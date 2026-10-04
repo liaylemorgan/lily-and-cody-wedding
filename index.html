@@ -3,522 +3,328 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Lily & Cody | 14 August 2027</title>
-  <meta
-    name="description"
-    content="The wedding of Lily and Cody at Dunedin Country House on Saturday 14 August 2027."
-  >
-
+  <meta name="description" content="The wedding of Lily and Cody at Dunedin Country House on Saturday 14 August 2027.">
+  <meta name="theme-color" content="#5A5E4B">
   <style>
-    :root {
-      --sage-light: #CBCCBB;
-      --sage: #AFB39D;
-      --olive: #8F927B;
-      --olive-dark: #5A5E4B;
-      --cream: #F7F5EF;
-      --paper: #F1EFE6;
-      --ink: #272923;
-      --white: #FFFFFF;
+    :root{
+      --sage-light:#CBCCBB;
+      --sage:#AFB39D;
+      --olive:#8F927B;
+      --olive-dark:#5A5E4B;
+      --cream:#F7F5EF;
+      --paper:#F1EFE6;
+      --ink:#282A24;
+      --white:#fff;
+      --line:rgba(90,94,75,.22);
+      --shadow:0 18px 50px rgba(47,50,40,.10);
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: Georgia, "Times New Roman", serif;
-      background: var(--cream);
-      color: var(--ink);
-      line-height: 1.6;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    /* =========================
-       HERO
-    ========================== */
-
-    .hero {
-      min-height: 100vh;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 70px 24px;
-      text-align: center;
-      background:
-        radial-gradient(circle at 50% 10%, rgba(255,255,255,0.75), transparent 45%),
-        linear-gradient(180deg, #d5d6c7 0%, #cbccbb 100%);
-    }
-
-    .hero-inner {
-      position: relative;
-      z-index: 2;
-      width: min(100%, 700px);
-    }
-
-    .eyebrow {
-      font-size: 0.77rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      margin-bottom: 24px;
-    }
-
-    .names {
-      line-height: 0.92;
-      margin-bottom: 32px;
-    }
-
-    .name {
-      display: block;
-      font-size: clamp(3.5rem, 15vw, 7.5rem);
-      font-weight: 400;
-      letter-spacing: 0.18em;
-      padding-left: 0.18em;
-    }
-
-    .and {
-      display: block;
-      font-family: "Brush Script MT", "Segoe Script", cursive;
-      font-size: clamp(2rem, 8vw, 4rem);
-      font-weight: 400;
-      margin: 16px 0;
-      transform: rotate(-5deg);
-    }
-
-    .date {
-      margin-top: 28px;
-      font-size: 0.95rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    .venue {
-      margin: 20px auto 36px;
-      font-size: 0.8rem;
-      letter-spacing: 0.13em;
-      text-transform: uppercase;
-      max-width: 360px;
-      line-height: 1.8;
-    }
-
-    .button {
-      display: inline-block;
-      background: var(--olive-dark);
-      color: var(--white);
-      border: 1px solid var(--olive-dark);
-      padding: 15px 35px;
-      min-width: 210px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      font-size: 0.78rem;
-      transition: 0.25s ease;
-      cursor: pointer;
-    }
-
-    .button:hover {
-      background: transparent;
-      color: var(--olive-dark);
-    }
-
-    .secondary-button {
-      margin-top: 12px;
-      background: transparent;
-      color: var(--olive-dark);
-    }
-
-    .secondary-button:hover {
-      background: var(--olive-dark);
-      color: white;
-    }
-
-    /* =========================
-       BOTANICAL DECORATION
-    ========================== */
-
-    .branch {
-      position: absolute;
-      width: min(55vw, 430px);
-      height: auto;
-      opacity: 0.72;
-      pointer-events: none;
-    }
-
-    .branch-top {
-      top: -40px;
-      left: -50px;
-      transform: rotate(-10deg);
-    }
-
-    .branch-bottom {
-      right: -60px;
-      bottom: -50px;
-      transform: rotate(172deg);
-    }
-
-    /* =========================
-       SECTIONS
-    ========================== */
-
-    section {
-      padding: 90px 24px;
-    }
-
-    .section-inner {
-      width: min(100%, 900px);
-      margin: 0 auto;
-      text-align: center;
-    }
-
-    .section-title {
-      font-size: clamp(2rem, 8vw, 3.2rem);
-      font-weight: 400;
-      letter-spacing: 0.08em;
-      margin-bottom: 10px;
-    }
-
-    .script-title {
-      font-family: "Brush Script MT", "Segoe Script", cursive;
-      font-size: 2rem;
-      color: var(--olive-dark);
-      margin-bottom: 30px;
-    }
-
-    .intro {
-      max-width: 640px;
-      margin: 0 auto 45px;
-      font-size: 1rem;
-    }
-
-    .info {
-      background: var(--white);
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      margin-top: 40px;
-    }
-
-    .card {
-      background: var(--paper);
-      padding: 38px 25px;
-      border: 1px solid rgba(90, 94, 75, 0.15);
-    }
-
-    .card-icon {
-      font-size: 1.8rem;
-      margin-bottom: 15px;
-    }
-
-    .card h3 {
-      font-weight: 400;
-      font-size: 1.15rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-
-    .card p {
-      font-size: 0.95rem;
-    }
-
-    .rsvp {
-      background: var(--sage-light);
-    }
-
-    .rsvp-box {
-      max-width: 610px;
-      margin: 0 auto;
-      padding: 50px 30px;
-      background: rgba(255,255,255,0.42);
-      border: 1px solid rgba(90, 94, 75, 0.18);
-    }
-
-    .rsvp-box p {
-      margin-bottom: 28px;
-    }
-
-    .coming-soon {
-      display: inline-block;
-      padding: 8px 14px;
-      margin-bottom: 25px;
-      border: 1px solid var(--olive-dark);
-      color: var(--olive-dark);
-      font-size: 0.7rem;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    footer {
-      background: var(--olive-dark);
-      color: #f3f1e9;
-      text-align: center;
-      padding: 40px 20px;
-    }
-
-    footer .footer-names {
-      font-size: 1.5rem;
-      letter-spacing: 0.15em;
-      margin-bottom: 8px;
-    }
-
-    footer p {
-      font-size: 0.78rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      opacity: 0.85;
-    }
-
-    /* =========================
-       MOBILE
-    ========================== */
-
-    @media (max-width: 700px) {
-      .hero {
-        padding: 80px 22px;
-      }
-
-      .cards {
-        grid-template-columns: 1fr;
-      }
-
-      section {
-        padding: 70px 20px;
-      }
-
-      .branch {
-        width: 70vw;
-      }
-
-      .branch-top {
-        top: -10px;
-        left: -65px;
-      }
-
-      .branch-bottom {
-        right: -75px;
-        bottom: -20px;
-      }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:Georgia,"Times New Roman",serif;background:var(--cream);color:var(--ink);line-height:1.6}
+    button,input,textarea{font:inherit}
+    a{color:inherit;text-decoration:none}
+    .hidden{display:none!important}
+    .wrap{width:min(100% - 36px,940px);margin:auto}
+    .eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:.72rem}
+    .section{padding:82px 0}
+    .section.alt{background:#fff}
+    .section.sage{background:var(--sage-light)}
+    .section-title{text-align:center;font-weight:400;font-size:clamp(2rem,7vw,3.2rem);letter-spacing:.08em}
+    .script{font-family:"Brush Script MT","Segoe Script",cursive;font-size:2rem;color:var(--olive-dark);text-align:center;margin-top:5px}
+    .intro{max-width:660px;margin:20px auto 0;text-align:center}
+    .btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 28px;border:1px solid var(--olive-dark);background:var(--olive-dark);color:#fff;letter-spacing:.14em;text-transform:uppercase;font-size:.74rem;cursor:pointer;transition:.2s}
+    .btn:hover{background:transparent;color:var(--olive-dark)}
+    .btn.secondary{background:transparent;color:var(--olive-dark)}
+    .btn.secondary:hover{background:var(--olive-dark);color:#fff}
+    .hero{min-height:100svh;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;padding:78px 20px;background:radial-gradient(circle at 50% 12%,rgba(255,255,255,.72),transparent 43%),linear-gradient(180deg,#d7d8ca 0%,var(--sage-light) 100%)}
+    .hero-inner{position:relative;z-index:2;width:min(100%,700px)}
+    .hero .eyebrow{margin-bottom:24px}
+    .names{line-height:.9}
+    .name{display:block;font-weight:400;font-size:clamp(3.8rem,15vw,7.5rem);letter-spacing:.18em;padding-left:.18em}
+    .and{display:block;font-family:"Brush Script MT","Segoe Script",cursive;font-weight:400;font-size:clamp(2rem,8vw,4rem);margin:18px 0;transform:rotate(-5deg)}
+    .date{margin-top:32px;text-transform:uppercase;letter-spacing:.16em;font-size:.9rem}
+    .venue{margin:18px auto 34px;text-transform:uppercase;letter-spacing:.13em;font-size:.78rem;line-height:1.9}
+    .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+    .branch{position:absolute;width:min(58vw,440px);opacity:.7;pointer-events:none}
+    .branch.top{top:-40px;left:-55px;transform:rotate(-10deg)}
+    .branch.bottom{right:-60px;bottom:-50px;transform:rotate(172deg)}
+    .nav{position:sticky;top:0;z-index:20;background:rgba(247,245,239,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    .nav-inner{width:min(100% - 28px,980px);margin:auto;display:flex;justify-content:space-between;align-items:center;min-height:62px;gap:16px}
+    .brand{letter-spacing:.16em;font-size:.86rem}
+    .nav-links{display:flex;gap:20px;font-size:.72rem;letter-spacing:.09em;text-transform:uppercase}
+    .invite-card{max-width:690px;margin:0 auto;background:rgba(255,255,255,.52);border:1px solid var(--line);box-shadow:var(--shadow);padding:42px 30px;text-align:center}
+    .invite-badge{display:inline-block;border:1px solid var(--olive-dark);padding:7px 13px;margin-bottom:20px;text-transform:uppercase;letter-spacing:.14em;font-size:.68rem;color:var(--olive-dark)}
+    .invite-card h3{font-size:1.8rem;font-weight:400;letter-spacing:.06em}
+    .invite-card .type{font-family:"Brush Script MT","Segoe Script",cursive;color:var(--olive-dark);font-size:2.1rem;margin:6px 0 22px}
+    .key-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+    .key-card{background:var(--paper);border:1px solid var(--line);padding:28px 20px;text-align:center}
+    .key-card h4{font-weight:400;text-transform:uppercase;letter-spacing:.11em;font-size:.8rem;margin-bottom:10px}
+    .key-card strong{display:block;font-size:1.15rem;font-weight:400}
+    .timeline{max-width:670px;margin:42px auto 0}
+    .time-row{display:grid;grid-template-columns:100px 22px 1fr;gap:14px;align-items:start;text-align:left;padding:15px 0}
+    .time{letter-spacing:.06em;text-align:right}
+    .dot{width:11px;height:11px;border:2px solid var(--olive-dark);border-radius:50%;margin-top:7px;position:relative}
+    .dot:after{content:"";position:absolute;width:1px;background:var(--line);height:54px;top:14px;left:3px}
+    .time-row:last-child .dot:after{display:none}
+    .event-title{font-weight:400;font-size:1.05rem}
+    .event-note{font-size:.88rem;color:#5f6257;margin-top:2px}
+    .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:38px}
+    .info-card{background:#fff;border:1px solid var(--line);padding:30px;text-align:left}
+    .info-card h3{font-weight:400;letter-spacing:.08em;text-transform:uppercase;font-size:.9rem;margin-bottom:12px}
+    .info-card p{font-size:.94rem}
+    .rsvp-shell{max-width:700px;margin:30px auto 0;background:rgba(255,255,255,.55);border:1px solid var(--line);padding:34px;box-shadow:var(--shadow)}
+    .form-row{margin-bottom:20px;text-align:left}
+    label,legend{display:block;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
+    input[type="text"],textarea{width:100%;padding:13px 14px;border:1px solid #b9bca9;background:rgba(255,255,255,.78);color:var(--ink);border-radius:0}
+    textarea{min-height:100px;resize:vertical}
+    fieldset{border:0;margin-bottom:20px}
+    .radio-line{display:flex;gap:20px;flex-wrap:wrap}
+    .radio-line label{display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:.95rem;margin:0}
+    .form-note{font-size:.84rem;color:#5d6055;margin-bottom:20px;text-align:left}
+    .status{margin-top:18px;padding:14px;border:1px solid var(--line);background:#fff;font-size:.9rem}
+    .faq{max-width:760px;margin:38px auto 0}
+    details{border-bottom:1px solid var(--line);padding:16px 2px}
+    summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px}
+    summary::-webkit-details-marker{display:none}
+    summary:after{content:"+";color:var(--olive-dark)}
+    details[open] summary:after{content:"−"}
+    details p{padding-top:12px;font-size:.94rem}
+    footer{background:var(--olive-dark);color:#f6f3ea;text-align:center;padding:42px 20px}
+    footer .footer-names{letter-spacing:.16em;font-size:1.35rem}
+    footer p{margin-top:6px;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;opacity:.84}
+    .preview-switch{position:fixed;right:12px;bottom:12px;z-index:30;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);padding:10px;font-size:.72rem}
+    .preview-switch a{display:inline-block;padding:6px 8px;color:var(--olive-dark)}
+    @media(max-width:720px){
+      .nav-links{display:none}
+      .branch{width:75vw}
+      .branch.top{top:-15px;left:-80px}
+      .branch.bottom{right:-90px;bottom:-20px}
+      .section{padding:64px 0}
+      .key-grid,.info-grid{grid-template-columns:1fr}
+      .time-row{grid-template-columns:78px 18px 1fr;gap:10px}
+      .rsvp-shell{padding:26px 20px}
+      .preview-switch{left:10px;right:10px;text-align:center}
     }
   </style>
 </head>
-
 <body>
-
-  <!-- =========================
-       HERO
-  ========================== -->
+  <svg class="hidden" aria-hidden="true">
+    <symbol id="branch" viewBox="0 0 500 350">
+      <path d="M20 300 C150 210, 220 115, 455 30" fill="none" stroke="#696e58" stroke-width="5" stroke-linecap="round"/>
+      <g fill="#7e856c">
+        <ellipse cx="90" cy="250" rx="20" ry="52" transform="rotate(-45 90 250)"/>
+        <ellipse cx="130" cy="225" rx="18" ry="48" transform="rotate(40 130 225)"/>
+        <ellipse cx="170" cy="188" rx="19" ry="50" transform="rotate(-50 170 188)"/>
+        <ellipse cx="220" cy="155" rx="20" ry="53" transform="rotate(40 220 155)"/>
+        <ellipse cx="267" cy="124" rx="19" ry="50" transform="rotate(-55 267 124)"/>
+        <ellipse cx="320" cy="96" rx="19" ry="50" transform="rotate(48 320 96)"/>
+        <ellipse cx="374" cy="66" rx="17" ry="47" transform="rotate(-55 374 66)"/>
+      </g>
+      <g fill="#a4aa8e">
+        <ellipse cx="112" cy="266" rx="13" ry="34" transform="rotate(35 112 266)"/>
+        <ellipse cx="195" cy="205" rx="12" ry="32" transform="rotate(45 195 205)"/>
+        <ellipse cx="293" cy="137" rx="12" ry="33" transform="rotate(-50 293 137)"/>
+        <ellipse cx="402" cy="60" rx="12" ry="34" transform="rotate(50 402 60)"/>
+      </g>
+    </symbol>
+  </svg>
 
   <header class="hero">
-
-    <!-- Botanical branch -->
-    <svg class="branch branch-top" viewBox="0 0 500 350" aria-hidden="true">
-      <path
-        d="M20 300 C150 210, 220 115, 455 30"
-        fill="none"
-        stroke="#696e58"
-        stroke-width="5"
-        stroke-linecap="round"
-      />
-
-      <g fill="#7e856c">
-        <ellipse cx="90" cy="250" rx="20" ry="52" transform="rotate(-45 90 250)"/>
-        <ellipse cx="130" cy="225" rx="18" ry="48" transform="rotate(40 130 225)"/>
-        <ellipse cx="170" cy="188" rx="19" ry="50" transform="rotate(-50 170 188)"/>
-        <ellipse cx="220" cy="155" rx="20" ry="53" transform="rotate(40 220 155)"/>
-        <ellipse cx="267" cy="124" rx="19" ry="50" transform="rotate(-55 267 124)"/>
-        <ellipse cx="320" cy="96" rx="19" ry="50" transform="rotate(48 320 96)"/>
-        <ellipse cx="374" cy="66" rx="17" ry="47" transform="rotate(-55 374 66)"/>
-      </g>
-
-      <g fill="#a4aa8e">
-        <ellipse cx="112" cy="266" rx="13" ry="34" transform="rotate(35 112 266)"/>
-        <ellipse cx="195" cy="205" rx="12" ry="32" transform="rotate(45 195 205)"/>
-        <ellipse cx="293" cy="137" rx="12" ry="33" transform="rotate(-50 293 137)"/>
-        <ellipse cx="402" cy="60" rx="12" ry="34" transform="rotate(50 402 60)"/>
-      </g>
-    </svg>
-
-    <svg class="branch branch-bottom" viewBox="0 0 500 350" aria-hidden="true">
-      <path
-        d="M20 300 C150 210, 220 115, 455 30"
-        fill="none"
-        stroke="#696e58"
-        stroke-width="5"
-        stroke-linecap="round"
-      />
-
-      <g fill="#7e856c">
-        <ellipse cx="90" cy="250" rx="20" ry="52" transform="rotate(-45 90 250)"/>
-        <ellipse cx="130" cy="225" rx="18" ry="48" transform="rotate(40 130 225)"/>
-        <ellipse cx="170" cy="188" rx="19" ry="50" transform="rotate(-50 170 188)"/>
-        <ellipse cx="220" cy="155" rx="20" ry="53" transform="rotate(40 220 155)"/>
-        <ellipse cx="267" cy="124" rx="19" ry="50" transform="rotate(-55 267 124)"/>
-        <ellipse cx="320" cy="96" rx="19" ry="50" transform="rotate(48 320 96)"/>
-        <ellipse cx="374" cy="66" rx="17" ry="47" transform="rotate(-55 374 66)"/>
-      </g>
-
-      <g fill="#a4aa8e">
-        <ellipse cx="112" cy="266" rx="13" ry="34" transform="rotate(35 112 266)"/>
-        <ellipse cx="195" cy="205" rx="12" ry="32" transform="rotate(45 195 205)"/>
-        <ellipse cx="293" cy="137" rx="12" ry="33" transform="rotate(-50 293 137)"/>
-        <ellipse cx="402" cy="60" rx="12" ry="34" transform="rotate(50 402 60)"/>
-      </g>
-    </svg>
-
+    <svg class="branch top" viewBox="0 0 500 350" aria-hidden="true"><use href="#branch"/></svg>
+    <svg class="branch bottom" viewBox="0 0 500 350" aria-hidden="true"><use href="#branch"/></svg>
     <div class="hero-inner">
-
-      <div class="eyebrow">
-        We invite you to celebrate the marriage of
+      <div class="eyebrow">We invite you to celebrate the marriage of</div>
+      <h1 class="names"><span class="name">LILY</span><span class="and">and</span><span class="name">CODY</span></h1>
+      <div class="date">Saturday · 14 August 2027</div>
+      <div class="venue">Dunedin Country House<br>Patrington · East Yorkshire</div>
+      <div class="hero-actions">
+        <a class="btn" href="#invitation">Your Invitation</a>
+        <a class="btn secondary" href="#information">Wedding Information</a>
       </div>
-
-      <h1 class="names">
-        <span class="name">LILY</span>
-        <span class="and">and</span>
-        <span class="name">CODY</span>
-      </h1>
-
-      <div class="date">
-        Saturday · 14 August 2027
-      </div>
-
-      <div class="venue">
-        Dunedin Country House<br>
-        Patrington · East Yorkshire
-      </div>
-
-      <a class="button" href="#rsvp">
-        RSVP
-      </a>
-
-      <br>
-
-      <a class="button secondary-button" href="#information">
-        Wedding Information
-      </a>
-
     </div>
   </header>
 
-
-  <!-- =========================
-       INFORMATION
-  ========================== -->
-
-  <section class="info" id="information">
-    <div class="section-inner">
-
-      <h2 class="section-title">The Wedding</h2>
-      <div class="script-title">Lily & Cody</div>
-
-      <p class="intro">
-        We cannot wait to celebrate with our favourite people.
-        Everything you need for the day will be available here,
-        including your invitation, RSVP, travel information and
-        important wedding updates.
-      </p>
-
-      <div class="cards">
-
-        <div class="card">
-          <div class="card-icon">♡</div>
-          <h3>The Date</h3>
-          <p>
-            Saturday<br>
-            14 August 2027
-          </p>
-        </div>
-
-        <div class="card">
-          <div class="card-icon">⌂</div>
-          <h3>The Venue</h3>
-          <p>
-            Dunedin Country House<br>
-            40 Westgate<br>
-            Patrington<br>
-            HU12 0NB
-          </p>
-        </div>
-
-        <div class="card">
-          <div class="card-icon">✦</div>
-          <h3>Your Invitation</h3>
-          <p>
-            Your personalised invitation will show the arrival time
-            and wedding information relevant to you.
-          </p>
-        </div>
-
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="#">LILY & CODY</a>
+      <div class="nav-links">
+        <a href="#invitation">Invitation</a>
+        <a href="#information">Information</a>
+        <a href="#rsvp">RSVP</a>
+        <a href="#faq">FAQs</a>
       </div>
-
     </div>
-  </section>
+  </nav>
 
+  <main>
+    <section class="section sage" id="invitation">
+      <div class="wrap">
+        <h2 class="section-title">Your Invitation</h2>
+        <div class="script">We can't wait to celebrate with you</div>
+        <div class="invite-card">
+          <span class="invite-badge" id="inviteBadge">Invitation preview</span>
+          <h3 id="guestName">Your invitation</h3>
+          <div class="type" id="inviteType">Wedding Guest</div>
+          <p id="inviteMessage">Your QR code will open the version of the website that matches your invitation.</p>
+          <div class="key-grid">
+            <div class="key-card"><h4>Arrival</h4><strong id="arrivalTime">See invitation</strong></div>
+            <div class="key-card"><h4>Date</h4><strong>14 Aug 2027</strong></div>
+            <div class="key-card"><h4>Venue</h4><strong>Dunedin</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <!-- =========================
-       RSVP
-  ========================== -->
+    <section class="section alt" id="information">
+      <div class="wrap">
+        <h2 class="section-title" id="infoTitle">Wedding Information</h2>
+        <div class="script" id="infoScript">Everything you need for the celebration</div>
+        <p class="intro" id="infoIntro">The information shown here changes automatically depending on the invitation linked to the guest's QR code.</p>
 
-  <section class="rsvp" id="rsvp">
-    <div class="section-inner">
+        <div class="timeline" id="dayTimeline">
+          <div class="time-row"><div class="time">12:30</div><div class="dot"></div><div><div class="event-title">Guest arrival</div><div class="event-note">Please do not arrive more than 30 minutes before your invited arrival time.</div></div></div>
+          <div class="time-row"><div class="time">13:30</div><div class="dot"></div><div><div class="event-title">Ceremony</div><div class="event-note">The wedding ceremony begins.</div></div></div>
+          <div class="time-row"><div class="time">Afternoon</div><div class="dot"></div><div><div class="event-title">Celebrations & wedding breakfast</div><div class="event-note">Food, drinks and celebrations at Dunedin Country House.</div></div></div>
+          <div class="time-row"><div class="time">19:00</div><div class="dot"></div><div><div class="event-title">Evening celebration</div><div class="event-note">Evening guests join the party.</div></div></div>
+        </div>
 
-      <div class="rsvp-box">
+        <div class="timeline hidden" id="eveningTimeline">
+          <div class="time-row"><div class="time">19:00</div><div class="dot"></div><div><div class="event-title">Evening guest arrival</div><div class="event-note">Please do not arrive more than 30 minutes before your invited arrival time.</div></div></div>
+          <div class="time-row"><div class="time">Evening</div><div class="dot"></div><div><div class="event-title">Celebrate with us</div><div class="event-note">Join Lily & Cody for drinks, music, dancing and evening food.</div></div></div>
+          <div class="time-row"><div class="time">Late</div><div class="dot"></div><div><div class="event-title">Carriages</div><div class="event-note">Final timings will be confirmed closer to the wedding.</div></div></div>
+        </div>
 
-        <span class="coming-soon">
-          RSVP System Coming Soon
-        </span>
+        <div class="info-grid">
+          <div class="info-card"><h3>Venue</h3><p>Dunedin Country House<br>40 Westgate, Patrington<br>Hull, HU12 0NB</p></div>
+          <div class="info-card"><h3>Bar</h3><p>The venue operates a <strong>cashless bar</strong>, so please bring a debit or credit card.</p></div>
+          <div class="info-card"><h3>Dress Code</h3><p>Please avoid <strong>sage green, white and cream</strong> so these colours remain reserved for the wedding party.</p></div>
+          <div class="info-card"><h3>Children</h3><p>This is an adults-only wedding unless a child has been specifically named on your invitation.</p></div>
+          <div class="info-card"><h3>Gifts</h3><p>Your presence is what matters most. If you would like to give a gift, cash is preferred and gifts can be handed to the bar for safekeeping.</p></div>
+          <div class="info-card"><h3>Mike & Sully</h3><p>The dogs will be cared for by their walker. Please do not approach them unless you already have an established relationship with them.</p></div>
+        </div>
+      </div>
+    </section>
 
+    <section class="section sage" id="rsvp">
+      <div class="wrap">
         <h2 class="section-title">RSVP</h2>
-
-        <div class="script-title">
-          We'd love to celebrate with you
-        </div>
-
-        <p>
-          Your personalised RSVP will appear here.
-          Guests will be able to confirm attendance,
-          provide dietary requirements and review
-          the information relevant to their invitation.
-        </p>
-
-        <p>
-          <strong>Please reply by January 2027.</strong>
-        </p>
-
+        <div class="script">Please reply by January 2027</div>
+        <p class="intro">This is the guest-facing form layout. We will connect it to the wedding guest list and Google Sheet next so responses are actually saved.</p>
+        <form class="rsvp-shell" id="rsvpForm">
+          <div class="form-row">
+            <label for="rsvpName">Name / household</label>
+            <input id="rsvpName" name="name" type="text" autocomplete="name" placeholder="Your name" required>
+          </div>
+          <fieldset>
+            <legend>Will you be attending?</legend>
+            <div class="radio-line">
+              <label><input type="radio" name="attendance" value="yes" required> Yes, I'll be there</label>
+              <label><input type="radio" name="attendance" value="no" required> Sorry, I can't attend</label>
+            </div>
+          </fieldset>
+          <div class="form-row">
+            <label for="dietary">Dietary requirements</label>
+            <textarea id="dietary" name="dietary" placeholder="Allergies, intolerances or vegetarian requirements"></textarea>
+          </div>
+          <p class="form-note">There are no meal selections to make. Vegetarian options will be available; please tell Lily & Cody about any dietary requirements.</p>
+          <div class="form-row">
+            <label for="message">Message for Lily & Cody <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
+            <textarea id="message" name="message" placeholder="Leave a message for the couple"></textarea>
+          </div>
+          <button class="btn" type="submit">Submit RSVP</button>
+          <div class="status hidden" id="formStatus" role="status"></div>
+        </form>
       </div>
+    </section>
 
-    </div>
-  </section>
-
-
-  <!-- =========================
-       FOOTER
-  ========================== -->
+    <section class="section alt" id="faq">
+      <div class="wrap">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <div class="script">A few useful details</div>
+        <div class="faq">
+          <details><summary>When should I arrive?</summary><p id="arrivalFaq">Your invitation will show your arrival time. Please do not arrive more than 30 minutes early.</p></details>
+          <details><summary>Can I bring my children?</summary><p>Only children specifically named on the invitation are invited. If a child is not named, please arrange childcare for the celebration.</p></details>
+          <details><summary>Can I pay cash at the bar?</summary><p>No. The bar is cashless, so please bring a debit or credit card.</p></details>
+          <details><summary>What should I wear?</summary><p>Please avoid sage green, white and cream. Further dress guidance can be added here if Lily & Cody choose to specify it.</p></details>
+          <details><summary>Are vegetarian meals available?</summary><p>Yes. Please include vegetarian requirements, allergies or intolerances in your RSVP.</p></details>
+          <details><summary>Where can I stay?</summary><p>Accommodation recommendations and local taxi information will be added to the site before invitations are sent.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <footer>
-
-    <div class="footer-names">
-      LILY & CODY
-    </div>
-
-    <p>
-      14 August 2027 · Dunedin Country House
-    </p>
-
+    <div class="footer-names">LILY & CODY</div>
+    <p>14 August 2027 · Dunedin Country House</p>
   </footer>
 
+  <div class="preview-switch" id="previewSwitch">
+    Preview: <a href="?preview=day#invitation">Full Day</a> · <a href="?preview=evening#invitation">Evening</a> · <a href="./#invitation">Generic</a>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const preview = params.get('preview');
+    const inviteCode = params.get('invite');
+
+    let inviteType = preview === 'day' || preview === 'evening' ? preview : null;
+
+    if (inviteCode === 'DAY-DEMO') inviteType = 'day';
+    if (inviteCode === 'EVE-DEMO') inviteType = 'evening';
+
+    const badge = document.getElementById('inviteBadge');
+    const guestName = document.getElementById('guestName');
+    const type = document.getElementById('inviteType');
+    const message = document.getElementById('inviteMessage');
+    const arrival = document.getElementById('arrivalTime');
+    const dayTimeline = document.getElementById('dayTimeline');
+    const eveningTimeline = document.getElementById('eveningTimeline');
+    const infoTitle = document.getElementById('infoTitle');
+    const infoScript = document.getElementById('infoScript');
+    const infoIntro = document.getElementById('infoIntro');
+    const arrivalFaq = document.getElementById('arrivalFaq');
+
+    if (inviteType === 'day') {
+      badge.textContent = 'Full Day Invitation';
+      guestName.textContent = 'Your Invitation';
+      type.textContent = 'Full Day Guest';
+      message.textContent = 'You are invited to join Lily & Cody for the ceremony, wedding breakfast and evening celebrations.';
+      arrival.textContent = '12:30 PM';
+      dayTimeline.classList.remove('hidden');
+      eveningTimeline.classList.add('hidden');
+      infoTitle.textContent = 'Your Wedding Day';
+      infoScript.textContent = 'From ceremony to celebration';
+      infoIntro.textContent = 'Here is the information relevant to guests invited for the full wedding day.';
+      arrivalFaq.textContent = 'Full Day guests are invited to arrive from 12:30 PM. Please do not arrive before 12:00 PM.';
+    } else if (inviteType === 'evening') {
+      badge.textContent = 'Evening Invitation';
+      guestName.textContent = 'Your Invitation';
+      type.textContent = 'Evening Guest';
+      message.textContent = 'You are invited to join Lily & Cody for their evening wedding celebrations.';
+      arrival.textContent = '7:00 PM';
+      dayTimeline.classList.add('hidden');
+      eveningTimeline.classList.remove('hidden');
+      infoTitle.textContent = 'Evening Celebration';
+      infoScript.textContent = 'Join us for the party';
+      infoIntro.textContent = 'This page only shows the information relevant to evening guests.';
+      arrivalFaq.textContent = 'Evening guests are invited to arrive from 7:00 PM. Please do not arrive before 6:30 PM.';
+    } else {
+      badge.textContent = 'Wedding Website';
+      guestName.textContent = 'Lily & Cody';
+      type.textContent = '14 August 2027';
+      message.textContent = 'Guests arriving through their invitation QR code will automatically see the Full Day or Evening information relevant to them.';
+      arrival.textContent = 'By invitation';
+      dayTimeline.classList.remove('hidden');
+      eveningTimeline.classList.add('hidden');
+    }
+
+    document.getElementById('rsvpForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const status = document.getElementById('formStatus');
+      status.classList.remove('hidden');
+      status.innerHTML = '<strong>Preview only.</strong> The form is working visually, but it is not saving responses yet. The next build step is connecting it securely to the guest list.';
+    });
+  </script>
 </body>
 </html>
