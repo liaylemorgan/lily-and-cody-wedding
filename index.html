@@ -6,6 +6,7 @@
   <title>Lily & Cody | 14 August 2027</title>
   <meta name="description" content="The wedding of Lily and Cody at Dunedin Country House on Saturday 14 August 2027.">
   <meta name="theme-color" content="#5A5E4B">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
   <style>
     :root{
       --sage-light:#CBCCBB;
@@ -95,6 +96,22 @@
     footer p{margin-top:6px;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;opacity:.84}
     .preview-switch{position:fixed;right:12px;bottom:12px;z-index:30;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);padding:10px;font-size:.72rem}
     .preview-switch a{display:inline-block;padding:6px 8px;color:var(--olive-dark)}
+    body.locked{overflow:hidden}
+    .site-shell{display:none}
+    body.unlocked .site-shell{display:block}
+    .gate{min-height:100svh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:28px;background:radial-gradient(circle at 50% 12%,rgba(255,255,255,.76),transparent 43%),linear-gradient(180deg,#d7d8ca 0%,var(--sage-light) 100%)}
+    body.unlocked .gate{display:none}
+    .gate-card{position:relative;z-index:2;width:min(100%,500px);background:rgba(247,245,239,.92);border:1px solid var(--line);box-shadow:var(--shadow);padding:46px 32px;text-align:center}
+    .gate-card h1{font-weight:400;font-size:clamp(2.5rem,10vw,4.4rem);letter-spacing:.13em;padding-left:.13em;line-height:1}
+    .gate-card .gate-and{font-family:"Brush Script MT","Segoe Script",cursive;font-size:2rem;color:var(--olive-dark);margin:14px 0}
+    .gate-copy{margin:24px auto 26px;max-width:360px;font-size:.95rem}
+    .code-input{width:100%;padding:15px 16px;border:1px solid #aeb19d;background:#fff;text-align:center;text-transform:uppercase;letter-spacing:.18em;font-size:1.05rem;margin-bottom:12px}
+    .gate-error{min-height:24px;margin-top:12px;font-size:.86rem;color:#744b46}
+    .gate-help{font-size:.78rem;color:#66695d;margin-top:18px}
+    .logout-btn{border:0;background:transparent;color:var(--olive-dark);text-decoration:underline;cursor:pointer;font-size:.74rem}
+    .loading-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--olive-dark);animation:pulse 1s infinite alternate}
+    @keyframes pulse{to{opacity:.25}}
+
     @media(max-width:720px){
       .nav-links{display:none}
       .branch{width:75vw}
@@ -108,7 +125,26 @@
     }
   </style>
 </head>
-<body>
+<body class="locked">
+  <section class="gate" id="gate" aria-label="Wedding invitation login">
+    <svg class="branch top" viewBox="0 0 500 350" aria-hidden="true"><use href="#branch"/></svg>
+    <svg class="branch bottom" viewBox="0 0 500 350" aria-hidden="true"><use href="#branch"/></svg>
+    <div class="gate-card">
+      <div class="eyebrow">Private wedding invitation</div>
+      <h1>LILY</h1>
+      <div class="gate-and">and</div>
+      <h1>CODY</h1>
+      <p class="gate-copy">Please enter the invitation code printed with your wedding invitation.</p>
+      <form id="gateForm">
+        <label for="inviteCodeInput" class="hidden">Invitation code</label>
+        <input id="inviteCodeInput" class="code-input" type="text" inputmode="text" autocomplete="one-time-code" maxlength="20" placeholder="INVITATION CODE" required>
+        <button class="btn" id="gateButton" type="submit">Open Invitation</button>
+        <div class="gate-error" id="gateError" role="alert"></div>
+      </form>
+      <p class="gate-help">This is a private wedding website. Access is by invitation only.</p>
+    </div>
+  </section>
+
   <svg class="hidden" aria-hidden="true">
     <symbol id="branch" viewBox="0 0 500 350">
       <path d="M20 300 C150 210, 220 115, 455 30" fill="none" stroke="#696e58" stroke-width="5" stroke-linecap="round"/>
@@ -130,6 +166,7 @@
     </symbol>
   </svg>
 
+  <div class="site-shell" id="siteShell">
   <header class="hero">
     <svg class="branch top" viewBox="0 0 500 350" aria-hidden="true"><use href="#branch"/></svg>
     <svg class="branch bottom" viewBox="0 0 500 350" aria-hidden="true"><use href="#branch"/></svg>
@@ -257,21 +294,26 @@
   <footer>
     <div class="footer-names">LILY & CODY</div>
     <p>14 August 2027 · Dunedin Country House</p>
+    <p style="margin-top:14px"><button class="logout-btn" id="logoutBtn" type="button">Use a different invitation code</button></p>
   </footer>
-
-  <div class="preview-switch" id="previewSwitch">
-    Preview: <a href="?preview=day#invitation">Full Day</a> · <a href="?preview=evening#invitation">Evening</a> · <a href="./#invitation">Generic</a>
   </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const preview = params.get('preview');
-    const inviteCode = params.get('invite');
+    /*
+      Lily & Cody guest access
+      ------------------------
+      Set API_URL to the deployed Google Apps Script /exec URL.
+      Invite codes are validated against the private Google Sheet;
+      no real codes or guest data are stored in this public repository.
+    */
+    const API_URL = 'PASTE_APPS_SCRIPT_WEB_APP_URL_HERE';
+    const STORAGE_KEY = 'lc_invite_code';
 
-    let inviteType = preview === 'day' || preview === 'evening' ? preview : null;
-
-    if (inviteCode === 'DAY-DEMO') inviteType = 'day';
-    if (inviteCode === 'EVE-DEMO') inviteType = 'evening';
+    const gateForm = document.getElementById('gateForm');
+    const gateInput = document.getElementById('inviteCodeInput');
+    const gateError = document.getElementById('gateError');
+    const gateButton = document.getElementById('gateButton');
+    const logoutBtn = document.getElementById('logoutBtn');
 
     const badge = document.getElementById('inviteBadge');
     const guestName = document.getElementById('guestName');
@@ -284,47 +326,147 @@
     const infoScript = document.getElementById('infoScript');
     const infoIntro = document.getElementById('infoIntro');
     const arrivalFaq = document.getElementById('arrivalFaq');
+    const rsvpName = document.getElementById('rsvpName');
 
-    if (inviteType === 'day') {
-      badge.textContent = 'Full Day Invitation';
-      guestName.textContent = 'Your Invitation';
-      type.textContent = 'Full Day Guest';
-      message.textContent = 'You are invited to join Lily & Cody for the ceremony, wedding breakfast and evening celebrations.';
-      arrival.textContent = '12:30 PM';
-      dayTimeline.classList.remove('hidden');
-      eveningTimeline.classList.add('hidden');
-      infoTitle.textContent = 'Your Wedding Day';
-      infoScript.textContent = 'From ceremony to celebration';
-      infoIntro.textContent = 'Here is the information relevant to guests invited for the full wedding day.';
-      arrivalFaq.textContent = 'Full Day guests are invited to arrive from 12:30 PM. Please do not arrive before 12:00 PM.';
-    } else if (inviteType === 'evening') {
-      badge.textContent = 'Evening Invitation';
-      guestName.textContent = 'Your Invitation';
-      type.textContent = 'Evening Guest';
-      message.textContent = 'You are invited to join Lily & Cody for their evening wedding celebrations.';
-      arrival.textContent = '7:00 PM';
-      dayTimeline.classList.add('hidden');
-      eveningTimeline.classList.remove('hidden');
-      infoTitle.textContent = 'Evening Celebration';
-      infoScript.textContent = 'Join us for the party';
-      infoIntro.textContent = 'This page only shows the information relevant to evening guests.';
-      arrivalFaq.textContent = 'Evening guests are invited to arrive from 7:00 PM. Please do not arrive before 6:30 PM.';
-    } else {
-      badge.textContent = 'Wedding Website';
-      guestName.textContent = 'Lily & Cody';
-      type.textContent = '14 August 2027';
-      message.textContent = 'Guests arriving through their invitation QR code will automatically see the Full Day or Evening information relevant to them.';
-      arrival.textContent = 'By invitation';
-      dayTimeline.classList.remove('hidden');
-      eveningTimeline.classList.add('hidden');
+    let activeInvite = null;
+
+    function normaliseCode(value) {
+      return String(value || '').trim().toUpperCase().replace(/\s+/g, '');
     }
 
-    document.getElementById('rsvpForm').addEventListener('submit', function(e){
+    function isApiConfigured() {
+      return API_URL && !API_URL.includes('PASTE_APPS_SCRIPT');
+    }
+
+    async function lookupInvite(code) {
+      if (!isApiConfigured()) {
+        throw new Error('The guest login is being connected. Please try again shortly.');
+      }
+
+      const url = API_URL + '?action=lookup&code=' + encodeURIComponent(code);
+      const response = await fetch(url, { method: 'GET', cache: 'no-store' });
+      if (!response.ok) throw new Error('Unable to check invitation code.');
+      return response.json();
+    }
+
+    function applyInvite(invite) {
+      activeInvite = invite;
+      const inviteType = String(invite.invitationType || '').toLowerCase();
+      const isDay = inviteType.includes('full');
+
+      badge.textContent = isDay ? 'Full Day Invitation' : 'Evening Invitation';
+      guestName.textContent = invite.household || invite.contactName || 'Your Invitation';
+      type.textContent = isDay ? 'Full Day Guest' : 'Evening Guest';
+      message.textContent = isDay
+        ? 'You are invited to join Lily & Cody for the ceremony, wedding breakfast and evening celebrations.'
+        : 'You are invited to join Lily & Cody for their evening wedding celebrations.';
+      arrival.textContent = isDay ? '12:30 PM' : '7:00 PM';
+
+      dayTimeline.classList.toggle('hidden', !isDay);
+      eveningTimeline.classList.toggle('hidden', isDay);
+
+      infoTitle.textContent = isDay ? 'Your Wedding Day' : 'Evening Celebration';
+      infoScript.textContent = isDay ? 'From ceremony to celebration' : 'Join us for the party';
+      infoIntro.textContent = isDay
+        ? 'Here is the information relevant to guests invited for the full wedding day.'
+        : 'This page only shows the information relevant to evening guests.';
+      arrivalFaq.textContent = isDay
+        ? 'Full Day guests are invited to arrive from 12:30 PM. Please do not arrive before 12:00 PM.'
+        : 'Evening guests are invited to arrive from 7:00 PM. Please do not arrive before 6:30 PM.';
+
+      if (rsvpName) rsvpName.value = invite.household || invite.contactName || '';
+
+      document.body.classList.remove('locked');
+      document.body.classList.add('unlocked');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    async function authenticate(code, remember = true) {
+      const cleanCode = normaliseCode(code);
+      if (!cleanCode) return;
+
+      gateError.textContent = '';
+      gateButton.disabled = true;
+      gateButton.innerHTML = 'Checking <span class="loading-dot"></span>';
+
+      try {
+        const result = await lookupInvite(cleanCode);
+        if (!result.ok || !result.invite) {
+          throw new Error('That invitation code was not recognised. Please check it and try again.');
+        }
+        if (remember) localStorage.setItem(STORAGE_KEY, cleanCode);
+        applyInvite(result.invite);
+      } catch (err) {
+        localStorage.removeItem(STORAGE_KEY);
+        gateError.textContent = err.message || 'Unable to open invitation.';
+      } finally {
+        gateButton.disabled = false;
+        gateButton.textContent = 'Open Invitation';
+      }
+    }
+
+    gateForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      authenticate(gateInput.value);
+    });
+
+    logoutBtn.addEventListener('click', function() {
+      localStorage.removeItem(STORAGE_KEY);
+      activeInvite = null;
+      document.body.classList.remove('unlocked');
+      document.body.classList.add('locked');
+      gateInput.value = '';
+      gateError.textContent = '';
+      gateInput.focus();
+    });
+
+    document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const status = document.getElementById('formStatus');
+
+      if (!activeInvite) {
+        status.classList.remove('hidden');
+        status.textContent = 'Please sign in with your invitation code again.';
+        return;
+      }
+
+      if (!isApiConfigured()) {
+        status.classList.remove('hidden');
+        status.innerHTML = '<strong>RSVP connection pending.</strong> The secure backend still needs its deployment URL added.';
+        return;
+      }
+
+      const attendance = this.querySelector('input[name="attendance"]:checked');
+      const data = {
+        action: 'rsvp',
+        code: normaliseCode(localStorage.getItem(STORAGE_KEY)),
+        attendance: attendance ? attendance.value : '',
+        attendingGuests: [],
+        dietary: document.getElementById('dietary').value.trim(),
+        accessibility: '',
+        message: document.getElementById('message').value.trim(),
+        amended: Boolean(activeInvite.rsvpStatus && activeInvite.rsvpStatus !== 'Not sent')
+      };
+
       status.classList.remove('hidden');
-      status.innerHTML = '<strong>Preview only.</strong> The form is working visually, but it is not saving responses yet. The next build step is connecting it securely to the guest list.';
+      status.textContent = 'Saving your RSVP…';
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: {'Content-Type':'text/plain;charset=utf-8'},
+          body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if (!result.ok) throw new Error(result.error || 'Unable to save RSVP.');
+        status.innerHTML = '<strong>Thank you.</strong> Your RSVP has been saved for Lily & Cody.';
+      } catch (err) {
+        status.textContent = err.message || 'We could not save your RSVP. Please try again.';
+      }
     });
+
+    const savedCode = normaliseCode(localStorage.getItem(STORAGE_KEY));
+    if (savedCode) authenticate(savedCode, false);
   </script>
 </body>
 </html>
