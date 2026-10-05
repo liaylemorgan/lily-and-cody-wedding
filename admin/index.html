@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<title>Lily & Cody | Wedding Admin</title>
+<style>
+:root{--sage:#AFB39D;--light:#CBCCBB;--olive:#5A5E4B;--mid:#8F927B;--cream:#F7F5EF;--paper:#F1EFE6;--ink:#292b25;--line:rgba(90,94,75,.22)}
+*{box-sizing:border-box}body{margin:0;font-family:Georgia,"Times New Roman",serif;background:var(--cream);color:var(--ink)}
+.hidden{display:none!important}.wrap{width:min(1180px,calc(100% - 28px));margin:auto}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.login{min-height:100svh;display:grid;place-items:center;background:linear-gradient(180deg,#d9dacd,var(--light));padding:24px}
+.login-card{width:min(460px,100%);background:rgba(255,255,255,.84);border:1px solid var(--line);padding:40px;box-shadow:0 18px 55px rgba(50,54,42,.12);text-align:center}
+.login h1{font-weight:400;letter-spacing:.12em;margin:8px 0}.script{font-family:"Brush Script MT","Segoe Script",cursive;color:var(--olive);font-size:1.8rem}
+.field{margin:16px 0;text-align:left}.field label{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;background:#fff}textarea{min-height:84px}
+.btn{border:1px solid var(--olive);background:var(--olive);color:#fff;padding:12px 18px;letter-spacing:.08em;text-transform:uppercase;font-size:.74rem}.btn.secondary{background:transparent;color:var(--olive)}.btn.danger{background:#704d48;border-color:#704d48}
+.error{color:#7c4139;font-size:.86rem;min-height:22px;margin-top:12px}
+.topbar{background:var(--olive);color:#fff;padding:14px 0;position:sticky;top:0;z-index:20}.toprow{display:flex;justify-content:space-between;align-items:center;gap:16px}.brand{letter-spacing:.14em}.user{font-size:.83rem;opacity:.9}
+.layout{display:grid;grid-template-columns:230px 1fr;gap:26px;padding:28px 0 60px}.side{background:#fff;border:1px solid var(--line);padding:14px;height:max-content;position:sticky;top:84px}.side button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:11px 10px;color:var(--ink)}.side button.active{background:var(--paper);color:var(--olive);font-weight:bold}
+.panel{display:none}.panel.active{display:block}.panel h2{font-weight:400;letter-spacing:.06em;margin:0 0 18px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat{background:#fff;border:1px solid var(--line);padding:20px}.stat small{display:block;text-transform:uppercase;letter-spacing:.08em;font-size:.68rem}.stat strong{font-size:1.8rem;font-weight:400;display:block;margin-top:5px}
+.card{background:#fff;border:1px solid var(--line);padding:20px;margin-top:18px}.card h3{font-weight:400;margin:0 0 14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.table-wrap{overflow:auto;border:1px solid var(--line);background:#fff}table{width:100%;border-collapse:collapse;min-width:720px}th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:.88rem}th{background:var(--paper);text-transform:uppercase;letter-spacing:.06em;font-size:.68rem}.pill{display:inline-block;padding:4px 8px;border:1px solid var(--line);font-size:.75rem}.muted{color:#686b61;font-size:.88rem}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.notice{background:var(--paper);border-left:4px solid var(--mid);padding:13px 15px;margin-bottom:18px}
+@media(max-width:860px){.layout{grid-template-columns:1fr}.side{position:static;display:flex;overflow:auto}.side button{white-space:nowrap;width:auto}.stats{grid-template-columns:1fr 1fr}.grid2,.grid3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<section class="login" id="loginView">
+  <div class="login-card">
+    <div class="script">Lily & Cody</div>
+    <h1>WEDDING ADMIN</h1>
+    <p class="muted">Private planning area for the wedding team.</p>
+    <form id="loginForm">
+      <div class="field"><label>Email address</label><input id="adminEmail" type="email" autocomplete="username" required></div>
+      <div class="field"><label>Admin access code</label><input id="adminCode" type="password" autocomplete="current-password" required></div>
+      <button class="btn" type="submit">Sign in</button>
+      <div class="error" id="loginError"></div>
+    </form>
+  </div>
+</section>
+
+<div id="app" class="hidden">
+  <header class="topbar"><div class="wrap toprow"><div class="brand">LILY & CODY | ADMIN</div><div><span class="user" id="who"></span> &nbsp; <button class="btn secondary" id="logout" type="button">Log out</button></div></div></header>
+  <div class="wrap layout">
+    <nav class="side" id="nav">
+      <button data-panel="dashboard" class="active">Dashboard</button>
+      <button data-panel="households">Households</button>
+      <button data-panel="guests">Guests</button>
+      <button data-panel="seating">Seating planner</button>
+      <button data-panel="photos">Photos</button>
+      <button data-panel="messages">Messages</button>
+      <button data-panel="tasks">Wedding tasks</button>
+    </nav>
+    <main>
+      <section class="panel active" id="dashboard">
+        <h2>Wedding Dashboard</h2>
+        <div class="notice">This is the private management area. Changes here write to the wedding database behind the scenes.</div>
+        <div class="stats">
+          <div class="stat"><small>Households</small><strong id="sHouseholds">0</strong></div>
+          <div class="stat"><small>Full Day</small><strong id="sDay">0</strong></div>
+          <div class="stat"><small>Evening</small><strong id="sEvening">0</strong></div>
+          <div class="stat"><small>Invited guests</small><strong id="sGuests">0</strong></div>
+          <div class="stat"><small>Adults</small><strong id="sAdults">0</strong></div>
+          <div class="stat"><small>Children</small><strong id="sChildren">0</strong></div>
+          <div class="stat"><small>RSVPs received</small><strong id="sRsvp">0</strong></div>
+          <div class="stat"><small>Awaiting reply</small><strong id="sAwaiting">0</strong></div>
+        </div>
+      </section>
+
+      <section class="panel" id="households">
+        <h2>Households & Invitations</h2>
+        <div class="card">
+          <h3>Add household</h3>
+          <form id="householdForm">
+            <div class="grid3">
+              <div class="field"><label>Household / party</label><input name="household" required></div>
+              <div class="field"><label>Invitation type</label><select name="invitationType"><option>Full Day</option><option>Evening</option></select></div>
+              <div class="field"><label>Contact name</label><input name="contactName"></div>
+              <div class="field"><label>Contact email</label><input type="email" name="contactEmail"></div>
+              <div class="field"><label>Invited adults</label><input type="number" min="0" name="adults" value="1"></div>
+              <div class="field"><label>Invited children</label><input type="number" min="0" name="children" value="0"></div>
+            </div>
+            <div class="field"><label>Notes</label><textarea name="notes"></textarea></div>
+            <button class="btn" type="submit">Add household</button>
+          </form>
+        </div>
+        <div class="card"><h3>Current households</h3><div class="table-wrap"><table><thead><tr><th>Household</th><th>Type</th><th>Adults</th><th>Children</th><th>Invite code</th><th>RSVP</th></tr></thead><tbody id="householdRows"></tbody></table></div></div>
+      </section>
+
+      <section class="panel" id="guests">
+        <h2>Invited Guests</h2>
+        <div class="card"><h3>Add guest</h3><form id="guestForm"><div class="grid3">
+          <div class="field"><label>Household / party</label><select name="household" id="guestHousehold"></select></div>
+          <div class="field"><label>Guest name</label><input name="guestName" required></div>
+          <div class="field"><label>Adult / child</label><select name="guestType"><option>Adult</option><option>Child</option></select></div>
+        </div><button class="btn" type="submit">Add guest</button></form></div>
+        <div class="card"><h3>Guest list</h3><div class="table-wrap"><table><thead><tr><th>Guest</th><th>Household</th><th>Adult / child</th><th>Invited to</th><th>Response</th></tr></thead><tbody id="guestRows"></tbody></table></div></div>
+      </section>
+
+      <section class="panel" id="seating"><h2>Seating Planner</h2><div class="card"><p class="muted">The seating planner is ready for confirmed guests. Table editing will populate here from the database.</p><div id="seatContent"></div></div></section>
+      <section class="panel" id="photos"><h2>Photo Review</h2><div class="card"><p class="muted">Guest-camera uploads will appear here for approval before they are shown publicly.</p><div id="photoContent"></div></div></section>
+      <section class="panel" id="messages"><h2>Messages</h2><div class="card"><p class="muted">RSVP messages will appear here. Approved messages can later feed the website ticker.</p><div id="messageContent"></div></div></section>
+      <section class="panel" id="tasks"><h2>Wedding Tasks</h2><div class="card"><div id="taskContent"></div></div></section>
+    </main>
+  </div>
+</div>
+
+<script>
+const API='https://script.google.com/macros/s/AKfycbzgpBmJxOEE0Fqng7BdmwS2a7Q41ca-Z5zHQVs4ivvlod6W_76HkQItYynF9U0jvquidg/exec';
+const TOKEN_KEY='lc_admin_token';
+let state={token:sessionStorage.getItem(TOKEN_KEY)||'',user:null,data:null};
+
+async function api(action,payload={}){
+  const res=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,token:state.token,...payload})});
+  const json=await res.json();
+  if(!json.ok) throw new Error(json.error||'Request failed');
+  return json;
+}
+function showApp(user){
+  state.user=user; document.getElementById('loginView').classList.add('hidden');document.getElementById('app').classList.remove('hidden');
+  document.getElementById('who').textContent=user.name+' · '+user.role;
+}
+async function loadAll(){
+  const r=await api('adminDashboard'); state.data=r;
+  const s=r.stats||{}; ['Households','Day','Evening','Guests','Adults','Children','Rsvp','Awaiting'].forEach(k=>document.getElementById('s'+k).textContent=s[k.toLowerCase()]??0);
+  renderHouseholds(r.households||[]);renderGuests(r.guests||[]);
+  renderSimple('seatContent',r.seating||[]);renderSimple('photoContent',r.photos||[]);renderSimple('messageContent',r.messages||[]);renderSimple('taskContent',r.tasks||[]);
+}
+function renderHouseholds(rows){
+  const body=document.getElementById('householdRows');body.innerHTML='';
+  const select=document.getElementById('guestHousehold');select.innerHTML='<option value="">Choose household</option>';
+  rows.forEach(h=>{
+    body.insertAdjacentHTML('beforeend',`<tr><td>${esc(h.household)}</td><td>${esc(h.invitationType)}</td><td>${h.adults||0}</td><td>${h.children||0}</td><td>${esc(h.code||'Pending')}</td><td>${esc(h.rsvpStatus||'Not sent')}</td></tr>`);
+    const o=document.createElement('option');o.value=h.household;o.textContent=h.household;select.appendChild(o);
+  });
+}
+function renderGuests(rows){document.getElementById('guestRows').innerHTML=rows.map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.household)}</td><td>${esc(g.type)}</td><td>${esc(g.invitedTo)}</td><td>${esc(g.response||'No response')}</td></tr>`).join('')}
+function renderSimple(id,rows){const el=document.getElementById(id);if(!rows.length){el.innerHTML='<p class="muted">Nothing here yet.</p>';return}el.innerHTML='<div class="table-wrap"><table><tbody>'+rows.map(r=>'<tr>'+Object.values(r).map(v=>'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+document.getElementById('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault();const err=document.getElementById('loginError');err.textContent='';
+  try{
+    const r=await api('adminLogin',{email:document.getElementById('adminEmail').value.trim(),code:document.getElementById('adminCode').value.trim()});
+    state.token=r.token;sessionStorage.setItem(TOKEN_KEY,state.token);showApp(r.user);await loadAll();
+  }catch(x){err.textContent=x.message}
+});
+document.getElementById('logout').onclick=()=>{sessionStorage.removeItem(TOKEN_KEY);location.reload()};
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));document.getElementById(b.dataset.panel).classList.add('active')});
+document.getElementById('householdForm').addEventListener('submit',async e=>{e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));await api('adminAddHousehold',{household:fd});e.target.reset();await loadAll()});
+document.getElementById('guestForm').addEventListener('submit',async e=>{e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));await api('adminAddGuest',{guest:fd});e.target.reset();await loadAll()});
+
+(async()=>{if(state.token){try{const r=await api('adminSession');showApp(r.user);await loadAll()}catch(e){sessionStorage.removeItem(TOKEN_KEY)}}})();
+</script>
+</body>
+</html>
