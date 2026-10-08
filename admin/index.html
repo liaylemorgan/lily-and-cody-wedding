@@ -23,7 +23,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat{background:#fff;border:1px solid var(--line);padding:20px}.stat small{display:block;text-transform:uppercase;letter-spacing:.08em;font-size:.68rem}.stat strong{font-size:1.8rem;font-weight:400;display:block;margin-top:5px}
 .card{background:#fff;border:1px solid var(--line);padding:20px;margin-top:18px}.card h3{font-weight:400;margin:0 0 14px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.table-wrap{overflow:auto;border:1px solid var(--line);background:#fff}table{width:100%;border-collapse:collapse;min-width:720px}th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:.88rem}th{background:var(--paper);text-transform:uppercase;letter-spacing:.06em;font-size:.68rem}.pill{display:inline-block;padding:4px 8px;border:1px solid var(--line);font-size:.75rem}.muted{color:#686b61;font-size:.88rem}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.notice{background:var(--paper);border-left:4px solid var(--mid);padding:13px 15px;margin-bottom:18px}.success{background:#eef1e7;border-left:4px solid var(--olive);padding:13px 15px;margin:14px 0}.quick-actions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.guest-builder{display:grid;gap:10px}.guest-line{display:grid;grid-template-columns:1fr 160px 44px;gap:10px;align-items:end}.guest-line .field{margin:0}.icon-btn{height:43px;border:1px solid var(--line);background:#fff;color:#704d48;font-size:1.2rem}.wizard-summary{display:flex;gap:18px;flex-wrap:wrap;padding:12px 0;font-size:.88rem}.wizard-summary strong{color:var(--olive)}.tiny{font-size:.75rem}.inline-btn{border:0;background:transparent;color:var(--olive);text-decoration:underline;padding:0;font-size:.82rem}
+.table-wrap{overflow:auto;border:1px solid var(--line);background:#fff}table{width:100%;border-collapse:collapse;min-width:720px}th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:.88rem}th{background:var(--paper);text-transform:uppercase;letter-spacing:.06em;font-size:.68rem}.pill{display:inline-block;padding:4px 8px;border:1px solid var(--line);font-size:.75rem}.muted{color:#686b61;font-size:.88rem}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.notice{background:var(--paper);border-left:4px solid var(--mid);padding:13px 15px;margin-bottom:18px}.success{background:#eef1e7;border-left:4px solid var(--olive);padding:13px 15px;margin:14px 0}.quick-actions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.guest-builder{display:grid;gap:10px}.guest-line{display:grid;grid-template-columns:1fr 160px 44px;gap:10px;align-items:end}.guest-line .field{margin:0}.icon-btn{height:43px;border:1px solid var(--line);background:#fff;color:#704d48;font-size:1.2rem}.wizard-summary{display:flex;gap:18px;flex-wrap:wrap;padding:12px 0;font-size:.88rem}.wizard-summary strong{color:var(--olive)}.tiny{font-size:.75rem}.inline-btn{border:0;background:transparent;color:var(--olive);text-decoration:underline;padding:0;font-size:.82rem}.modal-backdrop{position:fixed;inset:0;background:rgba(35,38,31,.48);display:grid;place-items:center;padding:20px;z-index:100}.modal{width:min(620px,100%);max-height:90svh;overflow:auto;background:var(--cream);border:1px solid var(--line);box-shadow:0 24px 70px rgba(0,0,0,.22);padding:24px}.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}.modal-head h3{font-weight:400;margin:0}.modal-close{border:0;background:transparent;font-size:1.5rem;color:var(--olive)}.row-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 @media(max-width:860px){.layout{grid-template-columns:1fr}.side{position:static;display:flex;overflow:auto}.side button{white-space:nowrap;width:auto}.stats{grid-template-columns:1fr 1fr}.grid2,.grid3{grid-template-columns:1fr}.guest-line{grid-template-columns:1fr 120px 44px}}
 </style>
 </head>
@@ -113,7 +113,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
             <button class="btn" type="submit">Add household</button>
           </form>
         </div>
-        <div class="card"><h3>Current households</h3><div class="table-wrap"><table><thead><tr><th>Household</th><th>Type</th><th>Adults</th><th>Children</th><th>Invite code</th><th>RSVP</th><th>Action</th></tr></thead><tbody id="householdRows"></tbody></table></div></div>
+        <div class="card"><h3>Current households</h3><div class="table-wrap"><table><thead><tr><th>Household</th><th>Type</th><th>Adults</th><th>Children</th><th>Invite code</th><th>RSVP</th><th>Actions</th></tr></thead><tbody id="householdRows"></tbody></table></div></div>
       </section>
 
       <section class="panel" id="guests">
@@ -123,7 +123,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
           <div class="field"><label>Guest name</label><input name="guestName" required></div>
           <div class="field"><label>Adult / child</label><select name="guestType"><option>Adult</option><option>Child</option></select></div>
         </div><button class="btn" type="submit">Add guest</button></form></div>
-        <div class="card"><h3>Guest list</h3><div class="table-wrap"><table><thead><tr><th>Guest</th><th>Household</th><th>Adult / child</th><th>Invited to</th><th>Response</th></tr></thead><tbody id="guestRows"></tbody></table></div></div>
+        <div class="card"><h3>Guest list</h3><div class="table-wrap"><table><thead><tr><th>Guest</th><th>Household</th><th>Adult / child</th><th>Invited to</th><th>Response</th><th>Actions</th></tr></thead><tbody id="guestRows"></tbody></table></div></div>
       </section>
 
       <section class="panel" id="seating"><h2>Seating Planner</h2><div class="card"><p class="muted">The seating planner is ready for confirmed guests. Table editing will populate here from the database.</p><div id="seatContent"></div></div></section>
@@ -131,6 +131,37 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
       <section class="panel" id="messages"><h2>Messages</h2><div class="card"><p class="muted">RSVP messages will appear here. Approved messages can later feed the website ticker.</p><div id="messageContent"></div></div></section>
       <section class="panel" id="tasks"><h2>Wedding Tasks</h2><div class="card"><div id="taskContent"></div></div></section>
     </main>
+  </div>
+</div>
+
+
+<div id="editModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="editModalTitle">
+  <div class="modal">
+    <div class="modal-head"><h3 id="editModalTitle">Edit</h3><button id="closeEditModal" class="modal-close" type="button" aria-label="Close">×</button></div>
+    <form id="editHouseholdForm" class="hidden">
+      <input type="hidden" name="row">
+      <div class="grid2">
+        <div class="field"><label>Household / party</label><input name="household" required></div>
+        <div class="field"><label>Invitation type</label><select name="invitationType"><option>Full Day</option><option>Evening</option></select></div>
+        <div class="field"><label>Contact name</label><input name="contactName"></div>
+        <div class="field"><label>Contact email</label><input name="contactEmail" type="email"></div>
+      </div>
+      <div class="field"><label>Notes</label><textarea name="notes"></textarea></div>
+      <div class="notice tiny">Adult and child totals are calculated from the named guests automatically.</div>
+      <div class="actions"><button class="btn" type="submit">Save changes</button><button class="btn secondary" type="button" data-modal-cancel>Cancel</button></div>
+      <div class="error" id="editHouseholdError"></div>
+    </form>
+    <form id="editGuestForm" class="hidden">
+      <input type="hidden" name="row">
+      <div class="field"><label>Guest name</label><input name="guestName" required></div>
+      <div class="grid2">
+        <div class="field"><label>Household / party</label><select name="household" id="editGuestHousehold" required></select></div>
+        <div class="field"><label>Adult / child</label><select name="guestType"><option>Adult</option><option>Child</option></select></div>
+      </div>
+      <div class="notice tiny">Moving a guest to a different household will automatically update both household totals.</div>
+      <div class="actions"><button class="btn" type="submit">Save changes</button><button class="btn secondary" type="button" data-modal-cancel>Cancel</button></div>
+      <div class="error" id="editGuestError"></div>
+    </form>
   </div>
 </div>
 
@@ -159,11 +190,11 @@ function renderHouseholds(rows){
   const body=document.getElementById('householdRows');body.innerHTML='';
   const select=document.getElementById('guestHousehold');select.innerHTML='<option value="">Choose household</option>';
   rows.forEach(h=>{
-    body.insertAdjacentHTML('beforeend',`<tr><td>${esc(h.household)}</td><td>${esc(h.invitationType)}</td><td>${h.adults||0}</td><td>${h.children||0}</td><td>${esc(h.code||'Pending')}</td><td>${esc(h.rsvpStatus||'Not sent')}</td><td><button class="inline-btn" type="button" data-add-guest="${esc(h.household)}">Add guest</button></td></tr>`);
+    body.insertAdjacentHTML('beforeend',`<tr><td>${esc(h.household)}</td><td>${esc(h.invitationType)}</td><td>${h.adults||0}</td><td>${h.children||0}</td><td>${esc(h.code||'Pending')}</td><td>${esc(h.rsvpStatus||'Not sent')}</td><td><div class="row-actions"><button class="inline-btn" type="button" data-edit-household="${h.row}">Edit</button><button class="inline-btn" type="button" data-add-guest="${esc(h.household)}">Add guest</button></div></td></tr>`);
     const o=document.createElement('option');o.value=h.household;o.textContent=h.household;select.appendChild(o);
   });
 }
-function renderGuests(rows){document.getElementById('guestRows').innerHTML=rows.map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.household)}</td><td>${esc(g.type)}</td><td>${esc(g.invitedTo)}</td><td>${esc(g.response||'No response')}</td></tr>`).join('')}
+function renderGuests(rows){document.getElementById('guestRows').innerHTML=rows.map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.household)}</td><td>${esc(g.type)}</td><td>${esc(g.invitedTo)}</td><td>${esc(g.response||'No response')}</td><td><button class="inline-btn" type="button" data-edit-guest="${g.row}">Edit</button></td></tr>`).join('')}
 function renderSimple(id,rows){const el=document.getElementById(id);if(!rows.length){el.innerHTML='<p class="muted">Nothing here yet.</p>';return}el.innerHTML='<div class="table-wrap"><table><tbody>'+rows.map(r=>'<tr>'+Object.values(r).map(v=>'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'}
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 
@@ -210,7 +241,55 @@ function updateBuilderCounts(){
 document.getElementById('addBuilderGuest').onclick=()=>addBuilderGuest();
 document.getElementById('openInviteBuilder').onclick=()=>openPanel('invitationBuilder');
 document.getElementById('openExistingGuest').onclick=()=>openPanel('guests');
+
+function closeEditModal(){
+  document.getElementById('editModal').classList.add('hidden');
+  document.getElementById('editHouseholdForm').classList.add('hidden');
+  document.getElementById('editGuestForm').classList.add('hidden');
+}
+function populateEditHousehold(row){
+  const h=(state.data?.households||[]).find(x=>Number(x.row)===Number(row));if(!h)return;
+  const form=document.getElementById('editHouseholdForm');
+  form.row.value=h.row;form.household.value=h.household||'';form.invitationType.value=h.invitationType||'Full Day';
+  form.contactName.value=h.contactName||'';form.contactEmail.value=h.contactEmail||'';form.notes.value=h.notes||'';
+  document.getElementById('editModalTitle').textContent='Edit household';
+  document.getElementById('editHouseholdError').textContent='';
+  document.getElementById('editGuestForm').classList.add('hidden');form.classList.remove('hidden');
+  document.getElementById('editModal').classList.remove('hidden');applyNameCase(form);
+}
+function populateEditGuest(row){
+  const g=(state.data?.guests||[]).find(x=>Number(x.row)===Number(row));if(!g)return;
+  const form=document.getElementById('editGuestForm'),select=document.getElementById('editGuestHousehold');
+  select.innerHTML=(state.data?.households||[]).map(h=>'<option value="'+esc(h.household)+'">'+esc(h.household)+'</option>').join('');
+  form.row.value=g.row;form.guestName.value=g.name||'';form.household.value=g.household||'';form.guestType.value=g.type||'Adult';
+  document.getElementById('editModalTitle').textContent='Edit guest';
+  document.getElementById('editGuestError').textContent='';
+  document.getElementById('editHouseholdForm').classList.add('hidden');form.classList.remove('hidden');
+  document.getElementById('editModal').classList.remove('hidden');applyNameCase(form);
+}
+document.getElementById('closeEditModal').onclick=closeEditModal;
+document.querySelectorAll('[data-modal-cancel]').forEach(b=>b.onclick=closeEditModal);
+document.getElementById('editModal').addEventListener('click',e=>{if(e.target.id==='editModal')closeEditModal();});
+document.getElementById('editHouseholdForm').addEventListener('submit',async e=>{
+  e.preventDefault();const fd=Object.fromEntries(new FormData(e.target)),err=document.getElementById('editHouseholdError');err.textContent='';
+  fd.household=smartNameCase(fd.household);fd.contactName=smartNameCase(fd.contactName);
+  const btn=e.submitter;btn.disabled=true;btn.textContent='Saving…';
+  try{await api('adminUpdateHousehold',{household:fd});await loadAll();closeEditModal();}
+  catch(x){err.textContent=x.message||'Could not update household.'}
+  finally{btn.disabled=false;btn.textContent='Save changes';}
+});
+document.getElementById('editGuestForm').addEventListener('submit',async e=>{
+  e.preventDefault();const fd=Object.fromEntries(new FormData(e.target)),err=document.getElementById('editGuestError');err.textContent='';
+  fd.guestName=smartNameCase(fd.guestName);fd.household=smartNameCase(fd.household);
+  const btn=e.submitter;btn.disabled=true;btn.textContent='Saving…';
+  try{await api('adminUpdateGuest',{guest:fd});await loadAll();closeEditModal();}
+  catch(x){err.textContent=x.message||'Could not update guest.'}
+  finally{btn.disabled=false;btn.textContent='Save changes';}
+});
+
 document.addEventListener('click',e=>{
+  const eh=e.target.closest('[data-edit-household]');if(eh){populateEditHousehold(eh.dataset.editHousehold);return;}
+  const eg=e.target.closest('[data-edit-guest]');if(eg){populateEditGuest(eg.dataset.editGuest);return;}
   const b=e.target.closest('[data-add-guest]');if(!b)return;
   openPanel('guests');
   document.getElementById('guestHousehold').value=b.dataset.addGuest;
