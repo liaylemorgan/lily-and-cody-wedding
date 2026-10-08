@@ -58,7 +58,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
     <main>
       <section class="panel active" id="dashboard">
         <h2>Wedding Dashboard</h2>
-        <div class="notice">This is the private management area. Changes here write to the wedding database behind the scenes.</div>
+        <div class="notice"><strong>Google Sheet is the source of truth.</strong> The admin dashboard displays the live wedding database exactly as stored there; it does not rename, merge or “correct” existing households or guests.</div><div class="quick-actions"><button class="btn secondary" type="button" id="refreshDashboard">Refresh from spreadsheet</button><span class="muted" id="lastSynced"></span></div>
         <div class="quick-actions"><button class="btn" type="button" id="openInviteBuilder">+ Add invitation</button><button class="btn secondary" type="button" id="openExistingGuest">+ Add guest to existing household</button></div>
         <div class="stats">
           <div class="stat"><small>Households</small><strong id="sHouseholds">0</strong></div>
@@ -184,6 +184,7 @@ async function loadAll(){
   const r=await api('adminDashboard'); state.data=r;
   const s=r.stats||{}; ['Households','Day','Evening','Guests','Adults','Children','Rsvp','Awaiting'].forEach(k=>document.getElementById('s'+k).textContent=s[k.toLowerCase()]??0);
   renderHouseholds(r.households||[]);renderGuests(r.guests||[]);
+  const sync=document.getElementById('lastSynced');if(sync)sync.textContent='Last refreshed: '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
   renderSimple('seatContent',r.seating||[]);renderSimple('photoContent',r.photos||[]);renderSimple('messageContent',r.messages||[]);renderSimple('taskContent',r.tasks||[]);
 }
 function renderHouseholds(rows){
@@ -239,6 +240,7 @@ function updateBuilderCounts(){
   document.getElementById('builderTotalCount').textContent=types.length;
 }
 document.getElementById('addBuilderGuest').onclick=()=>addBuilderGuest();
+document.getElementById('refreshDashboard').onclick=async()=>{const b=document.getElementById('refreshDashboard');const old=b.textContent;b.disabled=true;b.textContent='Refreshing…';try{await loadAll();}finally{b.disabled=false;b.textContent=old;}};
 document.getElementById('openInviteBuilder').onclick=()=>openPanel('invitationBuilder');
 document.getElementById('openExistingGuest').onclick=()=>openPanel('guests');
 
