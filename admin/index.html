@@ -288,94 +288,83 @@ function spacedPdfText(value){
   return String(value||'').toUpperCase().split('').join(' ');
 }
 function drawQrCard(doc,h,x,y,w,hh){
-  const paper=[246,247,241];       // very pale sage/off-white for low ink use
-  const sage=[226,230,216];        // subtle accent
+  const paper=[248,248,244];
+  const sage=[232,234,225];
   const olive=[90,94,75];
+  const line=[184,187,172];
   const ink=[41,43,37];
 
-  // Low-ink pale background
+  // Background
   doc.setFillColor(...paper);
   doc.rect(x,y,w,hh,'F');
 
-  // Fine olive outline
-  doc.setDrawColor(...olive);
+  // Border
+  doc.setDrawColor(...line);
   doc.setLineWidth(0.35);
   doc.rect(x,y,w,hh);
 
-  // Pale accent strip across the top
+  // Top band
   doc.setFillColor(...sage);
   doc.rect(x,y,w,10,'F');
 
-  // Minimal decorative corner foliage using fine linework only
-  doc.setDrawColor(143,146,123);
-  doc.setLineWidth(0.45);
-  doc.line(x+5,y+5,x+27,y+17);
-  doc.line(x+w-5,y+hh-5,x+w-27,y+hh-17);
-  const leaf=(lx,ly,rx,ry)=>{
-    doc.ellipse(lx,ly,rx,ry,'S');
-  };
-  leaf(x+10,y+8,3.8,1.5);
-  leaf(x+16,y+11,4.2,1.6);
-  leaf(x+22,y+14,3.8,1.5);
-  leaf(x+w-10,y+hh-8,3.8,1.5);
-  leaf(x+w-16,y+hh-11,4.2,1.6);
-  leaf(x+w-22,y+hh-14,3.8,1.5);
+  const leftX = x + 12;
+  const contentW = w - 78;
+  const qrSize = Math.min(hh - 20, 46);
+  const qrX = x + w - qrSize - 12;
+  const qrY = y + (hh - qrSize) / 2;
 
-  const leftX=x+12;
-  const midY=y+(hh/2);
-
-  // Wedding heading
+  // Heading
   doc.setTextColor(...olive);
   doc.setFont('times','normal');
   doc.setFontSize(9.5);
-  doc.text('L I L Y   &   C O D Y',leftX,y+7.2);
+  doc.text('L I L Y   &   C O D Y', leftX, y + 7.1);
 
-  // Small instruction
+  // Subheading
   doc.setTextColor(...ink);
   doc.setFont('times','italic');
   doc.setFontSize(7.6);
-  doc.text('Your private wedding invitation access',leftX,y+19);
+  doc.text('Your private wedding invitation access', leftX, y + 18);
 
   // Household name
-  const household=String(h.household||'').toUpperCase();
-  let nameSize=18;
-  if(household.length>24) nameSize=13;
-  else if(household.length>18) nameSize=15;
+  const household = String(h.household || '').toUpperCase();
+  let nameSize = 18;
+  if(household.length > 24) nameSize = 13;
+  else if(household.length > 18) nameSize = 15;
 
   doc.setFont('times','normal');
   doc.setFontSize(nameSize);
-  doc.text(household,leftX,midY-1,{maxWidth:w-75});
+  doc.text(household, leftX, y + 34, { maxWidth: contentW });
 
-  // Divider rule under household
-  doc.setDrawColor(175,179,157);
+  // Divider
+  doc.setDrawColor(...line);
   doc.setLineWidth(0.3);
-  doc.line(leftX,midY+4,leftX+58,midY+4);
+  doc.line(leftX, y + 39, leftX + 58, y + 39);
 
-  // Login code
+  // Login code label
+  doc.setTextColor(...ink);
   doc.setFont('times','italic');
   doc.setFontSize(8);
-  doc.text('Login code',leftX,midY+12);
+  doc.text('Login code', leftX, y + 48);
 
+  // Login code value
   doc.setFont('times','normal');
   doc.setFontSize(14.5);
-  doc.text(String(h.code||'').toUpperCase(),leftX,midY+22);
+  doc.text(String(h.code || '').toUpperCase(), leftX, y + 59);
 
-  // Small instructions/footer
+  // Footer text
   doc.setTextColor(...olive);
+  doc.setFont('times','normal');
   doc.setFontSize(7.8);
-  doc.text('Scan the QR code or visit lilyandcody.co.uk',leftX,y+hh-9);
+  doc.text('Scan the QR code or visit lilyandcody.co.uk', leftX, y + hh - 10);
+
   doc.setFont('times','italic');
   doc.setFontSize(6.8);
-  doc.text('Keep this code with your invitation',leftX,y+hh-4.5);
+  doc.text('Keep this code with your invitation', leftX, y + hh - 5);
 
-  // QR panel on the right with a white quiet zone
-  const q=Math.min(hh-20,46);
-  const qx=x+w-q-11;
-  const qy=y+(hh-q)/2+2;
-
+  // QR white panel
   doc.setFillColor(255,255,255);
-  doc.roundedRect(qx-3,qy-3,q+6,q+6,1.5,1.5,'F');
-  doc.addImage(WEDDING_QR_DATA,'PNG',qx,qy,q,q);
+  doc.roundedRect(qrX - 3, qrY - 3, qrSize + 6, qrSize + 6, 1.5, 1.5, 'F');
+  doc.addImage(WEDDING_QR_DATA,'PNG',qrX,qrY,qrSize,qrSize);
 }
 
 async function downloadAllQrCards(){
