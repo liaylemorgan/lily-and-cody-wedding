@@ -287,94 +287,105 @@ async function ensurePdfAssets(rows){
 function spacedPdfText(value){
   return String(value||'').toUpperCase().split('').join(' ');
 }
-function drawInfoPanel(doc,x,y,w,h){
-  doc.setFillColor(247,245,239);
-  doc.setDrawColor(223,225,214);
-  doc.setLineWidth(0.25);
-  doc.roundedRect(x,y,w,h,2,2,'FD');
-}
 function drawQrCard(doc,h,x,y,w,hh){
+  const sage=[203,204,187];
   const ink=[41,43,37];
   const olive=[90,94,75];
-  const cx=x+(w/2);
 
-  doc.addImage(qrCardTemplateData,'PNG',x,y,w,hh);
+  // Simple sage slip, intentionally matching the original QR-card concept.
+  doc.setFillColor(...sage);
+  doc.rect(x,y,w,hh,'F');
+  doc.setDrawColor(175,179,157);
+  doc.setLineWidth(0.35);
+  doc.rect(x,y,w,hh);
 
-  drawInfoPanel(doc,x+18,y+23,w-36,49);
+  const leftX=x+12;
+  const midY=y+(hh/2);
+
+  // Small wedding heading
+  doc.setTextColor(...olive);
+  doc.setFont('times','normal');
+  doc.setFontSize(9);
+  doc.text('LILY & CODY',leftX,y+11);
+
+  // Household name
+  const household=String(h.household||'').toUpperCase();
+  let nameSize=17;
+  if(household.length>24) nameSize=12.5;
+  else if(household.length>18) nameSize=14.5;
 
   doc.setTextColor(...ink);
   doc.setFont('times','normal');
-  doc.setFontSize(6.2);
-  doc.text('WE INVITE YOU TO JOIN US',cx,y+30,{align:'center'});
-  doc.text('TO CELEBRATE THE MARRIAGE OF',cx,y+35,{align:'center'});
+  doc.setFontSize(nameSize);
+  doc.text(household,leftX,midY-2,{maxWidth:w-72});
 
-  doc.setFont('times','normal');
-  doc.setFontSize(17.5);
-  doc.text('LILY',cx,y+48,{align:'center'});
-
+  // Login code
   doc.setFont('times','italic');
-  doc.setFontSize(11.5);
-  doc.text('and',cx,y+56,{align:'center'});
+  doc.setFontSize(8);
+  doc.text('Login code',leftX,midY+8);
 
   doc.setFont('times','normal');
-  doc.setFontSize(17.5);
-  doc.text('CODY',cx,y+67,{align:'center'});
+  doc.setFontSize(14);
+  doc.text(String(h.code||'').toUpperCase(),leftX,midY+18);
 
-  drawInfoPanel(doc,x+21,y+76,w-42,25);
-
-  const householdName=String(h.household||'').toUpperCase();
-  let householdSize=13.5;
-  if(householdName.length>18)householdSize=12;
-  if(householdName.length>24)householdSize=10.5;
-
-  doc.setFont('times','normal');
-  doc.setFontSize(householdSize);
-  doc.text(householdName,cx,y+85,{align:'center',maxWidth:w-32});
-
-  doc.setFont('times','italic');
-  doc.setFontSize(7.8);
-  doc.text('Login code',cx,y+92,{align:'center'});
-
-  doc.setFont('times','normal');
-  doc.setFontSize(12.5);
-  doc.text(String(h.code||'').toUpperCase(),cx,y+99,{align:'center'});
-
-  const q=31;
-  doc.addImage(WEDDING_QR_DATA,'PNG',cx-(q/2),y+103,q,q);
-
+  // Website
   doc.setTextColor(...olive);
-  doc.setFont('times','normal');
-  doc.setFontSize(8.2);
-  doc.text('lilyandcody.co.uk',cx,y+137,{align:'center'});
+  doc.setFontSize(8);
+  doc.text('lilyandcody.co.uk',leftX,y+hh-8);
+
+  // QR to the right
+  const q=Math.min(hh-14,48);
+  doc.addImage(WEDDING_QR_DATA,'PNG',x+w-q-9,y+(hh-q)/2,q,q);
 }
 
 async function downloadAllQrCards(){
   const rows=(state.data?.households||[]);
   if(!rows.length)return;
   if(!(await ensurePdfAssets(rows)))return;
+
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  const pageW=210,pageH=297,margin=8,gap=6;
-  const cardW=(pageW-margin*2-gap)/2;
-  const cardH=(pageH-margin*2-gap)/2;
+
+  const pageW=210;
+  const pageH=297;
+  const marginX=10;
+  const marginY=10;
+  const gap=5;
+  const cardW=pageW-(marginX*2);
+  const cardH=(pageH-(marginY*2)-(gap*3))/4;
+
   rows.forEach((h,i)=>{
     if(i>0&&i%4===0)doc.addPage();
-    const slot=i%4,col=slot%2,row=Math.floor(slot/2);
-    drawQrCard(doc,h,margin+col*(cardW+gap),margin+row*(cardH+gap),cardW,cardH);
+
+    const slot=i%4;
+    const x=marginX;
+    const y=marginY+slot*(cardH+gap);
+
+    drawQrCard(doc,h,x,y,cardW,cardH);
   });
+
   doc.save('Lily-Cody-All-Household-QR-Cards.pdf');
 }
+
 async function downloadSingleQrCard(row){
   const h=(state.data?.households||[]).find(x=>Number(x.row)===Number(row));
   if(!h)return;
   if(!(await ensurePdfAssets([h])))return;
+
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  const cardW=94,cardH=137;
-  drawQrCard(doc,h,(210-cardW)/2,(297-cardH)/2,cardW,cardH);
-  const safe=String(h.household||'Household').replace(/[^a-z0-9_-]+/gi,'-').replace(/^-+|-+$/g,'');
+
+  const cardW=190;
+  const cardH=65;
+  drawQrCard(doc,h,10,(297-cardH)/2,cardW,cardH);
+
+  const safe=String(h.household||'Household')
+    .replace(/[^a-z0-9_-]+/gi,'-')
+    .replace(/^-+|-+$/g,'');
+
   doc.save('Lily-Cody-'+safe+'-QR-Card.pdf');
 }
+
 document.getElementById('downloadAllQrCards').onclick=downloadAllQrCards;
 document.getElementById('downloadAllQrCards2').onclick=downloadAllQrCards;
 
