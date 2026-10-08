@@ -23,8 +23,8 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat{background:#fff;border:1px solid var(--line);padding:20px}.stat small{display:block;text-transform:uppercase;letter-spacing:.08em;font-size:.68rem}.stat strong{font-size:1.8rem;font-weight:400;display:block;margin-top:5px}
 .card{background:#fff;border:1px solid var(--line);padding:20px;margin-top:18px}.card h3{font-weight:400;margin:0 0 14px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.table-wrap{overflow:auto;border:1px solid var(--line);background:#fff}table{width:100%;border-collapse:collapse;min-width:720px}th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:.88rem}th{background:var(--paper);text-transform:uppercase;letter-spacing:.06em;font-size:.68rem}.pill{display:inline-block;padding:4px 8px;border:1px solid var(--line);font-size:.75rem}.muted{color:#686b61;font-size:.88rem}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.notice{background:var(--paper);border-left:4px solid var(--mid);padding:13px 15px;margin-bottom:18px}
-@media(max-width:860px){.layout{grid-template-columns:1fr}.side{position:static;display:flex;overflow:auto}.side button{white-space:nowrap;width:auto}.stats{grid-template-columns:1fr 1fr}.grid2,.grid3{grid-template-columns:1fr}}
+.table-wrap{overflow:auto;border:1px solid var(--line);background:#fff}table{width:100%;border-collapse:collapse;min-width:720px}th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:.88rem}th{background:var(--paper);text-transform:uppercase;letter-spacing:.06em;font-size:.68rem}.pill{display:inline-block;padding:4px 8px;border:1px solid var(--line);font-size:.75rem}.muted{color:#686b61;font-size:.88rem}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.notice{background:var(--paper);border-left:4px solid var(--mid);padding:13px 15px;margin-bottom:18px}.success{background:#eef1e7;border-left:4px solid var(--olive);padding:13px 15px;margin:14px 0}.quick-actions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.guest-builder{display:grid;gap:10px}.guest-line{display:grid;grid-template-columns:1fr 160px 44px;gap:10px;align-items:end}.guest-line .field{margin:0}.icon-btn{height:43px;border:1px solid var(--line);background:#fff;color:#704d48;font-size:1.2rem}.wizard-summary{display:flex;gap:18px;flex-wrap:wrap;padding:12px 0;font-size:.88rem}.wizard-summary strong{color:var(--olive)}.tiny{font-size:.75rem}.inline-btn{border:0;background:transparent;color:var(--olive);text-decoration:underline;padding:0;font-size:.82rem}
+@media(max-width:860px){.layout{grid-template-columns:1fr}.side{position:static;display:flex;overflow:auto}.side button{white-space:nowrap;width:auto}.stats{grid-template-columns:1fr 1fr}.grid2,.grid3{grid-template-columns:1fr}.guest-line{grid-template-columns:1fr 120px 44px}}
 </style>
 </head>
 <body>
@@ -47,6 +47,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
   <div class="wrap layout">
     <nav class="side" id="nav">
       <button data-panel="dashboard" class="active">Dashboard</button>
+      <button data-panel="invitationBuilder">+ Add invitation</button>
       <button data-panel="households">Households</button>
       <button data-panel="guests">Guests</button>
       <button data-panel="seating">Seating planner</button>
@@ -58,6 +59,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
       <section class="panel active" id="dashboard">
         <h2>Wedding Dashboard</h2>
         <div class="notice">This is the private management area. Changes here write to the wedding database behind the scenes.</div>
+        <div class="quick-actions"><button class="btn" type="button" id="openInviteBuilder">+ Add invitation</button><button class="btn secondary" type="button" id="openExistingGuest">+ Add guest to existing household</button></div>
         <div class="stats">
           <div class="stat"><small>Households</small><strong id="sHouseholds">0</strong></div>
           <div class="stat"><small>Full Day</small><strong id="sDay">0</strong></div>
@@ -67,6 +69,30 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
           <div class="stat"><small>Children</small><strong id="sChildren">0</strong></div>
           <div class="stat"><small>RSVPs received</small><strong id="sRsvp">0</strong></div>
           <div class="stat"><small>Awaiting reply</small><strong id="sAwaiting">0</strong></div>
+        </div>
+      </section>
+
+      <section class="panel" id="invitationBuilder">
+        <h2>Add Invitation</h2>
+        <div class="notice">Create the household and all named guests together. Adult and child totals are calculated automatically.</div>
+        <div class="card">
+          <form id="invitationForm">
+            <div class="grid2">
+              <div class="field"><label>Household / party name</label><input name="household" placeholder="e.g. Smith Family" required></div>
+              <div class="field"><label>Invitation type</label><select name="invitationType"><option>Full Day</option><option>Evening</option></select></div>
+              <div class="field"><label>Main contact name</label><input name="contactName"></div>
+              <div class="field"><label>Contact email</label><input type="email" name="contactEmail"></div>
+            </div>
+            <div class="field"><label>Notes</label><textarea name="notes" placeholder="Optional notes for the wedding team"></textarea></div>
+
+            <h3>Named guests</h3>
+            <p class="muted">Add everyone specifically included on this invitation.</p>
+            <div id="builderGuests" class="guest-builder"></div>
+            <div class="actions"><button class="btn secondary" type="button" id="addBuilderGuest">+ Add another guest</button></div>
+            <div class="wizard-summary"><span>Adults: <strong id="builderAdultCount">0</strong></span><span>Children: <strong id="builderChildCount">0</strong></span><span>Total guests: <strong id="builderTotalCount">0</strong></span></div>
+            <div class="actions"><button class="btn" type="submit" id="saveInvitationBtn">Save invitation</button></div>
+            <div id="invitationStatus"></div>
+          </form>
         </div>
       </section>
 
@@ -87,7 +113,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
             <button class="btn" type="submit">Add household</button>
           </form>
         </div>
-        <div class="card"><h3>Current households</h3><div class="table-wrap"><table><thead><tr><th>Household</th><th>Type</th><th>Adults</th><th>Children</th><th>Invite code</th><th>RSVP</th></tr></thead><tbody id="householdRows"></tbody></table></div></div>
+        <div class="card"><h3>Current households</h3><div class="table-wrap"><table><thead><tr><th>Household</th><th>Type</th><th>Adults</th><th>Children</th><th>Invite code</th><th>RSVP</th><th>Action</th></tr></thead><tbody id="householdRows"></tbody></table></div></div>
       </section>
 
       <section class="panel" id="guests">
@@ -133,13 +159,63 @@ function renderHouseholds(rows){
   const body=document.getElementById('householdRows');body.innerHTML='';
   const select=document.getElementById('guestHousehold');select.innerHTML='<option value="">Choose household</option>';
   rows.forEach(h=>{
-    body.insertAdjacentHTML('beforeend',`<tr><td>${esc(h.household)}</td><td>${esc(h.invitationType)}</td><td>${h.adults||0}</td><td>${h.children||0}</td><td>${esc(h.code||'Pending')}</td><td>${esc(h.rsvpStatus||'Not sent')}</td></tr>`);
+    body.insertAdjacentHTML('beforeend',`<tr><td>${esc(h.household)}</td><td>${esc(h.invitationType)}</td><td>${h.adults||0}</td><td>${h.children||0}</td><td>${esc(h.code||'Pending')}</td><td>${esc(h.rsvpStatus||'Not sent')}</td><td><button class="inline-btn" type="button" data-add-guest="${esc(h.household)}">Add guest</button></td></tr>`);
     const o=document.createElement('option');o.value=h.household;o.textContent=h.household;select.appendChild(o);
   });
 }
 function renderGuests(rows){document.getElementById('guestRows').innerHTML=rows.map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.household)}</td><td>${esc(g.type)}</td><td>${esc(g.invitedTo)}</td><td>${esc(g.response||'No response')}</td></tr>`).join('')}
 function renderSimple(id,rows){const el=document.getElementById(id);if(!rows.length){el.innerHTML='<p class="muted">Nothing here yet.</p>';return}el.innerHTML='<div class="table-wrap"><table><tbody>'+rows.map(r=>'<tr>'+Object.values(r).map(v=>'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'}
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+
+function openPanel(id){
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('active',x.dataset.panel===id));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function addBuilderGuest(name='',type='Adult'){
+  const row=document.createElement('div');row.className='guest-line';
+  row.innerHTML='<div class="field"><label>Guest name</label><input class="builderGuestName" required></div><div class="field"><label>Adult / child</label><select class="builderGuestType"><option>Adult</option><option>Child</option></select></div><button class="icon-btn" type="button" title="Remove guest">×</button>';
+  row.querySelector('.builderGuestName').value=name;
+  row.querySelector('.builderGuestType').value=type;
+  row.querySelector('.icon-btn').onclick=()=>{row.remove();updateBuilderCounts();};
+  row.querySelector('.builderGuestType').onchange=updateBuilderCounts;
+  document.getElementById('builderGuests').appendChild(row);updateBuilderCounts();
+}
+function updateBuilderCounts(){
+  const types=[...document.querySelectorAll('.builderGuestType')].map(x=>x.value);
+  const adults=types.filter(x=>x==='Adult').length, children=types.filter(x=>x==='Child').length;
+  document.getElementById('builderAdultCount').textContent=adults;
+  document.getElementById('builderChildCount').textContent=children;
+  document.getElementById('builderTotalCount').textContent=types.length;
+}
+document.getElementById('addBuilderGuest').onclick=()=>addBuilderGuest();
+document.getElementById('openInviteBuilder').onclick=()=>openPanel('invitationBuilder');
+document.getElementById('openExistingGuest').onclick=()=>openPanel('guests');
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-add-guest]');if(!b)return;
+  openPanel('guests');
+  document.getElementById('guestHousehold').value=b.dataset.addGuest;
+  document.querySelector('#guestForm input[name="guestName"]').focus();
+});
+document.getElementById('invitationForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const status=document.getElementById('invitationStatus'),btn=document.getElementById('saveInvitationBtn');
+  status.className='';status.textContent='';
+  const fd=Object.fromEntries(new FormData(e.target));
+  const guestRows=[...document.querySelectorAll('#builderGuests .guest-line')];
+  const guests=guestRows.map(r=>({guestName:r.querySelector('.builderGuestName').value.trim(),guestType:r.querySelector('.builderGuestType').value})).filter(g=>g.guestName);
+  if(!guests.length){status.className='error';status.textContent='Please add at least one named guest.';return;}
+  const adults=guests.filter(g=>g.guestType==='Adult').length,children=guests.filter(g=>g.guestType==='Child').length;
+  btn.disabled=true;btn.textContent='Saving…';
+  try{
+    await api('adminAddHousehold',{household:{household:fd.household.trim(),invitationType:fd.invitationType,contactName:fd.contactName.trim(),contactEmail:fd.contactEmail.trim(),adults,children,notes:fd.notes.trim()}});
+    for(const g of guests){await api('adminAddGuest',{guest:{household:fd.household.trim(),guestName:g.guestName,guestType:g.guestType}});}
+    status.className='success';status.textContent='Invitation saved successfully — household and '+guests.length+' guest'+(guests.length===1?'':'s')+' added.';
+    e.target.reset();document.getElementById('builderGuests').innerHTML='';addBuilderGuest();await loadAll();
+  }catch(x){status.className='error';status.textContent=x.message||'Could not save invitation.'}
+  finally{btn.disabled=false;btn.textContent='Save invitation';}
+});
+addBuilderGuest();
 
 document.getElementById('loginForm').addEventListener('submit',async e=>{
   e.preventDefault();const err=document.getElementById('loginError');err.textContent='';
@@ -149,7 +225,7 @@ document.getElementById('loginForm').addEventListener('submit',async e=>{
   }catch(x){err.textContent=x.message}
 });
 document.getElementById('logout').onclick=()=>{sessionStorage.removeItem(TOKEN_KEY);location.reload()};
-document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));document.getElementById(b.dataset.panel).classList.add('active')});
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>openPanel(b.dataset.panel));
 document.getElementById('householdForm').addEventListener('submit',async e=>{e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));await api('adminAddHousehold',{household:fd});e.target.reset();await loadAll()});
 document.getElementById('guestForm').addEventListener('submit',async e=>{e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));await api('adminAddGuest',{guest:fd});e.target.reset();await loadAll()});
 
