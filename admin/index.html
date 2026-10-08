@@ -310,16 +310,21 @@ function drawQrCard(doc,h,x,y,w,hh){
   const qrX=x+w-qrSize-12;
   const qrY=y+(hh-qrSize)/2;
 
+  // Elegant spaced serif heading
   doc.setTextColor(...olive);
   doc.setFont('times','normal');
-  doc.setFontSize(9.3);
-  doc.text('L I L Y   &   C O D Y',leftX,y+7.1);
+  doc.setFontSize(9.2);
+  if(doc.setCharSpace) doc.setCharSpace(1.25);
+  doc.text('LILY & CODY',leftX,y+7.1);
+  if(doc.setCharSpace) doc.setCharSpace(0);
 
+  // Softer italic subtitle
   doc.setTextColor(...ink);
   doc.setFont('times','italic');
-  doc.setFontSize(7.4);
+  doc.setFontSize(7.5);
   doc.text('Your private wedding invitation access',leftX,y+18);
 
+  // Household name with subtle letter spacing
   const household=String(h.household||'').toUpperCase();
   let nameSize=17;
   if(household.length>24)nameSize=12.5;
@@ -327,25 +332,32 @@ function drawQrCard(doc,h,x,y,w,hh){
 
   doc.setFont('times','normal');
   doc.setFontSize(nameSize);
+  if(doc.setCharSpace) doc.setCharSpace(0.65);
   doc.text(household,leftX,y+31,{maxWidth:contentW});
+  if(doc.setCharSpace) doc.setCharSpace(0);
 
   doc.setDrawColor(...line);
   doc.setLineWidth(0.3);
   doc.line(leftX,y+36,leftX+58,y+36);
 
+  // Login label and code
   doc.setFont('times','italic');
   doc.setFontSize(7.8);
   doc.text('Login code',leftX,y+43.5);
 
   doc.setFont('times','normal');
-  doc.setFontSize(14);
+  doc.setFontSize(13.8);
+  if(doc.setCharSpace) doc.setCharSpace(0.8);
   doc.text(String(h.code||'').toUpperCase(),leftX,y+52);
+  if(doc.setCharSpace) doc.setCharSpace(0);
 
+  // Footer
   doc.setTextColor(...olive);
-  doc.setFont('times','normal');
-  doc.setFontSize(7.5);
+  doc.setFont('times','italic');
+  doc.setFontSize(7.4);
   doc.text('Scan the QR code or visit lilyandcody.co.uk',leftX,y+61);
 
+  // QR
   doc.setFillColor(255,255,255);
   doc.roundedRect(qrX-3,qrY-3,qrSize+6,qrSize+6,1.5,1.5,'F');
   doc.addImage(WEDDING_QR_DATA,'PNG',qrX,qrY,qrSize,qrSize);
