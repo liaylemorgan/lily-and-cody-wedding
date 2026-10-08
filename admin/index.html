@@ -294,76 +294,60 @@ function drawQrCard(doc,h,x,y,w,hh){
   const line=[184,187,172];
   const ink=[41,43,37];
 
-  // Background
   doc.setFillColor(...paper);
   doc.rect(x,y,w,hh,'F');
 
-  // Border
   doc.setDrawColor(...line);
   doc.setLineWidth(0.35);
   doc.rect(x,y,w,hh);
 
-  // Top band
   doc.setFillColor(...sage);
   doc.rect(x,y,w,10,'F');
 
-  const leftX = x + 12;
-  const contentW = w - 78;
-  const qrSize = Math.min(hh - 20, 46);
-  const qrX = x + w - qrSize - 12;
-  const qrY = y + (hh - qrSize) / 2;
+  const leftX=x+12;
+  const contentW=w-80;
+  const qrSize=Math.min(hh-18,44);
+  const qrX=x+w-qrSize-12;
+  const qrY=y+(hh-qrSize)/2;
 
-  // Heading
   doc.setTextColor(...olive);
   doc.setFont('times','normal');
-  doc.setFontSize(9.5);
-  doc.text('L I L Y   &   C O D Y', leftX, y + 7.1);
+  doc.setFontSize(9.3);
+  doc.text('L I L Y   &   C O D Y',leftX,y+7.1);
 
-  // Subheading
   doc.setTextColor(...ink);
   doc.setFont('times','italic');
-  doc.setFontSize(7.6);
-  doc.text('Your private wedding invitation access', leftX, y + 18);
+  doc.setFontSize(7.4);
+  doc.text('Your private wedding invitation access',leftX,y+18);
 
-  // Household name
-  const household = String(h.household || '').toUpperCase();
-  let nameSize = 18;
-  if(household.length > 24) nameSize = 13;
-  else if(household.length > 18) nameSize = 15;
+  const household=String(h.household||'').toUpperCase();
+  let nameSize=17;
+  if(household.length>24)nameSize=12.5;
+  else if(household.length>18)nameSize=14.5;
 
   doc.setFont('times','normal');
   doc.setFontSize(nameSize);
-  doc.text(household, leftX, y + 34, { maxWidth: contentW });
+  doc.text(household,leftX,y+31,{maxWidth:contentW});
 
-  // Divider
   doc.setDrawColor(...line);
   doc.setLineWidth(0.3);
-  doc.line(leftX, y + 39, leftX + 58, y + 39);
+  doc.line(leftX,y+36,leftX+58,y+36);
 
-  // Login code label
-  doc.setTextColor(...ink);
   doc.setFont('times','italic');
-  doc.setFontSize(8);
-  doc.text('Login code', leftX, y + 48);
+  doc.setFontSize(7.8);
+  doc.text('Login code',leftX,y+43.5);
 
-  // Login code value
   doc.setFont('times','normal');
-  doc.setFontSize(14.5);
-  doc.text(String(h.code || '').toUpperCase(), leftX, y + 59);
+  doc.setFontSize(14);
+  doc.text(String(h.code||'').toUpperCase(),leftX,y+52);
 
-  // Footer text
   doc.setTextColor(...olive);
   doc.setFont('times','normal');
-  doc.setFontSize(7.8);
-  doc.text('Scan the QR code or visit lilyandcody.co.uk', leftX, y + hh - 10);
+  doc.setFontSize(7.5);
+  doc.text('Scan the QR code or visit lilyandcody.co.uk',leftX,y+61);
 
-  doc.setFont('times','italic');
-  doc.setFontSize(6.8);
-  doc.text('Keep this code with your invitation', leftX, y + hh - 5);
-
-  // QR white panel
   doc.setFillColor(255,255,255);
-  doc.roundedRect(qrX - 3, qrY - 3, qrSize + 6, qrSize + 6, 1.5, 1.5, 'F');
+  doc.roundedRect(qrX-3,qrY-3,qrSize+6,qrSize+6,1.5,1.5,'F');
   doc.addImage(WEDDING_QR_DATA,'PNG',qrX,qrY,qrSize,qrSize);
 }
 
