@@ -167,6 +167,25 @@ function renderGuests(rows){document.getElementById('guestRows').innerHTML=rows.
 function renderSimple(id,rows){const el=document.getElementById(id);if(!rows.length){el.innerHTML='<p class="muted">Nothing here yet.</p>';return}el.innerHTML='<div class="table-wrap"><table><tbody>'+rows.map(r=>'<tr>'+Object.values(r).map(v=>'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'}
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 
+
+function smartNameCase(value){
+  return String(value||'').trim().split(/\s+/).map(word=>{
+    if(!word)return word;
+    if(/^[A-Z]{2,3}$/.test(word)) return word;
+    return word.split('-').map(part=>part.split("'").map(bit=>{
+      if(!bit)return bit;
+      let out=bit.charAt(0).toUpperCase()+bit.slice(1).toLowerCase();
+      if(/^Mc[a-z]/.test(out)) out='Mc'+out.charAt(2).toUpperCase()+out.slice(3);
+      return out;
+    }).join("'")).join('-');
+  }).join(' ');
+}
+function applyNameCase(root=document){
+  root.querySelectorAll('input[name="household"],input[name="contactName"],input[name="guestName"],.builderGuestName').forEach(input=>{
+    input.addEventListener('blur',()=>{input.value=smartNameCase(input.value);});
+  });
+}
+
 function openPanel(id){
   document.querySelectorAll('#nav button').forEach(x=>x.classList.toggle('active',x.dataset.panel===id));
   document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('active',x.id===id));
@@ -175,11 +194,11 @@ function openPanel(id){
 function addBuilderGuest(name='',type='Adult'){
   const row=document.createElement('div');row.className='guest-line';
   row.innerHTML='<div class="field"><label>Guest name</label><input class="builderGuestName" required></div><div class="field"><label>Adult / child</label><select class="builderGuestType"><option>Adult</option><option>Child</option></select></div><button class="icon-btn" type="button" title="Remove guest">×</button>';
-  row.querySelector('.builderGuestName').value=name;
+  row.querySelector('.builderGuestName').value=smartNameCase(name);
   row.querySelector('.builderGuestType').value=type;
   row.querySelector('.icon-btn').onclick=()=>{row.remove();updateBuilderCounts();};
   row.querySelector('.builderGuestType').onchange=updateBuilderCounts;
-  document.getElementById('builderGuests').appendChild(row);updateBuilderCounts();
+  document.getElementById('builderGuests').appendChild(row);applyNameCase(row);updateBuilderCounts();
 }
 function updateBuilderCounts(){
   const types=[...document.querySelectorAll('.builderGuestType')].map(x=>x.value);
@@ -202,8 +221,9 @@ document.getElementById('invitationForm').addEventListener('submit',async e=>{
   const status=document.getElementById('invitationStatus'),btn=document.getElementById('saveInvitationBtn');
   status.className='';status.textContent='';
   const fd=Object.fromEntries(new FormData(e.target));
+  fd.household=smartNameCase(fd.household);fd.contactName=smartNameCase(fd.contactName);
   const guestRows=[...document.querySelectorAll('#builderGuests .guest-line')];
-  const guests=guestRows.map(r=>({guestName:r.querySelector('.builderGuestName').value.trim(),guestType:r.querySelector('.builderGuestType').value})).filter(g=>g.guestName);
+  const guests=guestRows.map(r=>({guestName:smartNameCase(r.querySelector('.builderGuestName').value),guestType:r.querySelector('.builderGuestType').value})).filter(g=>g.guestName);
   if(!guests.length){status.className='error';status.textContent='Please add at least one named guest.';return;}
   const adults=guests.filter(g=>g.guestType==='Adult').length,children=guests.filter(g=>g.guestType==='Child').length;
   btn.disabled=true;btn.textContent='Saving…';
@@ -226,8 +246,10 @@ document.getElementById('loginForm').addEventListener('submit',async e=>{
 });
 document.getElementById('logout').onclick=()=>{sessionStorage.removeItem(TOKEN_KEY);location.reload()};
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>openPanel(b.dataset.panel));
-document.getElementById('householdForm').addEventListener('submit',async e=>{e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));await api('adminAddHousehold',{household:fd});e.target.reset();await loadAll()});
-document.getElementById('guestForm').addEventListener('submit',async e=>{e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));await api('adminAddGuest',{guest:fd});e.target.reset();await loadAll()});
+document.getElementById('householdForm').addEventListener('submit',async e=>{e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));fd.household=smartNameCase(fd.household);fd.contactName=smartNameCase(fd.contactName);await api('adminAddHousehold',{household:fd});e.target.reset();await loadAll()});
+document.getElementById('guestForm').addEventListener('submit',async e=>{e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));fd.guestName=smartNameCase(fd.guestName);await api('adminAddGuest',{guest:fd});e.target.reset();await loadAll()});
+
+applyNameCase(document);
 
 (async()=>{if(state.token){try{const r=await api('adminSession');showApp(r.user);await loadAll()}catch(e){sessionStorage.removeItem(TOKEN_KEY)}}})();
 </script>
