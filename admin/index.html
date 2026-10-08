@@ -26,6 +26,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
 .table-wrap{overflow:auto;border:1px solid var(--line);background:#fff}table{width:100%;border-collapse:collapse;min-width:720px}th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:.88rem}th{background:var(--paper);text-transform:uppercase;letter-spacing:.06em;font-size:.68rem}.pill{display:inline-block;padding:4px 8px;border:1px solid var(--line);font-size:.75rem}.muted{color:#686b61;font-size:.88rem}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.notice{background:var(--paper);border-left:4px solid var(--mid);padding:13px 15px;margin-bottom:18px}.success{background:#eef1e7;border-left:4px solid var(--olive);padding:13px 15px;margin:14px 0}.quick-actions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.guest-builder{display:grid;gap:10px}.guest-line{display:grid;grid-template-columns:1fr 160px 44px;gap:10px;align-items:end}.guest-line .field{margin:0}.icon-btn{height:43px;border:1px solid var(--line);background:#fff;color:#704d48;font-size:1.2rem}.wizard-summary{display:flex;gap:18px;flex-wrap:wrap;padding:12px 0;font-size:.88rem}.wizard-summary strong{color:var(--olive)}.tiny{font-size:.75rem}.inline-btn{border:0;background:transparent;color:var(--olive);text-decoration:underline;padding:0;font-size:.82rem}.modal-backdrop{position:fixed;inset:0;background:rgba(35,38,31,.48);display:grid;place-items:center;padding:20px;z-index:100}.modal{width:min(620px,100%);max-height:90svh;overflow:auto;background:var(--cream);border:1px solid var(--line);box-shadow:0 24px 70px rgba(0,0,0,.22);padding:24px}.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}.modal-head h3{font-weight:400;margin:0}.modal-close{border:0;background:transparent;font-size:1.5rem;color:var(--olive)}.row-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 @media(max-width:860px){.layout{grid-template-columns:1fr}.side{position:static;display:flex;overflow:auto}.side button{white-space:nowrap;width:auto}.stats{grid-template-columns:1fr 1fr}.grid2,.grid3{grid-template-columns:1fr}.guest-line{grid-template-columns:1fr 120px 44px}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 </head>
 <body>
 <section class="login" id="loginView">
@@ -59,7 +60,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
       <section class="panel active" id="dashboard">
         <h2>Wedding Dashboard</h2>
         <div class="notice"><strong>Google Sheet is the source of truth.</strong> The admin dashboard displays the live wedding database exactly as stored there; it does not rename, merge or “correct” existing households or guests.</div><div class="quick-actions"><button class="btn secondary" type="button" id="refreshDashboard">Refresh from spreadsheet</button><span class="muted" id="lastSynced"></span></div>
-        <div class="quick-actions"><button class="btn" type="button" id="openInviteBuilder">+ Add invitation</button><button class="btn secondary" type="button" id="openExistingGuest">+ Add guest to existing household</button></div>
+        <div class="quick-actions"><button class="btn" type="button" id="openInviteBuilder">+ Add invitation</button><button class="btn secondary" type="button" id="openExistingGuest">+ Add guest to existing household</button><button class="btn secondary" type="button" id="downloadAllQrCards">Download all QR cards (PDF)</button></div>
         <div class="stats">
           <div class="stat"><small>Households</small><strong id="sHouseholds">0</strong></div>
           <div class="stat"><small>Full Day</small><strong id="sDay">0</strong></div>
@@ -113,7 +114,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
             <button class="btn" type="submit">Add household</button>
           </form>
         </div>
-        <div class="card"><h3>Current households</h3><div class="table-wrap"><table><thead><tr><th>Household</th><th>Type</th><th>Adults</th><th>Children</th><th>Invite code</th><th>RSVP</th><th>Actions</th></tr></thead><tbody id="householdRows"></tbody></table></div></div>
+        <div class="card"><div class="toprow"><h3>Current households</h3><button class="btn secondary" type="button" id="downloadAllQrCards2">Download all QR cards (PDF)</button></div><div class="table-wrap"><table><thead><tr><th>Household</th><th>Type</th><th>Adults</th><th>Children</th><th>Invite code</th><th>RSVP</th><th>Actions</th></tr></thead><tbody id="householdRows"></tbody></table></div></div>
       </section>
 
       <section class="panel" id="guests">
@@ -169,6 +170,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
 const API='https://script.google.com/macros/s/AKfycbzgpBmJxOEE0Fqng7BdmwS2a7Q41ca-Z5zHQVs4ivvlod6W_76HkQItYynF9U0jvquidg/exec';
 const TOKEN_KEY='lc_admin_token';
 let state={token:sessionStorage.getItem(TOKEN_KEY)||'',user:null,data:null};
+const WEDDING_QR_DATA='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA9gAAAPYAQAAAAAJUWzcAAAEPklEQVR4nO3dy2rkMBAFUGnI//+yZ9HEyPVQdxZDGHTuynE7PqBVIUrleY1fy5/fo9lsNpvNZrPZbDabzWaz2Ww2m81ms9lsNpvNZrPZbDabzWaz2Ww2m/3DfK1/zOqJa4w5xlU9k3vX5/JT97Y7p645m81ms9lsNpvd5Sv8HUruuVxsCvX11/WZ7m2vnLrmbDabzWaz2Wx2l1ifj+ce+HqRi/D5/Wu+n8v4vNl+6pqz2Ww2m81ms9ldivo8567D17L8vjmeBfnnOXXN2Ww2m81ms9nsLh/V56PpJ79S6f6jKv3UNWez2Ww2m81ms7sU9XlZY5dd5fNZt8/nr5u3vXLqmrPZbDabzWaz2V1ifV4OXRnbDvPwzCdve+XUNWez2Ww2m81ms7vMzztSNvMS35buZU5dczabzWaz2Ww2u0vdfz7Twc9ZtbW8rcPzOHTzz9lsNpvNZrPZ7D5vvk+U6/A8wmW9P36ykX7qmrPZbDabzWaz2V3q/fPrufU9Um95OVZxM3FxVt3pp645m81ms9lsNpvd5VGf36X1THeu5c/RTES/qp9GU5yPc9eczWaz2Ww2m83u8mZ+S9gzz1vooym/Z7oYqd3l1DVns9lsNpvNZrO7zNygMpp9783N9Q1l/3nZkX7qmrPZbDabzWaz2V1ifZ7r7fFsXFlTDkXPc1q646KnrjmbzWaz2Ww2m92l7j+/y+lQmYf+8zX3RJcrXYc7d05dczabzWaz2Ww2u0vRfx7GJ16pLA91e9g234xVtH/OZrPZbDabzWZvE+efv+0tH1UHy0hHRPPIl2H/nM1ms9lsNpvNfpOZi/DRjEO8UgE/qtb0cCZ0vVafs9lsNpvNZrPZ28T6fPTDz7sh5+FiPP8rvFZ9zmaz2Ww2m81m9ym+H9pNYsmb4ZvJ5+VXRENOXXM2m81ms9lsNrtLfT70Tvlt0NG0weRSvBvM+Mqpa85ms9lsNpvNZneJ50Nfyd8YKnfFN5NbcjdL3mk/dc3ZbDabzWaz2ewucf55KKFzh3nYQh9p1mLIWqibr8hms9lsNpvNZm9TfD80967kU595q3yTrhf91DVns9lsNpvNZrO7FPNbioe+L3ITSzl0cVTVu/mKbDabzWaz2Wz2u9T952uuZ3PLusFefqIoPHzft3/OZrPZbDabzWa/S9HfMpo7+xOjIeVBUfvnbDabzWaz2Wz2NsX889x2XiZX6esbyrmL9s/ZbDabzWaz2extivo8J8xgCQV83lQfqdflfo/9czabzWaz2Ww2u89H9XloIC/b0cMU9PKnkFPXnM1ms9lsNpvN7lLU511bS6i6w7eHXgknQ8MD+lvYbDabzWaz2ext4vnQnPKB0Hw+q8fyKHX1OZvNZrPZbDabvc1H88//UU5dczabzWaz2Ww2m81ms9lsNpvNZrPZbDabzWaz2Ww2m81ms9lsNpvN/h/tvxT9BNe91qoVAAAAAElFTkSuQmCC';
 
 async function api(action,payload={}){
   const res=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action,token:state.token,...payload})});
@@ -191,7 +193,7 @@ function renderHouseholds(rows){
   const body=document.getElementById('householdRows');body.innerHTML='';
   const select=document.getElementById('guestHousehold');select.innerHTML='<option value="">Choose household</option>';
   rows.forEach(h=>{
-    body.insertAdjacentHTML('beforeend',`<tr><td>${esc(h.household)}</td><td>${esc(h.invitationType)}</td><td>${h.adults||0}</td><td>${h.children||0}</td><td>${esc(h.code||'Pending')}</td><td>${esc(h.rsvpStatus||'Not sent')}</td><td><div class="row-actions"><button class="inline-btn" type="button" data-edit-household="${h.row}">Edit</button><button class="inline-btn" type="button" data-add-guest="${esc(h.household)}">Add guest</button></div></td></tr>`);
+    body.insertAdjacentHTML('beforeend',`<tr><td>${esc(h.household)}</td><td>${esc(h.invitationType)}</td><td>${h.adults||0}</td><td>${h.children||0}</td><td>${esc(h.code||'Pending')}</td><td>${esc(h.rsvpStatus||'Not sent')}</td><td><div class="row-actions"><button class="inline-btn" type="button" data-edit-household="${h.row}">Edit</button><button class="inline-btn" type="button" data-add-guest="${esc(h.household)}">Add guest</button><button class="inline-btn" type="button" data-qr-household-row="${h.row}">QR card PDF</button></div></td></tr>`);
     const o=document.createElement('option');o.value=h.household;o.textContent=h.household;select.appendChild(o);
   });
 }
@@ -244,6 +246,75 @@ document.getElementById('refreshDashboard').onclick=async()=>{const b=document.g
 document.getElementById('openInviteBuilder').onclick=()=>openPanel('invitationBuilder');
 document.getElementById('openExistingGuest').onclick=()=>openPanel('guests');
 
+
+function pdfReady(){
+  return !!(window.jspdf&&window.jspdf.jsPDF);
+}
+function drawLeaf(doc,x,y,w,h,angle,fill){
+  doc.setFillColor(fill[0],fill[1],fill[2]);
+  doc.ellipse(x,y,w,h,'F',angle);
+}
+function drawOliveSprig(doc,x,y,flip=false){
+  const dir=flip?-1:1;
+  doc.setDrawColor(118,124,91);doc.setLineWidth(.55);
+  doc.line(x,y,x+dir*34,y+22);
+  const pts=[[5,3,5,2,-28],[10,7,5.5,2.2,26],[15,9,6,2.3,-25],[20,13,6,2.4,28],[25,16,6,2.3,-24],[30,20,5,2.1,27]];
+  pts.forEach((p,i)=>{
+    const px=x+dir*p[0],py=y+p[1];
+    drawLeaf(doc,px,py,p[2],p[3],dir*p[4],i%2?[143,146,123]:[122,132,101]);
+  });
+  doc.setFillColor(184,187,140);doc.circle(x+dir*18,y+12,1.5,'F');doc.circle(x+dir*23,y+16,1.35,'F');
+}
+function spacedPdfText(value){
+  return String(value||'').toUpperCase().split('').join(' ');
+}
+function drawQrCard(doc,h,x,y,w,hh){
+  const sage=[203,204,187],ink=[41,43,37],olive=[90,94,75];
+  doc.setFillColor(...sage);doc.rect(x,y,w,hh,'F');
+  doc.setDrawColor(175,179,157);doc.setLineWidth(.35);doc.rect(x,y,w,hh);
+  drawOliveSprig(doc,x+6,y+7,false);drawOliveSprig(doc,x+w-6,y+hh-29,true);
+  const cx=x+w/2;
+  doc.setTextColor(...ink);
+  doc.setFont('times','normal');doc.setFontSize(13);doc.text('L I L Y',cx-13,y+25,{align:'center'});
+  doc.setFont('times','italic');doc.setFontSize(12);doc.text('and',cx,y+25,{align:'center'});
+  doc.setFont('times','normal');doc.setFontSize(13);doc.text('C O D Y',cx+15,y+25,{align:'center'});
+  doc.setFontSize(9);doc.text('SCAN THE QR CODE',cx,y+38,{align:'center'});
+  const name=spacedPdfText(h.household);
+  let nameSize=name.length>25?12:name.length>18?14:16;
+  doc.setFontSize(nameSize);doc.text(name,cx,y+51,{align:'center',maxWidth:w-16});
+  doc.setFont('times','italic');doc.setFontSize(8.5);doc.text('Login code',cx,y+61,{align:'center'});
+  doc.setFont('times','normal');doc.setFontSize(13);doc.text(spacedPdfText(h.code),cx,y+70,{align:'center'});
+  const q=42;doc.addImage(WEDDING_QR_DATA,'PNG',cx-q/2,y+76,q,q);
+  doc.setTextColor(...olive);doc.setFontSize(8.5);doc.text('lilyandcody.co.uk',cx,y+124,{align:'center'});
+}
+function ensurePdfData(rows){
+  if(!pdfReady()){alert('The PDF tool has not loaded yet. Please refresh the page and try again.');return false;}
+  const missing=rows.filter(h=>!h.code);
+  if(missing.length){alert('These households do not yet have an invite code: '+missing.map(h=>h.household).join(', '));return false;}
+  return true;
+}
+function downloadAllQrCards(){
+  const rows=(state.data?.households||[]);
+  if(!rows.length||!ensurePdfData(rows))return;
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const pageW=210,pageH=297,margin=8,gap=6,cardW=(pageW-margin*2-gap)/2,cardH=(pageH-margin*2-gap)/2;
+  rows.forEach((h,i)=>{
+    if(i>0&&i%4===0)doc.addPage();
+    const slot=i%4,col=slot%2,row=Math.floor(slot/2);
+    drawQrCard(doc,h,margin+col*(cardW+gap),margin+row*(cardH+gap),cardW,cardH);
+  });
+  doc.save('Lily-Cody-All-Household-QR-Cards.pdf');
+}
+function downloadSingleQrCard(row){
+  const h=(state.data?.households||[]).find(x=>Number(x.row)===Number(row));if(!h||!ensurePdfData([h]))return;
+  const {jsPDF}=window.jspdf;const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const cardW=94,cardH=137;drawQrCard(doc,h,(210-cardW)/2,(297-cardH)/2,cardW,cardH);
+  const safe=String(h.household||'Household').replace(/[^a-z0-9_-]+/gi,'-').replace(/^-+|-+$/g,'');
+  doc.save('Lily-Cody-'+safe+'-QR-Card.pdf');
+}
+document.getElementById('downloadAllQrCards').onclick=downloadAllQrCards;
+document.getElementById('downloadAllQrCards2').onclick=downloadAllQrCards;
+
 function closeEditModal(){
   document.getElementById('editModal').classList.add('hidden');
   document.getElementById('editHouseholdForm').classList.add('hidden');
@@ -290,6 +361,7 @@ document.getElementById('editGuestForm').addEventListener('submit',async e=>{
 });
 
 document.addEventListener('click',e=>{
+  const qr=e.target.closest('[data-qr-household-row]');if(qr){downloadSingleQrCard(qr.dataset.qrHouseholdRow);return;}
   const eh=e.target.closest('[data-edit-household]');if(eh){populateEditHousehold(eh.dataset.editHousehold);return;}
   const eg=e.target.closest('[data-edit-guest]');if(eg){populateEditGuest(eg.dataset.editGuest);return;}
   const b=e.target.closest('[data-add-guest]');if(!b)return;
