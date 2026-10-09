@@ -54,6 +54,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
       <button data-panel="seating">Seating planner</button>
       <button data-panel="photos">Photos</button>
       <button data-panel="messages">Messages</button>
+      <button data-panel="faqs">FAQ questions</button>
       <button data-panel="tasks">Wedding tasks</button>
     </nav>
     <main>
@@ -130,6 +131,18 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
       <section class="panel" id="seating"><h2>Seating Planner</h2><div class="card"><p class="muted">The seating planner is ready for confirmed guests. Table editing will populate here from the database.</p><div id="seatContent"></div></div></section>
       <section class="panel" id="photos"><h2>Photo Review</h2><div class="card"><p class="muted">Guest-camera uploads will appear here for approval before they are shown publicly.</p><div id="photoContent"></div></div></section>
       <section class="panel" id="messages"><h2>Messages</h2><div class="card"><p class="muted">RSVP messages will appear here. Approved messages can later feed the website ticker.</p><div id="messageContent"></div></div></section>
+      <section class="panel" id="faqs">
+        <h2>FAQ Questions</h2>
+        <div class="notice">Questions the guest FAQ assistant could not answer appear here. Repeated wording is grouped so you can spot common questions and promote them to the live FAQ.</div>
+        <div class="card">
+          <h3>Waiting for review</h3>
+          <div class="table-wrap"><table><thead><tr><th>Question</th><th>Asked</th><th>Households</th><th>Action</th></tr></thead><tbody id="faqQuestionRows"></tbody></table></div>
+        </div>
+        <div class="card">
+          <h3>Live FAQ library</h3>
+          <div class="table-wrap"><table><thead><tr><th>Question</th><th>Answer</th><th>Times asked</th><th>Status</th></tr></thead><tbody id="faqLibraryRows"></tbody></table></div>
+        </div>
+      </section>
       <section class="panel" id="tasks"><h2>Wedding Tasks</h2><div class="card"><div id="taskContent"></div></div></section>
     </main>
   </div>
@@ -162,6 +175,19 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
       <div class="notice tiny">Moving a guest to a different household will automatically update both household totals.</div>
       <div class="actions"><button class="btn" type="submit">Save changes</button><button class="btn secondary" type="button" data-modal-cancel>Cancel</button></div>
       <div class="error" id="editGuestError"></div>
+    </form>
+  </div>
+</div>
+<div id="faqModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="faqModalTitle">
+  <div class="modal">
+    <div class="modal-head"><h3 id="faqModalTitle">Add to FAQ</h3><button id="closeFaqModal" class="modal-close" type="button" aria-label="Close">×</button></div>
+    <form id="faqApproveForm">
+      <input type="hidden" name="normalised">
+      <div class="field"><label>FAQ question</label><input name="question" required></div>
+      <div class="field"><label>Approved answer</label><textarea name="answer" required placeholder="Write the answer guests should see"></textarea></div>
+      <div class="notice tiny">Adding this will make the question available to the guest FAQ assistant after the backend is live, and matching unanswered questions will be marked as resolved.</div>
+      <div class="actions"><button class="btn" type="submit">Add to live FAQ</button><button class="btn secondary" id="cancelFaqModal" type="button">Cancel</button></div>
+      <div class="error" id="faqApproveError"></div>
     </form>
   </div>
 </div>
