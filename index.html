@@ -78,6 +78,8 @@
     .ticker-track{display:flex;width:max-content;animation:tickerScroll 28s linear infinite;white-space:nowrap;padding:9px 0}
     .ticker:hover .ticker-track{animation-play-state:paused}
     .ticker-item{display:inline-block;padding:0 38px;font-size:.78rem;letter-spacing:.05em}
+    .ticker-item.guest-message{font-style:italic}
+    .ticker-item.official-update{font-style:normal;font-weight:500}
     @keyframes tickerScroll{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
     .camera-cta{max-width:760px;margin:28px auto 0;background:rgba(247,245,239,.82);border:1px solid rgba(90,94,75,.16);padding:30px;text-align:center}
     .camera-cta h3{font-weight:400;font-size:1.5rem;margin-bottom:8px}
@@ -569,7 +571,17 @@
         tickerTrack.innerHTML = '';
         return;
       }
-      tickerTrack.innerHTML = approved.map(m => '<span class="ticker-item">✦ ' + escHtml(m) + '</span>').join('');
+      tickerTrack.innerHTML = approved.map(m => {
+        if (typeof m === 'string') {
+          return '<span class="ticker-item official-update">✦ ' + escHtml(m) + '</span>';
+        }
+        const type = String(m.type || m.kind || 'official').toLowerCase();
+        const text = String(m.text || m.message || '').trim();
+        if (!text) return '';
+        const cls = type === 'guest' || type === 'guest-message' ? 'guest-message' : 'official-update';
+        const prefix = cls === 'guest-message' ? '♡ ' : '✦ ';
+        return '<span class="ticker-item ' + cls + '">' + prefix + escHtml(text) + '</span>';
+      }).join('');
       messageTicker.classList.remove('hidden');
     }
 
@@ -734,10 +746,10 @@
       renderTicker(invite.messages || invite.approvedMessages || []);
       if (tickerTestMode) {
         renderTicker([
-          'Welcome to Lily & Cody’s wedding invitation ✨',
-          'Please remember to RSVP by January 2027',
-          'Guest Camera testing is live — wedding-day uploads will stay private until reviewed',
-          'Taxi home? Pre-book it — future you will be grateful'
+          {type:'official', text:'Please remember to RSVP by January 2027'},
+          {type:'guest', text:'Wishing you both the happiest day — Sarah & Tom'},
+          {type:'official', text:'Taxi home? Pre-book it — future you will be grateful'},
+          {type:'guest', text:'Cannot wait to celebrate with you both! — Jenny'}
         ]);
       }
 
