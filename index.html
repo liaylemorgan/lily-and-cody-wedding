@@ -519,16 +519,30 @@
     try { tickerTestMode = tickerTestMode || sessionStorage.getItem('lc_ticker_test') === '1'; } catch (e) {}
 
     let activeInvite = null;
+    let phaseConfig = {
+      mode:'Automatic',
+      manualPhase:'rsvp',
+      rsvpEnds:'2027-02-01',
+      finalCountdownStarts:'2027-08-01',
+      weddingDate:'2027-08-14'
+    };
 
     const WEDDING_CEREMONY = new Date('2027-08-14T13:30:00+01:00');
     const WEDDING_DAY_START = new Date('2027-08-14T00:00:00+01:00');
     const WEDDING_DAY_END = new Date('2027-08-15T00:00:00+01:00');
 
     function weddingPhase(now = new Date()) {
-      if (now < new Date('2027-02-01T00:00:00+00:00')) return 'rsvp';
-      if (now < new Date('2027-08-01T00:00:00+01:00')) return 'planning';
-      if (now < WEDDING_DAY_START) return 'final-countdown';
-      if (now < WEDDING_DAY_END) return 'wedding-day';
+      const preview = new URLSearchParams(location.search).get('phasePreview');
+      if (['rsvp','planning','final-countdown','wedding-day','after'].includes(preview)) return preview;
+      if (String(phaseConfig.mode||'Automatic').toLowerCase()==='manual') return phaseConfig.manualPhase || 'rsvp';
+      const rsvpEnd = new Date((phaseConfig.rsvpEnds || '2027-02-01') + 'T00:00:00');
+      const finalStart = new Date((phaseConfig.finalCountdownStarts || '2027-08-01') + 'T00:00:00');
+      const weddingStart = new Date((phaseConfig.weddingDate || '2027-08-14') + 'T00:00:00');
+      const weddingEnd = new Date(weddingStart.getTime() + 86400000);
+      if (now < rsvpEnd) return 'rsvp';
+      if (now < finalStart) return 'planning';
+      if (now < weddingStart) return 'final-countdown';
+      if (now < weddingEnd) return 'wedding-day';
       return 'after';
     }
 
@@ -722,6 +736,10 @@
 
     function applyInvite(invite) {
       activeInvite = invite;
+      if (invite.sitePhase) {
+        phaseConfig = {...phaseConfig, ...invite.sitePhase};
+        applyWeddingPhase();
+      }
       const inviteType = String(invite.invitationType || '').toLowerCase();
       const isDay = inviteType.includes('full');
 
