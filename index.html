@@ -75,14 +75,15 @@
     .nav-inner{width:min(100% - 28px,980px);margin:auto;display:flex;justify-content:space-between;align-items:center;min-height:62px;gap:16px}
     .brand{letter-spacing:.16em;font-size:.86rem}
     .nav-links{display:flex;gap:20px;font-size:.72rem;letter-spacing:.09em;text-transform:uppercase}
-    .invite-card{max-width:690px;margin:0 auto;background:rgba(255,255,255,.86);border:1px solid rgba(90,94,75,.18);box-shadow:0 18px 50px rgba(47,50,40,.08);padding:48px 34px;text-align:center;backdrop-filter:blur(2px)}
-    .invite-badge{display:inline-block;border:1px solid var(--olive-dark);padding:7px 13px;margin-bottom:20px;text-transform:uppercase;letter-spacing:.14em;font-size:.68rem;color:var(--olive-dark)}
-    .invite-card h3{font-size:2rem;font-weight:400;letter-spacing:.08em}
-    .invite-card .type{font-family:"Brush Script MT","Segoe Script",cursive;color:var(--olive-dark);font-size:2.1rem;margin:6px 0 22px}
-    .key-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
-    .key-card{background:rgba(247,245,239,.92);border:1px solid rgba(90,94,75,.16);padding:26px 20px;text-align:center}
-    .key-card h4{font-weight:400;text-transform:uppercase;letter-spacing:.11em;font-size:.8rem;margin-bottom:10px}
-    .key-card strong{display:block;font-size:1.15rem;font-weight:400}
+    .invite-card{max-width:760px;margin:0 auto;background:rgba(247,245,239,.82);border:1px solid rgba(90,94,75,.16);box-shadow:0 16px 40px rgba(47,50,40,.06);padding:48px 38px;text-align:center;backdrop-filter:blur(1.5px)}
+    .invite-topline{font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--olive-dark);margin-bottom:18px}
+    .invite-card h3{font-size:2.2rem;font-weight:400;letter-spacing:.08em;margin:0 0 16px}
+    .invite-copy{max-width:520px;margin:0 auto 26px;line-height:1.8;color:#4d5047}
+    .invite-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:14px;text-align:left}
+    .invite-detail{background:rgba(255,255,255,.6);border:1px solid rgba(90,94,75,.12);padding:18px 18px 16px}
+    .invite-label{display:block;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--olive-dark);margin-bottom:8px}
+    .invite-value{display:block;font-size:1rem;line-height:1.6;color:var(--ink)}
+    .invite-note{margin-top:24px;font-style:italic;color:var(--olive-dark);line-height:1.7}
     .timeline{max-width:670px;margin:42px auto 0}
     .time-row{display:grid;grid-template-columns:100px 22px 1fr;gap:14px;align-items:start;text-align:left;padding:15px 0}
     .time{letter-spacing:.06em;text-align:right}
@@ -140,7 +141,9 @@
       .branch.top{top:-15px;left:-80px}
       .branch.bottom{right:-90px;bottom:-20px}
       .section{padding:64px 0}
-      .key-grid,.info-grid{grid-template-columns:1fr}
+      .invite-card{padding:34px 22px}
+      .invite-grid,.info-grid{grid-template-columns:1fr}
+      .invite-card h3{font-size:1.8rem}
       .time-row{grid-template-columns:78px 18px 1fr;gap:10px}
       .hero-inner{padding:40px 22px}
       .rsvp-shell{padding:26px 20px}
@@ -221,16 +224,41 @@
     <section class="section sage" id="invitation">
       <div class="wrap">
         <h2 class="section-title">Your Invitation</h2>
-        <div class="script">We can't wait to celebrate with you</div>
+        <div class="script">A note from Lily & Cody</div>
+
         <div class="invite-card">
-          <span class="invite-badge" id="inviteBadge">Invitation preview</span>
-          <h3 id="guestName">Your invitation</h3>
-          <div class="type" id="inviteType">Wedding Guest</div>
-          <p id="inviteMessage">Your QR code will open the version of the website that matches your invitation.</p>
-          <div class="key-grid">
-            <div class="key-card"><h4>Arrival</h4><strong id="arrivalTime">See invitation</strong></div>
-            <div class="key-card"><h4>Date</h4><strong>14 Aug 2027</strong></div>
-            <div class="key-card"><h4>Venue</h4><strong>Dunedin</strong></div>
+          <div class="invite-topline">WE ARE SO HAPPY TO INVITE</div>
+
+          <h3 id="guestName">Your Invitation</h3>
+
+          <p class="invite-copy" id="inviteMessage">
+            We are delighted to invite you to celebrate our wedding at <strong>Dunedin Country House</strong>.
+          </p>
+
+          <div class="invite-grid">
+            <div class="invite-detail">
+              <span class="invite-label">Invitation type</span>
+              <span class="invite-value" id="inviteType">Wedding Guest</span>
+            </div>
+
+            <div class="invite-detail">
+              <span class="invite-label">Date</span>
+              <span class="invite-value">Saturday 14 August 2027</span>
+            </div>
+
+            <div class="invite-detail">
+              <span class="invite-label">Guest arrival</span>
+              <span class="invite-value" id="arrivalTime">See invitation</span>
+            </div>
+
+            <div class="invite-detail">
+              <span class="invite-label">Venue</span>
+              <span class="invite-value">Dunedin Country House, Patrington</span>
+            </div>
+          </div>
+
+          <div class="invite-note" id="invitePersonalNote">
+            Please use the wedding information and RSVP sections below for everything you need.
           </div>
         </div>
       </div>
@@ -333,8 +361,8 @@
     const gateButton = document.getElementById('gateButton');
     const logoutBtn = document.getElementById('logoutBtn');
 
-    const badge = document.getElementById('inviteBadge');
     const guestName = document.getElementById('guestName');
+    const invitePersonalNote = document.getElementById('invitePersonalNote');
     const type = document.getElementById('inviteType');
     const message = document.getElementById('inviteMessage');
     const arrival = document.getElementById('arrivalTime');
@@ -480,13 +508,15 @@
       const inviteType = String(invite.invitationType || '').toLowerCase();
       const isDay = inviteType.includes('full');
 
-      badge.textContent = isDay ? 'Full Day Invitation' : 'Evening Invitation';
-      guestName.textContent = invite.household || invite.contactName || 'Your Invitation';
-      type.textContent = isDay ? 'Full Day Guest' : 'Evening Guest';
-      message.textContent = isDay
-        ? 'You are invited to join Lily & Cody for the ceremony, wedding breakfast and evening celebrations.'
-        : 'You are invited to join Lily & Cody for their evening wedding celebrations.';
-      arrival.textContent = isDay ? '12:30 PM' : '7:00 PM';
+      guestName.textContent = invite.household ? invite.household + ' Household' : (invite.contactName || 'Your Invitation');
+      type.textContent = isDay ? 'Full Day' : 'Evening';
+      message.innerHTML = isDay
+        ? 'We are delighted to invite you to celebrate our wedding at <strong>Dunedin Country House</strong>, joining us for the ceremony, wedding breakfast and evening celebrations.'
+        : 'We are delighted to invite you to celebrate our wedding at <strong>Dunedin Country House</strong> and join us for the evening celebrations.';
+      arrival.textContent = isDay ? 'From 12:30 PM' : 'From 7:00 PM';
+      invitePersonalNote.textContent = isDay
+        ? 'We are so excited to celebrate the full day with you. Please use the wedding information and RSVP sections below for everything you need.'
+        : 'We are so excited to celebrate with you in the evening. Please use the wedding information and RSVP sections below for everything you need.';
 
       dayTimeline.classList.toggle('hidden', !isDay);
       eveningTimeline.classList.toggle('hidden', isDay);
