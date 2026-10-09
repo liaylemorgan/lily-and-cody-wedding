@@ -94,9 +94,9 @@
     .event-title{font-weight:400;font-size:1.05rem}
     .event-note{font-size:.88rem;color:#5f6257;margin-top:2px}
     .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:28px}
-    .info-card{background:rgba(255,255,255,.82);border:1px solid rgba(90,94,75,.14);padding:28px 30px;text-align:left;box-shadow:0 8px 24px rgba(47,50,40,.04)}
-    .info-card h3{font-weight:400;letter-spacing:.16em;text-transform:uppercase;font-size:.76rem;margin-bottom:12px;color:var(--olive-dark)}
-    .info-card p{font-size:.94rem}
+    .info-card{background:#fafaf6;border:1px solid #afb39d;padding:28px 30px;text-align:left;box-shadow:none}
+    .info-card h3{font-weight:400;letter-spacing:.16em;text-transform:uppercase;font-size:.76rem;margin-bottom:12px;color:var(--olive-dark);display:flex;align-items:center;gap:9px}
+    .info-card p{font-size:.94rem}.info-icon{font-size:.95rem;color:var(--olive);line-height:1}
     .rsvp-shell{max-width:760px;margin:30px auto 0;background:rgba(255,255,255,.9);border:1px solid rgba(90,94,75,.18);padding:34px;box-shadow:0 18px 50px rgba(47,50,40,.08);backdrop-filter:blur(2px)}
     .guest-rsvp-list{display:grid;gap:16px;margin-bottom:24px}.guest-rsvp-card{background:rgba(255,255,255,.78);border:1px solid rgba(90,94,75,.14);padding:24px;text-align:left}.guest-rsvp-head{display:flex;justify-content:space-between;gap:14px;align-items:start;margin-bottom:15px}.guest-rsvp-name{font-size:1.32rem;font-weight:400;letter-spacing:.02em}.guest-rsvp-type{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--olive-dark);border:1px solid var(--line);padding:4px 8px}.guest-answer{display:flex;gap:18px;flex-wrap:wrap}.guest-answer label{display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:.95rem;margin:0}.guest-details{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}.guest-details.hidden{display:none!important}.guest-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.guest-detail-grid .form-row{margin-bottom:0}.rsvp-summary{background:rgba(241,239,230,.75);border:1px solid rgba(90,94,75,.14);padding:18px;margin:20px 0;text-align:left}.rsvp-summary strong{font-weight:400}.form-row{margin-bottom:20px;text-align:left}
     label,legend{display:block;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
@@ -114,6 +114,16 @@
     summary:after{content:"+";color:var(--olive-dark)}
     details[open] summary:after{content:"−"}
     details p{padding-top:12px;font-size:.94rem}
+    .faq-assistant{max-width:760px;margin:24px auto 0;background:#fafaf6;border:1px solid #afb39d;padding:28px 30px}
+    .faq-assistant-top{display:flex;justify-content:space-between;gap:18px;align-items:start;margin-bottom:14px}
+    .faq-assistant h3{font-weight:400;font-size:1.25rem;letter-spacing:.04em}
+    .faq-assistant-badge{font-size:.67rem;letter-spacing:.14em;text-transform:uppercase;color:var(--olive-dark);border:1px solid #afb39d;padding:5px 8px;white-space:nowrap}
+    .faq-assistant p{font-size:.9rem;color:#5d6055}
+    .faq-ask{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:18px}
+    .faq-ask input{width:100%;padding:13px 14px;border:1px solid #afb39d;background:#fff;color:var(--ink)}
+    .faq-answer{margin-top:16px;padding:16px;border-left:3px solid var(--olive);background:#fff;line-height:1.7}
+    .faq-answer.hidden{display:none!important}
+    .faq-assistant-note{margin-top:12px!important;font-size:.78rem!important}
     footer{background:var(--olive-dark);color:#f6f3ea;text-align:center;padding:42px 20px}
     footer .footer-names{letter-spacing:.16em;font-size:1.35rem}
     footer p{margin-top:6px;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;opacity:.84}
@@ -149,6 +159,9 @@
       .time-row{grid-template-columns:78px 18px 1fr;gap:10px}
       .hero-inner{padding:40px 22px}
       .rsvp-shell{padding:26px 20px}
+      .faq-assistant{padding:24px 20px}
+      .faq-assistant-top{display:block}.faq-assistant-badge{display:inline-block;margin-top:10px}
+      .faq-ask{grid-template-columns:1fr}.faq-ask .btn{width:100%}
       .preview-switch{left:10px;right:10px;text-align:center}
     }
   </style>
@@ -288,12 +301,12 @@
         </div>
 
         <div class="info-grid">
-          <div class="info-card"><h3>Venue</h3><p>Dunedin Country House<br>40 Westgate, Patrington<br>Hull, HU12 0NB</p></div>
-          <div class="info-card"><h3>Bar</h3><p>The venue operates a <strong>cashless bar</strong>, so please bring a debit or credit card.</p></div>
-          <div class="info-card"><h3>Dress Code</h3><p>Please avoid <strong>sage green, white and cream</strong> so these colours remain reserved for the wedding party.</p></div>
-          <div class="info-card"><h3>Children</h3><p>This is an adults-only wedding unless a child has been specifically named on your invitation.</p></div>
-          <div class="info-card"><h3>Gifts</h3><p>Your presence is what matters most. If you would like to give a gift, cash is preferred and gifts can be handed to the bar for safekeeping.</p></div>
-          <div class="info-card"><h3>Mike & Sully</h3><p>The dogs will be cared for by their walker. Please do not approach them unless you already have an established relationship with them.</p></div>
+          <div class="info-card"><h3><span class="info-icon">⌂</span>Venue</h3><p>Dunedin Country House<br>40 Westgate, Patrington<br>Hull, HU12 0NB</p></div>
+          <div class="info-card"><h3><span class="info-icon">◇</span>Bar</h3><p>The venue operates a <strong>cashless bar</strong>, so please bring a debit or credit card.</p></div>
+          <div class="info-card"><h3><span class="info-icon">✦</span>Dress Code</h3><p>Please avoid <strong>sage green, white and cream</strong> so these colours remain reserved for the wedding party.</p></div>
+          <div class="info-card"><h3><span class="info-icon">♡</span>Children</h3><p>This is an adults-only wedding unless a child has been specifically named on your invitation.</p></div>
+          <div class="info-card"><h3><span class="info-icon">◇</span>Gifts</h3><p>Your presence is what matters most. If you would like to give a gift, cash is preferred and gifts can be handed to the bar for safekeeping.</p></div>
+          <div class="info-card"><h3><span class="info-icon">✦</span>Mike & Sully</h3><p>The dogs will be cared for by their walker. Please do not approach them unless you already have an established relationship with them.</p></div>
         </div>
       </div>
     </section>
@@ -328,14 +341,38 @@
     <section class="section alt" id="faq">
       <div class="wrap">
         <h2 class="section-title">Frequently Asked Questions</h2>
-        <div class="script">A few useful details</div>
+        <div class="script">The useful bits, with a little attitude</div>
+
         <div class="faq">
-          <details><summary>When should I arrive?</summary><p id="arrivalFaq">Your invitation will show your arrival time. Please do not arrive more than 30 minutes early.</p></details>
-          <details><summary>Can I bring my children?</summary><p>Only children specifically named on the invitation are invited. If a child is not named, please arrange childcare for the celebration.</p></details>
-          <details><summary>Can I pay cash at the bar?</summary><p>No. The bar is cashless, so please bring a debit or credit card.</p></details>
-          <details><summary>What should I wear?</summary><p>Please avoid sage green, white and cream. Further dress guidance can be added here if Lily & Cody choose to specify it.</p></details>
-          <details><summary>Are vegetarian meals available?</summary><p>Yes. Please include vegetarian requirements, allergies or intolerances in your RSVP.</p></details>
-          <details><summary>Where can I stay?</summary><p>Accommodation recommendations and local taxi information will be added to the site before invitations are sent.</p></details>
+          <details><summary>What time should I arrive?</summary><p id="arrivalFaq">Your personalised invitation has your arrival time. Please follow that one—this wedding does not operate an “arrive early for a free upgrade” policy.</p></details>
+          <details><summary>Can I bring my children?</summary><p>Only children specifically named on your invitation are invited. If their name is not there, they are not on the guest list. Tiny humans are still humans.</p></details>
+          <details><summary>Can I wear patterned white?</summary><p>Please avoid white, cream and sage green. If you’re preparing a courtroom defence for your outfit, perhaps choose another one.</p></details>
+          <details><summary>What if my dietary requirements change?</summary><p>Please update your RSVP if something changes. Allergies and dietary needs matter; discovering you dislike potatoes during the wedding breakfast is slightly less helpful.</p></details>
+          <details><summary>Do I have to dance?</summary><p>Bring your enthusiasm. Coordination is optional, and we make no promises about anyone’s uncle.</p></details>
+          <details><summary>Can I request a song?</summary><p>You may suggest one. A suggestion is not a legally binding contract, especially if it lasts nine minutes.</p></details>
+          <details><summary>Can I propose at the wedding?</summary><p>We admire your commitment to saving money on venue hire, but please save your big moment for another day.</p></details>
+          <details><summary>Can I make an impromptu speech?</summary><p>Please leave speeches to the people asked to give them. Your podcast debut can wait.</p></details>
+          <details><summary>Can I pay cash at the bar?</summary><p>No. The bar is cashless, so please bring a debit or credit card. Your charming personality is not accepted as legal tender.</p></details>
+          <details><summary>I’ve lost my invitation code. What do I do?</summary><p>Get in touch and we’ll help. Please don’t borrow someone else’s—identity theft is an unusual wedding gift.</p></details>
+          <details><summary>Can I ask something that’s already answered on here?</summary><p>You can, but please have a little scroll first. The answers are here, wearing their best fonts.</p></details>
+          <details><summary>Where can I stay?</summary><p>Accommodation recommendations and local taxi information will be added here before invitations are sent.</p></details>
+        </div>
+
+        <div class="faq-assistant">
+          <div class="faq-assistant-top">
+            <div>
+              <h3>Ask the wedding FAQ assistant</h3>
+              <p>Type a question and it will answer using the approved wedding information for your invitation.</p>
+            </div>
+            <span class="faq-assistant-badge">Personalised</span>
+          </div>
+
+          <div class="faq-ask">
+            <input id="faqQuestion" type="text" placeholder="e.g. What time should I arrive?">
+            <button class="btn" id="faqAskButton" type="button">Ask</button>
+          </div>
+          <div class="faq-answer hidden" id="faqAnswer" role="status"></div>
+          <p class="faq-assistant-note">It will not invent wedding details or approve exceptions. Anything personal, unclear or not confirmed gets passed back to Lily & Cody.</p>
         </div>
       </div>
     </section>
@@ -379,6 +416,9 @@
     const rsvpGuestList = document.getElementById('rsvpGuestList');
     const rsvpHouseholdLabel = document.getElementById('rsvpHouseholdLabel');
     const rsvpResponsePrompt = document.getElementById('rsvpResponsePrompt');
+    const faqQuestion = document.getElementById('faqQuestion');
+    const faqAskButton = document.getElementById('faqAskButton');
+    const faqAnswer = document.getElementById('faqAnswer');
 
     let activeInvite = null;
 
@@ -531,8 +571,8 @@
         ? 'Here is the information relevant to guests invited for the full wedding day.'
         : 'This page only shows the information relevant to evening guests.';
       arrivalFaq.textContent = isDay
-        ? 'Full Day guests are invited to arrive from 12:30 PM. Please do not arrive before 12:00 PM.'
-        : 'Evening guests are invited to arrive from 7:00 PM. Please do not arrive before 6:30 PM.';
+        ? 'Your personalised invitation says 12:30 PM. Please do not arrive before 12:00 PM—this wedding does not operate an “arrive early for a free upgrade” policy.'
+        : 'Your personalised invitation says 7:00 PM. Please do not arrive before 6:30 PM—this wedding does not operate an “arrive early for a free upgrade” policy.';
 
       renderGuestRsvp(invite);
 
@@ -540,6 +580,98 @@
       document.body.classList.add('unlocked');
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
+
+    function answerWeddingQuestion(rawQuestion) {
+      const q = String(rawQuestion || '').trim().toLowerCase();
+      if (!q) return 'Ask me something first — telepathy was not included in the wedding budget.';
+
+      const isDay = String(activeInvite?.invitationType || '').toLowerCase().includes('full');
+      const arrivalText = isDay
+        ? 'Your invitation is for the full day, with guest arrival from 12:30 PM. Please do not arrive before 12:00 PM—this wedding does not operate an “arrive early for a free upgrade” policy.'
+        : 'Your invitation is for the evening celebration, with arrival from 7:00 PM. Please do not arrive before 6:30 PM—this wedding does not operate an “arrive early for a free upgrade” policy.';
+
+      if (/arriv|what time|when.*come|early|ceremony/.test(q)) return arrivalText;
+
+      if (/child|children|kid|baby|son|daughter/.test(q)) {
+        return 'Only children specifically named on your invitation are invited. If you are unsure about a particular child, please ask Lily & Cody rather than assuming.';
+      }
+
+      if (/plus.?one|extra guest|bring someone|partner|friend|guest not named/.test(q)) {
+        return 'The invitation is for the people specifically named on it. I cannot add or approve extra guests, so please ask Lily & Cody if you need to discuss this.';
+      }
+
+      if (/white|cream|sage|dress|wear|outfit/.test(q)) {
+        return 'Please avoid white, cream and sage green. If you’re preparing a courtroom defence for your outfit, perhaps choose another one.';
+      }
+
+      if (/diet|allerg|vegetarian|intoleran|food requirement/.test(q)) {
+        return 'Please add dietary requirements to the relevant guest in your RSVP. If something changes later, update the RSVP. Allergies and dietary needs matter; discovering you dislike potatoes during the wedding breakfast is slightly less helpful.';
+      }
+
+      if (/accessib|wheelchair|mobility|disab|medical|support need/.test(q)) {
+        return 'Please add any accessibility needs to the relevant guest in the RSVP so Lily & Cody can plan appropriately. If you need to discuss something specific or sensitive, please contact them directly.';
+      }
+
+      if (/cash|bar|card|payment|pay/.test(q)) {
+        return 'The bar is cashless, so please bring a debit or credit card. Your charming personality is not accepted as legal tender.';
+      }
+
+      if (/dance|dancing/.test(q)) {
+        return 'Bring your enthusiasm. Coordination is optional, and we make no promises about anyone’s uncle.';
+      }
+
+      if (/song|music|request/.test(q)) {
+        return 'You may suggest a song. A suggestion is not a legally binding contract, especially if it lasts nine minutes.';
+      }
+
+      if (/propos|engag/.test(q)) {
+        return 'We admire your commitment to saving money on venue hire, but please save your big moment for another day.';
+      }
+
+      if (/speech|toast|microphone|mic/.test(q)) {
+        return 'Please leave speeches to the people asked to give them. Your podcast debut can wait.';
+      }
+
+      if (/code|login|lost.*invite|invitation code/.test(q)) {
+        return 'Get in touch and we’ll help with your invitation code. Please don’t borrow someone else’s—identity theft is an unusual wedding gift.';
+      }
+
+      if (/gift|present|cash gift|money/.test(q)) {
+        return 'Your presence is what matters most. If you would like to give a gift, cash is preferred and gifts can be handed to the bar for safekeeping.';
+      }
+
+      if (/dog|mike|sully/.test(q)) {
+        return 'Mike & Sully will be cared for by their walker. Please do not approach them unless you already have an established relationship with them.';
+      }
+
+      if (/venue|where.*wedding|address|dunedin/.test(q)) {
+        return 'The wedding is at Dunedin Country House, 40 Westgate, Patrington, Hull, HU12 0NB.';
+      }
+
+      if (/stay|hotel|accommodation|taxi|travel|parking/.test(q)) {
+        return 'Those practical details are still being finalised for the website. I won’t make anything up, so please check back once Lily & Cody have approved the travel and accommodation information.';
+      }
+
+      if (/already|answered|scroll/.test(q)) {
+        return 'You can ask, but please have a little scroll first. The answers are here, wearing their best fonts.';
+      }
+
+      return 'That one is not covered by the approved wedding information yet, so I’m not going to invent an answer. Please check with Lily & Cody.';
+    }
+
+    function runFaqAssistant() {
+      const answer = answerWeddingQuestion(faqQuestion.value);
+      faqAnswer.textContent = answer;
+      faqAnswer.classList.remove('hidden');
+    }
+
+    faqAskButton.addEventListener('click', runFaqAssistant);
+    faqQuestion.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        runFaqAssistant();
+      }
+    });
 
     async function authenticate(code, remember = true) {
       const cleanCode = normaliseCode(code);
