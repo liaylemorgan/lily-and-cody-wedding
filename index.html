@@ -507,6 +507,7 @@
     const tickerTrack = document.getElementById('tickerTrack');
     const cameraButton = document.getElementById('cameraButton');
     const cameraStatus = document.getElementById('cameraStatus');
+    const tickerTestMode = new URLSearchParams(location.search).get('tickerTest') === '1';
 
     let activeInvite = null;
 
@@ -730,6 +731,14 @@
       renderGuestRsvp(invite);
       renderDynamicFaqs(invite);
       renderTicker(invite.messages || invite.approvedMessages || []);
+      if (tickerTestMode) {
+        renderTicker([
+          'Welcome to Lily & Cody’s wedding invitation ✨',
+          'Please remember to RSVP by January 2027',
+          'Guest Camera testing is live — wedding-day uploads will stay private until reviewed',
+          'Taxi home? Pre-book it — future you will be grateful'
+        ]);
+      }
 
       document.body.classList.remove('locked');
       document.body.classList.add('unlocked');
