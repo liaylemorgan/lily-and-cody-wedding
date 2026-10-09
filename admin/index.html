@@ -69,7 +69,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
           <div class="stat"><small>Adults</small><strong id="sAdults">0</strong></div>
           <div class="stat"><small>Children</small><strong id="sChildren">0</strong></div>
           <div class="stat"><small>RSVPs received</small><strong id="sRsvp">0</strong></div>
-          <div class="stat"><small>Awaiting reply</small><strong id="sAwaiting">0</strong></div>
+          <div class="stat"><small>Awaiting reply</small><strong id="sAwaiting">0</strong></div>\n          <div class="stat"><small>Unanswered FAQ asks</small><strong id="sFaq">0</strong></div>
         </div>
       </section>
 
@@ -186,10 +186,10 @@ function showApp(user){
 }
 async function loadAll(){
   const r=await api('adminDashboard'); state.data=r;
-  const s=r.stats||{}; ['Households','Day','Evening','Guests','Adults','Children','Rsvp','Awaiting'].forEach(k=>document.getElementById('s'+k).textContent=s[k.toLowerCase()]??0);
+  const s=r.stats||{}; ['Households','Day','Evening','Guests','Adults','Children','Rsvp','Awaiting','Faq'].forEach(k=>document.getElementById('s'+k).textContent=s[k.toLowerCase()]??0);
   renderHouseholds(r.households||[]);renderGuests(r.guests||[]);
   const sync=document.getElementById('lastSynced');if(sync)sync.textContent='Last refreshed: '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  renderSimple('seatContent',r.seating||[]);renderSimple('photoContent',r.photos||[]);renderSimple('messageContent',r.messages||[]);renderSimple('taskContent',r.tasks||[]);
+  renderSimple('seatContent',r.seating||[]);renderSimple('photoContent',r.photos||[]);renderSimple('messageContent',r.messages||[]);renderFaqs(r.faqQuestions||[],r.faqLibrary||[]);renderSimple('taskContent',r.tasks||[]);
 }
 function renderHouseholds(rows){
   const body=document.getElementById('householdRows');body.innerHTML='';
@@ -200,6 +200,30 @@ function renderHouseholds(rows){
   });
 }
 function renderGuests(rows){document.getElementById('guestRows').innerHTML=rows.map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.household)}</td><td>${esc(g.type)}</td><td>${esc(g.invitedTo)}</td><td>${esc(g.response||'No response')}</td><td><button class="inline-btn" type="button" data-edit-guest="${g.row}">Edit</button></td></tr>`).join('')}
+function renderFaqs(questions,library){
+  const qBody=document.getElementById('faqQuestionRows');
+  if(!questions.length){
+    qBody.innerHTML='<tr><td colspan="4" class="muted">No unanswered questions waiting for review.</td></tr>';
+  }else{
+    qBody.innerHTML=questions.map(q=>`<tr>
+      <td>${esc(q.question)}</td>
+      <td><strong>${Number(q.count||0)}</strong></td>
+      <td>${esc((q.households||[]).join(', '))}</td>
+      <td><div class="row-actions">
+        <button class="inline-btn" type="button" data-faq-add="${encodeURIComponent(q.normalised||'')}" data-faq-question="${encodeURIComponent(q.question||'')}">Add to FAQ</button>
+        <button class="inline-btn" type="button" data-faq-dismiss="${encodeURIComponent(q.normalised||'')}">Mark reviewed</button>
+      </div></td>
+    </tr>`).join('');
+  }
+
+  const lBody=document.getElementById('faqLibraryRows');
+  if(!library.length){
+    lBody.innerHTML='<tr><td colspan="4" class="muted">No dashboard-added FAQs yet. The built-in wedding FAQs are still live on the guest site.</td></tr>';
+  }else{
+    lBody.innerHTML=library.map(x=>`<tr><td>${esc(x.question)}</td><td>${esc(x.answer)}</td><td>${Number(x.timesAsked||0)}</td><td>${esc(x.status||'')}</td></tr>`).join('');
+  }
+}
+
 function renderSimple(id,rows){const el=document.getElementById(id);if(!rows.length){el.innerHTML='<p class="muted">Nothing here yet.</p>';return}el.innerHTML='<div class="table-wrap"><table><tbody>'+rows.map(r=>'<tr>'+Object.values(r).map(v=>'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'}
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 
@@ -457,6 +481,35 @@ document.getElementById('editGuestForm').addEventListener('submit',async e=>{
   try{await api('adminUpdateGuest',{guest:fd});await loadAll();closeEditModal();}
   catch(x){err.textContent=x.message||'Could not update guest.'}
   finally{btn.disabled=false;btn.textContent='Save changes';}
+});
+
+
+function openFaqModal(question,normalised){
+  const modal=document.getElementById('faqModal'),form=document.getElementById('faqApproveForm');
+  form.question.value=question||'';
+  form.normalised.value=normalised||'';
+  form.answer.value='';
+  document.getElementById('faqApproveError').textContent='';
+  modal.classList.remove('hidden');
+  setTimeout(()=>form.answer.focus(),50);
+}
+function closeFaqModal(){
+  document.getElementById('faqModal').classList.add('hidden');
+}
+document.getElementById('closeFaqModal').onclick=closeFaqModal;
+document.getElementById('cancelFaqModal').onclick=closeFaqModal;
+document.getElementById('faqModal').addEventListener('click',e=>{if(e.target.id==='faqModal')closeFaqModal();});
+document.getElementById('faqApproveForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const fd=Object.fromEntries(new FormData(e.target)),err=document.getElementById('faqApproveError');
+  err.textContent='';
+  const btn=e.submitter;btn.disabled=true;btn.textContent='Adding…';
+  try{
+    await api('adminAddFaq',{question:fd.question.trim(),answer:fd.answer.trim(),normalised:fd.normalised});
+    await loadAll();
+    closeFaqModal();
+  }catch(x){err.textContent=x.message||'Could not add FAQ.'}
+  finally{btn.disabled=false;btn.textContent='Add to live FAQ';}
 });
 
 document.addEventListener('click',e=>{
