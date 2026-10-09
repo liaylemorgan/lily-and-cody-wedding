@@ -325,7 +325,7 @@ function renderPhotos(rows){
     <td>${esc(p.status||'Pending')}</td>
     <td><div class="row-actions">
       <button class="inline-btn" type="button" data-photo-preview="${p.row}">Preview</button>
-      ${String(p.status||'Pending').toLowerCase()==='pending'?'<button class="inline-btn" type="button" data-photo-approve="'+p.row+'">Approve</button><button class="inline-btn" type="button" data-photo-reject="'+p.row+'">Reject</button>':''}
+      ${String(p.status||'Pending').toLowerCase()==='pending'?'<button class="inline-btn" type="button" data-photo-approve="'+p.row+'">Approve</button><button class="inline-btn" type="button" data-photo-reject="'+p.row+'">Reject</button>':(String(p.status||'').toLowerCase()==='rejected' && p.trashed===false?'<button class="inline-btn" type="button" data-photo-bin="'+p.row+'">Move to bin</button>':'')}
     </div></td>
   </tr>`).join(''):'<tr><td colspan="5" class="muted">No Guest Camera photos are waiting for review.</td></tr>';
 }
@@ -732,8 +732,9 @@ document.addEventListener('click',e=>{
   const te=e.target.closest('[data-task-edit]');if(te){populateEditTask(te.dataset.taskEdit);return;}
   const tc=e.target.closest('[data-task-complete]');if(tc){api('adminUpdateTask',{task:{row:Number(tc.dataset.taskComplete),status:'Complete'}}).then(loadAll).catch(x=>alert(x.message));return;}
   const pp=e.target.closest('[data-photo-preview]');if(pp){previewPhoto(pp.dataset.photoPreview);return;}
-  const pa=e.target.closest('[data-photo-approve]');if(pa){api('adminReviewPhoto',{row:Number(pa.dataset.photoApprove),decision:'approve'}).then(loadAll).catch(x=>alert(x.message));return;}
-  const pr=e.target.closest('[data-photo-reject]');if(pr){if(confirm('Reject this photo and move the file to the Google Drive bin?'))api('adminReviewPhoto',{row:Number(pr.dataset.photoReject),decision:'reject'}).then(loadAll).catch(x=>alert(x.message));return;}
+  const pa=e.target.closest('[data-photo-approve]');if(pa){api('adminReviewPhoto',{row:Number(pa.dataset.photoApprove),decision:'approve'}).then(r=>{if(r.warning)alert(r.warning);return loadAll();}).catch(x=>alert(x.message));return;}
+  const pr=e.target.closest('[data-photo-reject]');if(pr){if(confirm('Reject this photo and move the file to the Google Drive bin?'))api('adminReviewPhoto',{row:Number(pr.dataset.photoReject),decision:'reject'}).then(r=>{if(r.warning)alert(r.warning);return loadAll();}).catch(x=>alert(x.message));return;}
+  const pb=e.target.closest('[data-photo-bin]');if(pb){api('adminPhotoTrash',{row:Number(pb.dataset.photoBin)}).then(r=>{if(r.warning)alert(r.warning);return loadAll();}).catch(x=>alert(x.message));return;}
   const approve=e.target.closest('[data-message-approve]');if(approve){api('adminReviewTickerMessage',{row:Number(approve.dataset.messageApprove),decision:'approve'}).then(loadAll).catch(x=>alert(x.message));return;}
   const reject=e.target.closest('[data-message-reject]');if(reject){api('adminReviewTickerMessage',{row:Number(reject.dataset.messageReject),decision:'reject'}).then(loadAll).catch(x=>alert(x.message));return;}
   const toggle=e.target.closest('[data-message-toggle]');if(toggle){api('adminToggleTickerMessage',{row:Number(toggle.dataset.messageToggle),active:toggle.dataset.active!=='yes'}).then(loadAll).catch(x=>alert(x.message));return;}
