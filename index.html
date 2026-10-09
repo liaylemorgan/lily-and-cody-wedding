@@ -96,7 +96,11 @@
     .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:28px}
     .info-card{background:#fafaf6;border:1px solid #afb39d;padding:28px 30px;text-align:left;box-shadow:none}
     .info-card h3{font-weight:400;letter-spacing:.16em;text-transform:uppercase;font-size:.76rem;margin-bottom:12px;color:var(--olive-dark);display:flex;align-items:center;gap:9px}
-    .info-card p{font-size:.94rem}.info-icon{font-size:.95rem;color:var(--olive);line-height:1}
+    .info-card p{font-size:.94rem}
+    .info-card-link{display:block;min-height:180px;position:relative;padding-bottom:58px;transition:transform .18s ease,box-shadow .18s ease,background .18s ease;cursor:pointer}
+    .info-card-link:hover{transform:translateY(-2px);background:#fff;box-shadow:0 10px 28px rgba(47,50,40,.06)}
+    .info-card-link .card-more{position:absolute;left:30px;bottom:25px;font-size:.73rem;letter-spacing:.12em;text-transform:uppercase;color:var(--olive-dark)}
+    .info-card-link .card-more:after{content:"  →"}.info-icon{font-size:.95rem;color:var(--olive);line-height:1}
     .info-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
     .info-link{display:inline-block;border:1px solid #afb39d;padding:7px 10px;font-size:.75rem;letter-spacing:.05em;color:var(--olive-dark);background:#fff}
     .info-link:hover{background:var(--paper)}
@@ -306,48 +310,46 @@
         </div>
 
         <div class="info-grid">
-          <div class="info-card">
+          <a class="info-card info-card-link" href="info/venue.html">
             <h3><span class="info-icon">⌂</span>Venue</h3>
-            <p>Dunedin Country House<br>40 Westgate, Patrington<br>Hull, HU12 0NB</p>
-            <div class="info-links">
-              <a class="info-link" href="https://www.google.com/maps/search/?api=1&query=Dunedin+Country+House+40+Westgate+Patrington+Hull+HU12+0NB" target="_blank" rel="noopener">Open in Maps</a>
-            </div>
-          </div>
-
-          <div class="info-card">
+            <p>Dunedin Country House, Patrington — address, venue picture and directions.</p>
+            <span class="card-more">View venue</span>
+          </a>
+          <a class="info-card info-card-link" href="info/travel.html">
             <h3><span class="info-icon">↗</span>Travel & Parking</h3>
-            <p>Please allow plenty of time for your journey and follow venue signage or staff directions for parking on arrival.</p>
-            <p style="margin-top:10px"><strong>Local taxis:</strong></p>
-            <ul class="mini-list">
-              <li>Ush Travel, Patrington — <a href="tel:01964630246">01964 630246</a></li>
-              <li>Parish Taxis, Withernsea — <a href="tel:01964614614">01964 614614</a></li>
-              <li>Holderness Cars — <a href="tel:01482898989">01482 898989</a></li>
-            </ul>
-            <p style="margin-top:10px">We strongly recommend pre-booking your return journey and confirming pickup point, fare and payment method directly with the taxi company.</p>
-          </div>
-
-          <div class="info-card">
+            <p>Directions, parking guidance and local taxi options for getting there and home again.</p>
+            <span class="card-more">Plan your journey</span>
+          </a>
+          <a class="info-card info-card-link" href="info/accommodation.html">
             <h3><span class="info-icon">⌂</span>Accommodation</h3>
-            <p>Nearby places to stay include:</p>
-            <ul class="mini-list">
-              <li><a href="https://www.google.com/maps/search/?api=1&query=Shepherds+Retreat+Patrington" target="_blank" rel="noopener">Shepherds Retreat, Patrington</a></li>
-              <li><a href="https://www.google.com/maps/search/?api=1&query=Fairview+Lodges+Hollym" target="_blank" rel="noopener">Fairview Lodges, Hollym</a></li>
-              <li><a href="https://www.google.com/maps/search/?api=1&query=Captain+Williams+Withernsea" target="_blank" rel="noopener">Captain Williams, Withernsea</a></li>
-              <li><a href="https://www.google.com/maps/search/?api=1&query=The+Alex+Withernsea" target="_blank" rel="noopener">The Alex, Withernsea</a></li>
-              <li><a href="https://www.google.com/maps/search/?api=1&query=Withernsea+Sands+Holiday+Park" target="_blank" rel="noopener">Withernsea Sands Holiday Park</a></li>
-            </ul>
-            <p style="margin-top:10px">Please book directly with your chosen accommodation. Dunedin's rooms are not included here as they are already taken.</p>
-          </div>
-
-          <div class="info-card"><h3><span class="info-icon">◇</span>Bar</h3><p>The venue operates a <strong>cashless bar</strong>, so please bring a debit or credit card.</p></div>
-
-          <div class="info-card"><h3><span class="info-icon">✦</span>Dress Code</h3><p>Please avoid <strong>sage green, white and cream</strong> so these colours remain reserved for the wedding party.</p></div>
-
-          <div class="info-card"><h3><span class="info-icon">♡</span>Children</h3><p>This is an adults-only wedding unless a child has been specifically named on your invitation.</p></div>
-
-          <div class="info-card"><h3><span class="info-icon">◇</span>Gifts</h3><p>Your presence is what matters most. If you would like to give a gift, cash is preferred and gifts can be handed to the bar for safekeeping.</p></div>
-
-          <div class="info-card"><h3><span class="info-icon">✦</span>Mike & Sully</h3><p>The dogs will be cared for by their walker. Please do not approach them unless you already have an established relationship with them.</p></div>
+            <p>Nearby places to stay, with direct links to check availability and book.</p>
+            <span class="card-more">Find somewhere to stay</span>
+          </a>
+          <a class="info-card info-card-link" href="info/bar.html">
+            <h3><span class="info-icon">◇</span>Bar</h3>
+            <p>Everything you need to know before heading to the bar.</p>
+            <span class="card-more">Bar information</span>
+          </a>
+          <a class="info-card info-card-link" href="info/dress-code.html">
+            <h3><span class="info-icon">✦</span>Dress Code</h3>
+            <p>A quick guide to the colours Lily & Cody would like guests to avoid.</p>
+            <span class="card-more">What to wear</span>
+          </a>
+          <a class="info-card info-card-link" href="info/children.html">
+            <h3><span class="info-icon">♡</span>Children</h3>
+            <p>Please check this before making childcare arrangements for the day.</p>
+            <span class="card-more">Children information</span>
+          </a>
+          <a class="info-card info-card-link" href="info/gifts.html">
+            <h3><span class="info-icon">◇</span>Gifts</h3>
+            <p>Lily & Cody's gift preference and what to do with gifts on the day.</p>
+            <span class="card-more">Gift information</span>
+          </a>
+          <a class="info-card info-card-link" href="info/mike-and-sully.html">
+            <h3><span class="info-icon">✦</span>Mike & Sully</h3>
+            <p>A small but important note about the dogs and their arrangements on the day.</p>
+            <span class="card-more">Please read</span>
+          </a>
         </div>
       </div>
     </section>
