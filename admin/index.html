@@ -347,14 +347,23 @@ async function loadAll(){
   renderSitePhase(r.sitePhase||{});renderSeating(r.seating||[],r.guests||[]);renderPhotos(r.photos||[]);renderMessages(r.messages||[]);renderTickerMaster(r.tickerEnabled!==false);renderFaqs(r.faqQuestions||[],r.faqLibrary||[]);renderTasks(r.tasks||[]);renderActionCentre(r);
 }
 function phaseLabel(v){return ({'rsvp':'RSVP','planning':'Planning','final-countdown':'Final countdown','wedding-day':'Wedding day','after':'After wedding'})[v]||v||'RSVP';}
+function isoDateInput(v){
+  if(!v)return '';
+  const s=String(v).trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
+  const d=new Date(v);
+  if(Number.isNaN(d.getTime()))return '';
+  const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');
+  return y+'-'+m+'-'+day;
+}
 function renderSitePhase(p){
   const mode=p.mode||'Automatic';
   const current=p.currentPhase||'rsvp';
   document.getElementById('phaseMode').value=mode;
   document.getElementById('manualPhase').value=p.manualPhase||'rsvp';
-  document.getElementById('phaseRsvpEnds').value=p.rsvpEnds||'2027-02-01';
-  document.getElementById('phaseFinalStarts').value=p.finalCountdownStarts||'2027-08-01';
-  document.getElementById('phaseWeddingDate').value=p.weddingDate||'2027-08-14';
+  document.getElementById('phaseRsvpEnds').value=isoDateInput(p.rsvpEnds)||'2027-02-01';
+  document.getElementById('phaseFinalStarts').value=isoDateInput(p.finalCountdownStarts)||'2027-08-01';
+  document.getElementById('phaseWeddingDate').value=isoDateInput(p.weddingDate)||'2027-08-14';
   document.getElementById('manualPhase').disabled=String(mode).toLowerCase()!=='manual';
   document.getElementById('phaseLiveBadge').textContent='LIVE · '+phaseLabel(current);
   document.getElementById('phaseNextChange').textContent=p.nextChange||'Automatic timing is active.';
