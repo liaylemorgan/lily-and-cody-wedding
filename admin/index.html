@@ -73,6 +73,21 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
           <div class="stat"><small>Awaiting reply</small><strong id="sAwaiting">0</strong></div>\n          <div class="stat"><small>Unanswered FAQ asks</small><strong id="sFaq">0</strong></div>
         </div>
         <div class="card">
+          <div class="toprow"><div><h3 style="margin-bottom:4px">Website phase</h3><p class="muted" style="margin:0">The guest site changes automatically as the wedding gets closer. Manual mode is available when you need to override it.</p></div><span id="phaseLiveBadge" class="guest-rsvp-type">Loading…</span></div>
+          <form id="phaseSettingsForm" style="margin-top:14px">
+            <div class="grid2">
+              <div class="field"><label>Phase mode</label><select name="mode" id="phaseMode"><option>Automatic</option><option>Manual</option></select></div>
+              <div class="field"><label>Manual phase</label><select name="manualPhase" id="manualPhase"><option value="rsvp">RSVP</option><option value="planning">Planning</option><option value="final-countdown">Final countdown</option><option value="wedding-day">Wedding day</option><option value="after">After wedding</option></select></div>
+              <div class="field"><label>RSVP phase ends</label><input type="date" name="rsvpEnds" id="phaseRsvpEnds"></div>
+              <div class="field"><label>Final countdown starts</label><input type="date" name="finalCountdownStarts" id="phaseFinalStarts"></div>
+              <div class="field"><label>Wedding day</label><input type="date" name="weddingDate" id="phaseWeddingDate"></div>
+            </div>
+            <div class="notice tiny" id="phaseNextChange" style="margin-top:10px"></div>
+            <div class="actions"><button class="btn" type="submit">Save phase settings</button><button class="btn secondary" type="button" data-phase-preview="rsvp">Preview RSVP</button><button class="btn secondary" type="button" data-phase-preview="planning">Preview planning</button><button class="btn secondary" type="button" data-phase-preview="final-countdown">Preview final countdown</button><button class="btn secondary" type="button" data-phase-preview="wedding-day">Preview wedding day</button><button class="btn secondary" type="button" data-phase-preview="after">Preview after</button></div>
+            <div id="phaseSettingsStatus"></div>
+          </form>
+        </div>
+        <div class="card">
           <div class="toprow"><div><h3 style="margin-bottom:4px">Action centre</h3><p class="muted" style="margin:0">Anything currently waiting for the wedding team.</p></div><button class="btn secondary" type="button" id="openTasksFromDashboard">Open tasks</button></div>
           <div class="action-grid" style="margin-top:14px">
             <div class="action-box"><strong id="aMessages">0</strong><span>Guest messages to review</span></div>
@@ -329,7 +344,20 @@ async function loadAll(){
   const s=r.stats||{}; ['Households','Day','Evening','Guests','Adults','Children','Rsvp','Awaiting','Faq'].forEach(k=>document.getElementById('s'+k).textContent=s[k.toLowerCase()]??0);
   renderHouseholds(r.households||[]);renderGuests(r.guests||[]);
   const sync=document.getElementById('lastSynced');if(sync)sync.textContent='Last refreshed: '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  renderSeating(r.seating||[],r.guests||[]);renderPhotos(r.photos||[]);renderMessages(r.messages||[]);renderTickerMaster(r.tickerEnabled!==false);renderFaqs(r.faqQuestions||[],r.faqLibrary||[]);renderTasks(r.tasks||[]);renderActionCentre(r);
+  renderSitePhase(r.sitePhase||{});renderSeating(r.seating||[],r.guests||[]);renderPhotos(r.photos||[]);renderMessages(r.messages||[]);renderTickerMaster(r.tickerEnabled!==false);renderFaqs(r.faqQuestions||[],r.faqLibrary||[]);renderTasks(r.tasks||[]);renderActionCentre(r);
+}
+function phaseLabel(v){return ({'rsvp':'RSVP','planning':'Planning','final-countdown':'Final countdown','wedding-day':'Wedding day','after':'After wedding'})[v]||v||'RSVP';}
+function renderSitePhase(p){
+  const mode=p.mode||'Automatic';
+  const current=p.currentPhase||'rsvp';
+  document.getElementById('phaseMode').value=mode;
+  document.getElementById('manualPhase').value=p.manualPhase||'rsvp';
+  document.getElementById('phaseRsvpEnds').value=p.rsvpEnds||'2027-02-01';
+  document.getElementById('phaseFinalStarts').value=p.finalCountdownStarts||'2027-08-01';
+  document.getElementById('phaseWeddingDate').value=p.weddingDate||'2027-08-14';
+  document.getElementById('manualPhase').disabled=String(mode).toLowerCase()!=='manual';
+  document.getElementById('phaseLiveBadge').textContent='LIVE · '+phaseLabel(current);
+  document.getElementById('phaseNextChange').textContent=p.nextChange||'Automatic timing is active.';
 }
 function renderHouseholds(rows){
   const body=document.getElementById('householdRows');body.innerHTML='';
@@ -843,6 +871,7 @@ document.addEventListener('click',e=>{
   const eg=e.target.closest('[data-edit-guest]');if(eg){populateEditGuest(eg.dataset.editGuest);return;}
   const te=e.target.closest('[data-task-edit]');if(te){populateEditTask(te.dataset.taskEdit);return;}
   const tc=e.target.closest('[data-task-complete]');if(tc){api('adminUpdateTask',{task:{row:Number(tc.dataset.taskComplete),status:'Complete'}}).then(loadAll).catch(x=>alert(x.message));return;}
+  const pv=e.target.closest('[data-phase-preview]');if(pv){window.open('/?phasePreview='+encodeURIComponent(pv.dataset.phasePreview),'_blank');return;}
   const dt=e.target.closest('[data-delete-table]');if(dt){const table=decodeURIComponent(dt.dataset.deleteTable);if(confirm('Delete '+table+'? The table must be empty first.'))api('adminDeleteSeatingTable',{table}).then(loadAll).catch(x=>alert(x.message));return;}
   const seat=e.target.closest('[data-seat-guest]');if(seat){const row=seat.closest('tr'),table=row.querySelector('[data-seat-table]')?.value;if(!table){alert('Choose a table first.');return;}api('adminSeatGuest',{guestName:decodeURIComponent(seat.dataset.seatGuest),code:decodeURIComponent(seat.dataset.seatCode),table}).then(loadAll).catch(x=>alert(x.message));return;}
   const sh=e.target.closest('[data-seat-household]');if(sh){const row=sh.closest('tr'),table=row.querySelector('[data-seat-table]')?.value;if(!table){alert('Choose a table first.');return;}api('adminSeatHousehold',{code:decodeURIComponent(sh.dataset.seatHousehold),table}).then(loadAll).catch(x=>alert(x.message));return;}
@@ -896,6 +925,13 @@ document.getElementById('tickerMasterToggle').addEventListener('click',async e=>
   try{await api('adminSetTickerBar',{enabled:!enabled});await loadAll();}
   catch(x){alert(x.message||'Could not change the message bar.')}
   finally{btn.disabled=false;}
+});
+document.getElementById('phaseMode').addEventListener('change',e=>{document.getElementById('manualPhase').disabled=e.target.value!=='Manual';});
+document.getElementById('phaseSettingsForm').addEventListener('submit',async e=>{
+  e.preventDefault();const fd=Object.fromEntries(new FormData(e.target)),status=document.getElementById('phaseSettingsStatus'),btn=e.submitter;status.textContent='';btn.disabled=true;btn.textContent='Saving…';
+  try{await api('adminSetSitePhase',{settings:fd});status.className='success';status.textContent='Website phase settings saved.';await loadAll();}
+  catch(x){status.className='error';status.textContent=x.message||'Could not save website phase settings.'}
+  finally{btn.disabled=false;btn.textContent='Save phase settings';}
 });
 document.getElementById('addTableForm').addEventListener('submit',async e=>{
   e.preventDefault();const fd=Object.fromEntries(new FormData(e.target)),status=document.getElementById('seatingStatus');status.textContent='';
