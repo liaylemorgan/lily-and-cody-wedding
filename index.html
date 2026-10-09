@@ -372,7 +372,7 @@
             <button class="btn" id="faqAskButton" type="button">Ask</button>
           </div>
           <div class="faq-answer hidden" id="faqAnswer" role="status"></div>
-          <p class="faq-assistant-note">It will not invent wedding details or approve exceptions. Anything personal, unclear or not confirmed gets passed back to Lily & Cody.</p>
+          <p class="faq-assistant-note">It will not invent wedding details or approve exceptions. If it cannot answer, the question is sent to the wedding dashboard so Lily & Cody can review it and add common questions to the FAQ.</p>
         </div>
       </div>
     </section>
@@ -418,7 +418,7 @@
     const rsvpResponsePrompt = document.getElementById('rsvpResponsePrompt');
     const faqQuestion = document.getElementById('faqQuestion');
     const faqAskButton = document.getElementById('faqAskButton');
-    const faqAnswer = document.getElementById('faqAnswer');
+    const faqAnswer = document.getElementById('faqAnswer');\n    const dynamicFaqs = document.getElementById('dynamicFaqs');
 
     let activeInvite = null;
 
@@ -574,95 +574,140 @@
         ? 'Your personalised invitation says 12:30 PM. Please do not arrive before 12:00 PM—this wedding does not operate an “arrive early for a free upgrade” policy.'
         : 'Your personalised invitation says 7:00 PM. Please do not arrive before 6:30 PM—this wedding does not operate an “arrive early for a free upgrade” policy.';
 
-      renderGuestRsvp(invite);
+      renderGuestRsvp(invite);\n      renderDynamicFaqs(invite);
 
       document.body.classList.remove('locked');
       document.body.classList.add('unlocked');
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
+    function normaliseFaqText(value) {
+      return String(value || '')
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    function renderDynamicFaqs(invite) {
+      if (!dynamicFaqs) return;
+      const items = Array.isArray(invite?.faqLibrary) ? invite.faqLibrary : [];
+      dynamicFaqs.innerHTML = items.map(item =>
+        '<details><summary>' + escHtml(item.question) + '</summary><p>' + escHtml(item.answer) + '</p></details>'
+      ).join('');
+    }
+
+    async function logUnansweredFaq(question) {
+      try {
+        await fetch(API_URL, {
+          method: 'POST',
+          headers: {'Content-Type':'text/plain;charset=utf-8'},
+          body: JSON.stringify({
+            action: 'faqQuestion',
+            code: normaliseCode(localStorage.getItem(STORAGE_KEY)),
+            question: String(question || '').trim()
+          })
+        });
+      } catch (err) {
+        console.warn('FAQ question could not be logged', err);
+      }
+    }
+
     function answerWeddingQuestion(rawQuestion) {
-      const q = String(rawQuestion || '').trim().toLowerCase();
-      if (!q) return 'Ask me something first — telepathy was not included in the wedding budget.';
+      const raw = String(rawQuestion || '').trim();
+      const q = raw.toLowerCase();
+      const normalised = normaliseFaqText(raw);
+      if (!q) return { answer: 'Ask me something first — telepathy was not included in the wedding budget.', matched: true };
+
+      const library = Array.isArray(activeInvite?.faqLibrary) ? activeInvite.faqLibrary : [];
+      const libraryMatch = library.find(item => {
+        const itemQ = normaliseFaqText(item.question);
+        return itemQ === normalised || (itemQ.length > 8 && (normalised.includes(itemQ) || itemQ.includes(normalised)));
+      });
+      if (libraryMatch) return { answer: libraryMatch.answer, matched: true };
 
       const isDay = String(activeInvite?.invitationType || '').toLowerCase().includes('full');
       const arrivalText = isDay
         ? 'Your invitation is for the full day, with guest arrival from 12:30 PM. Please do not arrive before 12:00 PM—this wedding does not operate an “arrive early for a free upgrade” policy.'
         : 'Your invitation is for the evening celebration, with arrival from 7:00 PM. Please do not arrive before 6:30 PM—this wedding does not operate an “arrive early for a free upgrade” policy.';
 
-      if (/arriv|what time|when.*come|early|ceremony/.test(q)) return arrivalText;
+      if (/\b(arriv|arrival|early|ceremony|what time|when do i come|when should i come)\b/.test(q)) return { answer: arrivalText, matched: true };
 
-      if (/child|children|kid|baby|son|daughter/.test(q)) {
-        return 'Only children specifically named on your invitation are invited. If you are unsure about a particular child, please ask Lily & Cody rather than assuming.';
+      if (/\b(song|songs|music|playlist|request a song|request songs)\b/.test(q)) {
+        return { answer: 'You may suggest a song. A suggestion is not a legally binding contract, especially if it lasts nine minutes.', matched: true };
+      }
+
+      if (/\b(child|children|kid|kids|baby|babies|son|daughter)\b/.test(q)) {
+        return { answer: 'Only children specifically named on your invitation are invited. If you are unsure about a particular child, please ask Lily & Cody rather than assuming.', matched: true };
       }
 
       if (/plus.?one|extra guest|bring someone|partner|friend|guest not named/.test(q)) {
-        return 'The invitation is for the people specifically named on it. I cannot add or approve extra guests, so please ask Lily & Cody if you need to discuss this.';
+        return { answer: 'The invitation is for the people specifically named on it. I cannot add or approve extra guests, so please ask Lily & Cody if you need to discuss this.', matched: true };
       }
 
-      if (/white|cream|sage|dress|wear|outfit/.test(q)) {
-        return 'Please avoid white, cream and sage green. If you’re preparing a courtroom defence for your outfit, perhaps choose another one.';
+      if (/\b(white|cream|sage|dress|wear|outfit)\b/.test(q)) {
+        return { answer: 'Please avoid white, cream and sage green. If you’re preparing a courtroom defence for your outfit, perhaps choose another one.', matched: true };
       }
 
       if (/diet|allerg|vegetarian|intoleran|food requirement/.test(q)) {
-        return 'Please add dietary requirements to the relevant guest in your RSVP. If something changes later, update the RSVP. Allergies and dietary needs matter; discovering you dislike potatoes during the wedding breakfast is slightly less helpful.';
+        return { answer: 'Please add dietary requirements to the relevant guest in your RSVP. If something changes later, update the RSVP. Allergies and dietary needs matter; discovering you dislike potatoes during the wedding breakfast is slightly less helpful.', matched: true };
       }
 
       if (/accessib|wheelchair|mobility|disab|medical|support need/.test(q)) {
-        return 'Please add any accessibility needs to the relevant guest in the RSVP so Lily & Cody can plan appropriately. If you need to discuss something specific or sensitive, please contact them directly.';
+        return { answer: 'Please add any accessibility needs to the relevant guest in the RSVP so Lily & Cody can plan appropriately. If you need to discuss something specific or sensitive, please contact them directly.', matched: true };
       }
 
-      if (/cash|bar|card|payment|pay/.test(q)) {
-        return 'The bar is cashless, so please bring a debit or credit card. Your charming personality is not accepted as legal tender.';
+      if (/\b(cash|bar|card|payment|pay)\b/.test(q)) {
+        return { answer: 'The bar is cashless, so please bring a debit or credit card. Your charming personality is not accepted as legal tender.', matched: true };
       }
 
-      if (/dance|dancing/.test(q)) {
-        return 'Bring your enthusiasm. Coordination is optional, and we make no promises about anyone’s uncle.';
-      }
-
-      if (/song|music|request/.test(q)) {
-        return 'You may suggest a song. A suggestion is not a legally binding contract, especially if it lasts nine minutes.';
+      if (/\b(dance|dancing)\b/.test(q)) {
+        return { answer: 'Bring your enthusiasm. Coordination is optional, and we make no promises about anyone’s uncle.', matched: true };
       }
 
       if (/propos|engag/.test(q)) {
-        return 'We admire your commitment to saving money on venue hire, but please save your big moment for another day.';
+        return { answer: 'We admire your commitment to saving money on venue hire, but please save your big moment for another day.', matched: true };
       }
 
-      if (/speech|toast|microphone|mic/.test(q)) {
-        return 'Please leave speeches to the people asked to give them. Your podcast debut can wait.';
+      if (/speech|toast|microphone|\bmic\b/.test(q)) {
+        return { answer: 'Please leave speeches to the people asked to give them. Your podcast debut can wait.', matched: true };
       }
 
       if (/code|login|lost.*invite|invitation code/.test(q)) {
-        return 'Get in touch and we’ll help with your invitation code. Please don’t borrow someone else’s—identity theft is an unusual wedding gift.';
+        return { answer: 'Get in touch and we’ll help with your invitation code. Please don’t borrow someone else’s—identity theft is an unusual wedding gift.', matched: true };
       }
 
       if (/gift|present|cash gift|money/.test(q)) {
-        return 'Your presence is what matters most. If you would like to give a gift, cash is preferred and gifts can be handed to the bar for safekeeping.';
+        return { answer: 'Your presence is what matters most. If you would like to give a gift, cash is preferred and gifts can be handed to the bar for safekeeping.', matched: true };
       }
 
-      if (/dog|mike|sully/.test(q)) {
-        return 'Mike & Sully will be cared for by their walker. Please do not approach them unless you already have an established relationship with them.';
+      if (/\b(dog|dogs|mike|sully)\b/.test(q)) {
+        return { answer: 'Mike & Sully will be cared for by their walker. Please do not approach them unless you already have an established relationship with them.', matched: true };
       }
 
       if (/venue|where.*wedding|address|dunedin/.test(q)) {
-        return 'The wedding is at Dunedin Country House, 40 Westgate, Patrington, Hull, HU12 0NB.';
+        return { answer: 'The wedding is at Dunedin Country House, 40 Westgate, Patrington, Hull, HU12 0NB.', matched: true };
       }
 
       if (/stay|hotel|accommodation|taxi|travel|parking/.test(q)) {
-        return 'Those practical details are still being finalised for the website. I won’t make anything up, so please check back once Lily & Cody have approved the travel and accommodation information.';
+        return { answer: 'Those practical details are still being finalised for the website. I won’t make anything up, so please check back once Lily & Cody have approved the travel and accommodation information.', matched: true };
       }
 
       if (/already|answered|scroll/.test(q)) {
-        return 'You can ask, but please have a little scroll first. The answers are here, wearing their best fonts.';
+        return { answer: 'You can ask, but please have a little scroll first. The answers are here, wearing their best fonts.', matched: true };
       }
 
-      return 'That one is not covered by the approved wedding information yet, so I’m not going to invent an answer. Please check with Lily & Cody.';
+      return {
+        answer: 'I don’t have an approved answer for that one yet. I’ve sent the question to the wedding team so they can review it — and if it becomes a popular one, it may earn itself a place in the FAQ.',
+        matched: false
+      };
     }
 
     function runFaqAssistant() {
-      const answer = answerWeddingQuestion(faqQuestion.value);
-      faqAnswer.textContent = answer;
+      const result = answerWeddingQuestion(faqQuestion.value);
+      faqAnswer.textContent = result.answer;
       faqAnswer.classList.remove('hidden');
+      if (!result.matched) logUnansweredFaq(faqQuestion.value);
     }
 
     faqAskButton.addEventListener('click', runFaqAssistant);
