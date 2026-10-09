@@ -633,7 +633,16 @@
         ? 'Your invitation is for the full day, with guest arrival from 12:30 PM. Please do not arrive before 12:00 PM—this wedding does not operate an “arrive early for a free upgrade” policy.'
         : 'Your invitation is for the evening celebration, with arrival from 7:00 PM. Please do not arrive before 6:30 PM—this wedding does not operate an “arrive early for a free upgrade” policy.';
 
-      if (/\b(arriv|arrival|early|ceremony|what time|when do i come|when should i come)\b/.test(q)) return { answer: arrivalText, matched: true };
+      if (/\b(ceremony|ceremony start|when does the ceremony|what time is the ceremony)\b/.test(q)) {
+        return {
+          answer: isDay
+            ? 'The ceremony begins at 1:30 PM. Full Day guests are invited to arrive from 12:30 PM, so there is plenty of time to get settled before Lily & Cody make things official.'
+            : 'Your invitation is for the evening celebration, so the ceremony takes place before your invited arrival time. Evening guests are invited from 7:00 PM.',
+          matched: true
+        };
+      }
+
+      if (/\b(arriv|arrival|early|what time|when do i come|when should i come)\b/.test(q)) return { answer: arrivalText, matched: true };
 
       if (/\b(song|songs|music|playlist|request a song|request songs)\b/.test(q)) {
         return { answer: 'You may suggest a song. A suggestion is not a legally binding contract, especially if it lasts nine minutes.', matched: true };
@@ -675,7 +684,7 @@
         return { answer: 'Please leave speeches to the people asked to give them. Your podcast debut can wait.', matched: true };
       }
 
-      if (/code|login|lost.*invite|invitation code/.test(q)) {
+      if (/\b(invitation code|invite code|login code|login|lost.*invite|lost.*code)\b/.test(q)) {
         return { answer: 'Get in touch and we’ll help with your invitation code. Please don’t borrow someone else’s—identity theft is an unusual wedding gift.', matched: true };
       }
 
@@ -687,8 +696,8 @@
         return { answer: 'Mike & Sully will be cared for by their walker. Please do not approach them unless you already have an established relationship with them.', matched: true };
       }
 
-      if (/venue|where.*wedding|address|dunedin/.test(q)) {
-        return { answer: 'The wedding is at Dunedin Country House, 40 Westgate, Patrington, Hull, HU12 0NB.', matched: true };
+      if (/\b(postcode|post code|postal code|venue|address|dunedin)\b|where.*wedding/.test(q)) {
+        return { answer: 'The wedding is at Dunedin Country House, 40 Westgate, Patrington, Hull, HU12 0NB. The postcode is HU12 0NB.', matched: true };
       }
 
       if (/stay|hotel|accommodation|taxi|travel|parking/.test(q)) {
