@@ -29,7 +29,7 @@
     .wrap{width:min(100% - 36px,940px);margin:auto}
     .eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:.72rem}
     .section{padding:82px 0}
-    .section.alt{background:#fff}
+    .section.alt{background:#fbfaf6}
     .section.sage{background:linear-gradient(rgba(247,245,239,.88),rgba(247,245,239,.88)),url("assets/qr-card-template.png") center/cover fixed}
     .section-title{text-align:center;font-weight:400;font-size:clamp(2rem,7vw,3.2rem);letter-spacing:.08em}
     .script{font-family:"Brush Script MT","Segoe Script",cursive;font-size:2rem;color:var(--olive-dark);text-align:center;margin-top:5px}
@@ -84,7 +84,8 @@
     .invite-label{display:block;font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--olive-dark);margin-bottom:8px}
     .invite-value{display:block;font-size:1rem;line-height:1.6;color:var(--ink)}
     .invite-note{margin-top:24px;font-style:italic;color:var(--olive-dark);line-height:1.7}
-    .timeline{max-width:670px;margin:42px auto 0}
+    .timeline-shell{max-width:760px;margin:38px auto 0;background:rgba(247,245,239,.78);border:1px solid rgba(90,94,75,.14);padding:28px 34px;box-shadow:0 14px 38px rgba(47,50,40,.05)}
+    .timeline{max-width:670px;margin:0 auto}
     .time-row{display:grid;grid-template-columns:100px 22px 1fr;gap:14px;align-items:start;text-align:left;padding:15px 0}
     .time{letter-spacing:.06em;text-align:right}
     .dot{width:11px;height:11px;border:2px solid var(--olive-dark);border-radius:50%;margin-top:7px;position:relative}
@@ -92,12 +93,12 @@
     .time-row:last-child .dot:after{display:none}
     .event-title{font-weight:400;font-size:1.05rem}
     .event-note{font-size:.88rem;color:#5f6257;margin-top:2px}
-    .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:38px}
-    .info-card{background:#fff;border:1px solid rgba(90,94,75,.16);padding:30px;text-align:left;box-shadow:0 8px 24px rgba(47,50,40,.04)}
-    .info-card h3{font-weight:400;letter-spacing:.08em;text-transform:uppercase;font-size:.9rem;margin-bottom:12px}
+    .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:28px}
+    .info-card{background:rgba(255,255,255,.82);border:1px solid rgba(90,94,75,.14);padding:28px 30px;text-align:left;box-shadow:0 8px 24px rgba(47,50,40,.04)}
+    .info-card h3{font-weight:400;letter-spacing:.16em;text-transform:uppercase;font-size:.76rem;margin-bottom:12px;color:var(--olive-dark)}
     .info-card p{font-size:.94rem}
     .rsvp-shell{max-width:760px;margin:30px auto 0;background:rgba(255,255,255,.9);border:1px solid rgba(90,94,75,.18);padding:34px;box-shadow:0 18px 50px rgba(47,50,40,.08);backdrop-filter:blur(2px)}
-    .guest-rsvp-list{display:grid;gap:16px;margin-bottom:24px}.guest-rsvp-card{background:#fff;border:1px solid var(--line);padding:22px;text-align:left}.guest-rsvp-head{display:flex;justify-content:space-between;gap:14px;align-items:start;margin-bottom:15px}.guest-rsvp-name{font-size:1.25rem;font-weight:400}.guest-rsvp-type{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--olive-dark);border:1px solid var(--line);padding:4px 8px}.guest-answer{display:flex;gap:18px;flex-wrap:wrap}.guest-answer label{display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:.95rem;margin:0}.guest-details{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}.guest-details.hidden{display:none!important}.guest-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.guest-detail-grid .form-row{margin-bottom:0}.rsvp-summary{background:var(--paper);border:1px solid var(--line);padding:18px;margin:20px 0;text-align:left}.rsvp-summary strong{font-weight:400}.form-row{margin-bottom:20px;text-align:left}
+    .guest-rsvp-list{display:grid;gap:16px;margin-bottom:24px}.guest-rsvp-card{background:rgba(255,255,255,.78);border:1px solid rgba(90,94,75,.14);padding:24px;text-align:left}.guest-rsvp-head{display:flex;justify-content:space-between;gap:14px;align-items:start;margin-bottom:15px}.guest-rsvp-name{font-size:1.32rem;font-weight:400;letter-spacing:.02em}.guest-rsvp-type{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--olive-dark);border:1px solid var(--line);padding:4px 8px}.guest-answer{display:flex;gap:18px;flex-wrap:wrap}.guest-answer label{display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:.95rem;margin:0}.guest-details{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}.guest-details.hidden{display:none!important}.guest-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.guest-detail-grid .form-row{margin-bottom:0}.rsvp-summary{background:rgba(241,239,230,.75);border:1px solid rgba(90,94,75,.14);padding:18px;margin:20px 0;text-align:left}.rsvp-summary strong{font-weight:400}.form-row{margin-bottom:20px;text-align:left}
     label,legend{display:block;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
     input[type="text"],textarea{width:100%;padding:13px 14px;border:1px solid #b9bca9;background:rgba(255,255,255,.78);color:var(--ink);border-radius:0}
     textarea{min-height:100px;resize:vertical}
@@ -106,9 +107,9 @@
     .radio-line label{display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:.95rem;margin:0}
     .form-note{font-size:.84rem;color:#5d6055;margin-bottom:20px;text-align:left}
     .status{margin-top:18px;padding:14px;border:1px solid var(--line);background:#fff;font-size:.9rem}
-    .faq{max-width:760px;margin:38px auto 0}
-    details{border-bottom:1px solid var(--line);padding:16px 2px}
-    summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px}
+    .faq{max-width:760px;margin:38px auto 0;background:rgba(247,245,239,.62);border:1px solid rgba(90,94,75,.12);padding:8px 28px}
+    details{border-bottom:1px solid var(--line);padding:18px 2px}
+    summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px;font-size:1rem}
     summary::-webkit-details-marker{display:none}
     summary:after{content:"+";color:var(--olive-dark)}
     details[open] summary:after{content:"−"}
@@ -144,6 +145,7 @@
       .invite-card{padding:34px 22px}
       .invite-grid,.info-grid{grid-template-columns:1fr}
       .invite-card h3{font-size:1.8rem}
+      .timeline-shell{padding:24px 18px}
       .time-row{grid-template-columns:78px 18px 1fr;gap:10px}
       .hero-inner{padding:40px 22px}
       .rsvp-shell{padding:26px 20px}
@@ -270,6 +272,7 @@
         <div class="script" id="infoScript">Everything you need for the celebration</div>
         <p class="intro" id="infoIntro">The information shown here changes automatically depending on the invitation linked to the guest's QR code.</p>
 
+        <div class="timeline-shell" id="timelineShell">
         <div class="timeline" id="dayTimeline">
           <div class="time-row"><div class="time">12:30</div><div class="dot"></div><div><div class="event-title">Guest arrival</div><div class="event-note">Please do not arrive more than 30 minutes before your invited arrival time.</div></div></div>
           <div class="time-row"><div class="time">13:30</div><div class="dot"></div><div><div class="event-title">Ceremony</div><div class="event-note">The wedding ceremony begins.</div></div></div>
@@ -281,6 +284,7 @@
           <div class="time-row"><div class="time">19:00</div><div class="dot"></div><div><div class="event-title">Evening guest arrival</div><div class="event-note">Please do not arrive more than 30 minutes before your invited arrival time.</div></div></div>
           <div class="time-row"><div class="time">Evening</div><div class="dot"></div><div><div class="event-title">Celebrate with us</div><div class="event-note">Join Lily & Cody for drinks, music, dancing and evening food.</div></div></div>
           <div class="time-row"><div class="time">Late</div><div class="dot"></div><div><div class="event-title">Carriages</div><div class="event-note">Final timings will be confirmed closer to the wedding.</div></div></div>
+        </div>
         </div>
 
         <div class="info-grid">
