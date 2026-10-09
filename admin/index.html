@@ -325,7 +325,7 @@ function renderPhotos(rows){
     <td>${esc(p.status||'Pending')}</td>
     <td><div class="row-actions">
       <button class="inline-btn" type="button" data-photo-preview="${p.row}">Preview</button>
-      ${String(p.status||'Pending').toLowerCase()==='pending'?'<button class="inline-btn" type="button" data-photo-approve="'+p.row+'">Approve</button><button class="inline-btn" type="button" data-photo-reject="'+p.row+'">Reject</button>':(String(p.status||'').toLowerCase()==='rejected' && p.trashed===false?'<button class="inline-btn" type="button" data-photo-bin="'+p.row+'">Move to rejected</button>':'')}
+      ${String(p.status||'Pending').toLowerCase()==='pending'?'<button class="inline-btn" type="button" data-photo-approve="'+p.row+'">Approve</button><button class="inline-btn" type="button" data-photo-reject="'+p.row+'">Reject</button>':''}
     </div></td>
   </tr>`).join(''):'<tr><td colspan="5" class="muted">No Guest Camera photos are waiting for review.</td></tr>';
 }
