@@ -23,8 +23,8 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.stat{background:#fff;border:1px solid var(--line);padding:20px}.stat small{display:block;text-transform:uppercase;letter-spacing:.08em;font-size:.68rem}.stat strong{font-size:1.8rem;font-weight:400;display:block;margin-top:5px}
 .card{background:#fff;border:1px solid var(--line);padding:20px;margin-top:18px}.card h3{font-weight:400;margin:0 0 14px}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.table-wrap{overflow:auto;border:1px solid var(--line);background:#fff}table{width:100%;border-collapse:collapse;min-width:720px}th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:.88rem}th{background:var(--paper);text-transform:uppercase;letter-spacing:.06em;font-size:.68rem}.pill{display:inline-block;padding:4px 8px;border:1px solid var(--line);font-size:.75rem}.muted{color:#686b61;font-size:.88rem}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.notice{background:var(--paper);border-left:4px solid var(--mid);padding:13px 15px;margin-bottom:18px}.success{background:#eef1e7;border-left:4px solid var(--olive);padding:13px 15px;margin:14px 0}.quick-actions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.guest-builder{display:grid;gap:10px}.guest-line{display:grid;grid-template-columns:1fr 160px 44px;gap:10px;align-items:end}.guest-line .field{margin:0}.icon-btn{height:43px;border:1px solid var(--line);background:#fff;color:#704d48;font-size:1.2rem}.wizard-summary{display:flex;gap:18px;flex-wrap:wrap;padding:12px 0;font-size:.88rem}.wizard-summary strong{color:var(--olive)}.tiny{font-size:.75rem}.inline-btn{border:0;background:transparent;color:var(--olive);text-decoration:underline;padding:0;font-size:.82rem}.modal-backdrop{position:fixed;inset:0;background:rgba(35,38,31,.48);display:grid;place-items:center;padding:20px;z-index:100}.modal{width:min(620px,100%);max-height:90svh;overflow:auto;background:var(--cream);border:1px solid var(--line);box-shadow:0 24px 70px rgba(0,0,0,.22);padding:24px}.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}.modal-head h3{font-weight:400;margin:0}.modal-close{border:0;background:transparent;font-size:1.5rem;color:var(--olive)}.row-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-@media(max-width:860px){.layout{grid-template-columns:1fr}.side{position:static;display:flex;overflow:auto}.side button{white-space:nowrap;width:auto}.stats{grid-template-columns:1fr 1fr}.grid2,.grid3{grid-template-columns:1fr}.guest-line{grid-template-columns:1fr 120px 44px}}
+.table-wrap{overflow:auto;border:1px solid var(--line);background:#fff}table{width:100%;border-collapse:collapse;min-width:720px}th,td{padding:11px 12px;border-bottom:1px solid var(--line);text-align:left;font-size:.88rem}th{background:var(--paper);text-transform:uppercase;letter-spacing:.06em;font-size:.68rem}.pill{display:inline-block;padding:4px 8px;border:1px solid var(--line);font-size:.75rem}.muted{color:#686b61;font-size:.88rem}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.notice{background:var(--paper);border-left:4px solid var(--mid);padding:13px 15px;margin-bottom:18px}.success{background:#eef1e7;border-left:4px solid var(--olive);padding:13px 15px;margin:14px 0}.quick-actions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.guest-builder{display:grid;gap:10px}.guest-line{display:grid;grid-template-columns:1fr 160px 44px;gap:10px;align-items:end}.guest-line .field{margin:0}.icon-btn{height:43px;border:1px solid var(--line);background:#fff;color:#704d48;font-size:1.2rem}.wizard-summary{display:flex;gap:18px;flex-wrap:wrap;padding:12px 0;font-size:.88rem}.wizard-summary strong{color:var(--olive)}.tiny{font-size:.75rem}.inline-btn{border:0;background:transparent;color:var(--olive);text-decoration:underline;padding:0;font-size:.82rem}.modal-backdrop{position:fixed;inset:0;background:rgba(35,38,31,.48);display:grid;place-items:center;padding:20px;z-index:100}.modal{width:min(620px,100%);max-height:90svh;overflow:auto;background:var(--cream);border:1px solid var(--line);box-shadow:0 24px 70px rgba(0,0,0,.22);padding:24px}.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}.modal-head h3{font-weight:400;margin:0}.modal-close{border:0;background:transparent;font-size:1.5rem;color:var(--olive)}.row-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.action-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.action-box{border:1px solid var(--line);background:var(--paper);padding:14px}.action-box strong{display:block;font-size:1.55rem;font-weight:400;color:var(--olive)}.action-box span{font-size:.78rem}.task-status{white-space:nowrap}
+@media(max-width:860px){.layout{grid-template-columns:1fr}.side{position:static;display:flex;overflow:auto}.side button{white-space:nowrap;width:auto}.stats,.action-grid{grid-template-columns:1fr 1fr}.grid2,.grid3{grid-template-columns:1fr}.guest-line{grid-template-columns:1fr 120px 44px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
 </head>
@@ -71,6 +71,16 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
           <div class="stat"><small>Children</small><strong id="sChildren">0</strong></div>
           <div class="stat"><small>RSVPs received</small><strong id="sRsvp">0</strong></div>
           <div class="stat"><small>Awaiting reply</small><strong id="sAwaiting">0</strong></div>\n          <div class="stat"><small>Unanswered FAQ asks</small><strong id="sFaq">0</strong></div>
+        </div>
+        <div class="card">
+          <div class="toprow"><div><h3 style="margin-bottom:4px">Action centre</h3><p class="muted" style="margin:0">Anything currently waiting for the wedding team.</p></div><button class="btn secondary" type="button" id="openTasksFromDashboard">Open tasks</button></div>
+          <div class="action-grid" style="margin-top:14px">
+            <div class="action-box"><strong id="aMessages">0</strong><span>Guest messages to review</span></div>
+            <div class="action-box"><strong id="aPhotos">0</strong><span>Photos to review</span></div>
+            <div class="action-box"><strong id="aOverdue">0</strong><span>Overdue tasks</span></div>
+            <div class="action-box"><strong id="aOpenTasks">0</strong><span>Open wedding tasks</span></div>
+          </div>
+          <div id="actionSummary" class="muted" style="margin-top:14px"></div>
         </div>
       </section>
 
@@ -169,7 +179,27 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
           <div class="table-wrap"><table><thead><tr><th>Question</th><th>Answer</th><th>Times asked</th><th>Status</th></tr></thead><tbody id="faqLibraryRows"></tbody></table></div>
         </div>
       </section>
-      <section class="panel" id="tasks"><h2>Wedding Tasks</h2><div class="card"><div id="taskContent"></div></div></section>
+      <section class="panel" id="tasks">
+        <h2>Wedding Tasks</h2>
+        <div class="notice">This is the live wedding action list. Add jobs here, assign them, set priority/due date and update progress without opening the spreadsheet.</div>
+        <div class="card">
+          <h3>Add task</h3>
+          <form id="taskForm">
+            <div class="grid3">
+              <div class="field"><label>Area</label><input name="area" required placeholder="e.g. Venue"></div>
+              <div class="field"><label>Task</label><input name="task" required></div>
+              <div class="field"><label>Owner</label><input name="owner" placeholder="Wedding team"></div>
+              <div class="field"><label>Priority</label><select name="priority"><option>High</option><option selected>Medium</option><option>Low</option></select></div>
+              <div class="field"><label>Due date</label><input type="date" name="dueDate"></div>
+              <div class="field"><label>Status</label><select name="status"><option>Not started</option><option>In progress</option><option>Waiting</option><option>Complete</option></select></div>
+            </div>
+            <div class="field"><label>Notes</label><textarea name="notes"></textarea></div>
+            <button class="btn" type="submit">Add task</button>
+            <div id="taskStatus"></div>
+          </form>
+        </div>
+        <div class="card"><h3>Current task list</h3><div class="table-wrap"><table><thead><tr><th>Area</th><th>Task</th><th>Owner</th><th>Priority</th><th>Due</th><th>Status</th><th>Action</th></tr></thead><tbody id="taskRows"></tbody></table></div></div>
+      </section>
     </main>
   </div>
 </div>
@@ -201,6 +231,20 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
       <div class="notice tiny">Moving a guest to a different household will automatically update both household totals.</div>
       <div class="actions"><button class="btn" type="submit">Save changes</button><button class="btn secondary" type="button" data-modal-cancel>Cancel</button></div>
       <div class="error" id="editGuestError"></div>
+    </form>
+    <form id="editTaskForm" class="hidden">
+      <input type="hidden" name="row">
+      <div class="grid2">
+        <div class="field"><label>Area</label><input name="area" required></div>
+        <div class="field"><label>Task</label><input name="task" required></div>
+        <div class="field"><label>Owner</label><input name="owner"></div>
+        <div class="field"><label>Priority</label><select name="priority"><option>High</option><option>Medium</option><option>Low</option></select></div>
+        <div class="field"><label>Due date</label><input type="date" name="dueDate"></div>
+        <div class="field"><label>Status</label><select name="status"><option>Not started</option><option>In progress</option><option>Waiting</option><option>Complete</option></select></div>
+      </div>
+      <div class="field"><label>Notes</label><textarea name="notes"></textarea></div>
+      <div class="actions"><button class="btn" type="submit">Save task</button><button class="btn secondary" type="button" data-modal-cancel>Cancel</button></div>
+      <div class="error" id="editTaskError"></div>
     </form>
   </div>
 </div>
@@ -241,7 +285,7 @@ async function loadAll(){
   const s=r.stats||{}; ['Households','Day','Evening','Guests','Adults','Children','Rsvp','Awaiting','Faq'].forEach(k=>document.getElementById('s'+k).textContent=s[k.toLowerCase()]??0);
   renderHouseholds(r.households||[]);renderGuests(r.guests||[]);
   const sync=document.getElementById('lastSynced');if(sync)sync.textContent='Last refreshed: '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  renderSimple('seatContent',r.seating||[]);renderSimple('photoContent',r.photos||[]);renderMessages(r.messages||[]);renderTickerMaster(r.tickerEnabled!==false);renderFaqs(r.faqQuestions||[],r.faqLibrary||[]);renderSimple('taskContent',r.tasks||[]);
+  renderSimple('seatContent',r.seating||[]);renderSimple('photoContent',r.photos||[]);renderMessages(r.messages||[]);renderTickerMaster(r.tickerEnabled!==false);renderFaqs(r.faqQuestions||[],r.faqLibrary||[]);renderTasks(r.tasks||[]);renderActionCentre(r);
 }
 function renderHouseholds(rows){
   const body=document.getElementById('householdRows');body.innerHTML='';
@@ -301,6 +345,34 @@ function renderFaqs(questions,library){
   }
 }
 
+function parseTaskDate(v){
+  if(!v)return null;
+  const d=new Date(v);return isNaN(d.getTime())?null:d;
+}
+function renderActionCentre(r){
+  const messages=(r.messages||[]).filter(m=>String(m.type||'Guest').toLowerCase()==='guest' && String(m.approvedForTicker||'').toLowerCase()!=='yes' && String(m.status||'').toLowerCase()!=='rejected').length;
+  const photos=(r.photos||[]).filter(p=>!p.status || ['pending','waiting','to review'].includes(String(p.status).toLowerCase())).length;
+  const tasks=r.tasks||[],now=new Date();now.setHours(0,0,0,0);
+  const open=tasks.filter(t=>String(t.status||'').toLowerCase()!=='complete');
+  const overdue=open.filter(t=>{const d=parseTaskDate(t.dueDate);return d&&d<now;});
+  document.getElementById('aMessages').textContent=messages;
+  document.getElementById('aPhotos').textContent=photos;
+  document.getElementById('aOverdue').textContent=overdue.length;
+  document.getElementById('aOpenTasks').textContent=open.length;
+  const parts=[];
+  if(messages)parts.push(messages+' guest message'+(messages===1?'':'s')+' waiting for review');
+  if(photos)parts.push(photos+' photo'+(photos===1?'':'s')+' waiting for review');
+  if(overdue.length)parts.push(overdue.length+' overdue task'+(overdue.length===1?'':'s'));
+  document.getElementById('actionSummary').textContent=parts.length?'Needs attention: '+parts.join(' · '):'Nothing urgent is waiting for review right now.';
+}
+function renderTasks(rows){
+  const body=document.getElementById('taskRows');if(!body)return;
+  body.innerHTML=rows.length?rows.map(t=>`<tr>
+    <td>${esc(t.area||'')}</td><td>${esc(t.task||'')}</td><td>${esc(t.owner||'')}</td><td>${esc(t.priority||'')}</td>
+    <td>${esc(t.dueDate||'')}</td><td class="task-status">${esc(t.status||'')}</td>
+    <td><div class="row-actions"><button class="inline-btn" type="button" data-task-edit="${t.row}">Edit</button>${String(t.status||'').toLowerCase()!=='complete'?'<button class="inline-btn" type="button" data-task-complete="'+t.row+'">Complete</button>':''}</div></td>
+  </tr>`).join(''):'<tr><td colspan="7" class="muted">No wedding tasks yet.</td></tr>';
+}
 function renderSimple(id,rows){const el=document.getElementById(id);if(!rows.length){el.innerHTML='<p class="muted">Nothing here yet.</p>';return}el.innerHTML='<div class="table-wrap"><table><tbody>'+rows.map(r=>'<tr>'+Object.values(r).map(v=>'<td>'+esc(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>'}
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 
@@ -513,12 +585,14 @@ async function downloadSingleQrCard(row){
 }
 
 document.getElementById('downloadAllQrCards').onclick=downloadAllQrCards;
+document.getElementById('openTasksFromDashboard').onclick=()=>openPanel('tasks');
 document.getElementById('downloadAllQrCards2').onclick=downloadAllQrCards;
 
 function closeEditModal(){
   document.getElementById('editModal').classList.add('hidden');
   document.getElementById('editHouseholdForm').classList.add('hidden');
   document.getElementById('editGuestForm').classList.add('hidden');
+  document.getElementById('editTaskForm').classList.add('hidden');
 }
 function populateEditHousehold(row){
   const h=(state.data?.households||[]).find(x=>Number(x.row)===Number(row));if(!h)return;
@@ -529,6 +603,16 @@ function populateEditHousehold(row){
   document.getElementById('editHouseholdError').textContent='';
   document.getElementById('editGuestForm').classList.add('hidden');form.classList.remove('hidden');
   document.getElementById('editModal').classList.remove('hidden');applyNameCase(form);
+}
+function populateEditTask(row){
+  const t=(state.data?.tasks||[]).find(x=>Number(x.row)===Number(row));if(!t)return;
+  const form=document.getElementById('editTaskForm');
+  form.row.value=t.row;form.area.value=t.area||'';form.task.value=t.task||'';form.owner.value=t.owner||'';form.priority.value=t.priority||'Medium';
+  form.dueDate.value=t.dueDateInput||'';form.status.value=t.status||'Not started';form.notes.value=t.notes||'';
+  document.getElementById('editModalTitle').textContent='Edit task';
+  document.getElementById('editTaskError').textContent='';
+  document.getElementById('editHouseholdForm').classList.add('hidden');document.getElementById('editGuestForm').classList.add('hidden');form.classList.remove('hidden');
+  document.getElementById('editModal').classList.remove('hidden');
 }
 function populateEditGuest(row){
   const g=(state.data?.guests||[]).find(x=>Number(x.row)===Number(row));if(!g)return;
@@ -550,6 +634,13 @@ document.getElementById('editHouseholdForm').addEventListener('submit',async e=>
   try{await api('adminUpdateHousehold',{household:fd});await loadAll();closeEditModal();}
   catch(x){err.textContent=x.message||'Could not update household.'}
   finally{btn.disabled=false;btn.textContent='Save changes';}
+});
+document.getElementById('editTaskForm').addEventListener('submit',async e=>{
+  e.preventDefault();const fd=Object.fromEntries(new FormData(e.target)),err=document.getElementById('editTaskError');err.textContent='';
+  const btn=e.submitter;btn.disabled=true;btn.textContent='Saving…';
+  try{await api('adminUpdateTask',{task:fd});await loadAll();closeEditModal();}
+  catch(x){err.textContent=x.message||'Could not update task.'}
+  finally{btn.disabled=false;btn.textContent='Save task';}
 });
 document.getElementById('editGuestForm').addEventListener('submit',async e=>{
   e.preventDefault();const fd=Object.fromEntries(new FormData(e.target)),err=document.getElementById('editGuestError');err.textContent='';
@@ -593,6 +684,8 @@ document.addEventListener('click',e=>{
   const qr=e.target.closest('[data-qr-household-row]');if(qr){downloadSingleQrCard(qr.dataset.qrHouseholdRow);return;}
   const eh=e.target.closest('[data-edit-household]');if(eh){populateEditHousehold(eh.dataset.editHousehold);return;}
   const eg=e.target.closest('[data-edit-guest]');if(eg){populateEditGuest(eg.dataset.editGuest);return;}
+  const te=e.target.closest('[data-task-edit]');if(te){populateEditTask(te.dataset.taskEdit);return;}
+  const tc=e.target.closest('[data-task-complete]');if(tc){api('adminUpdateTask',{task:{row:Number(tc.dataset.taskComplete),status:'Complete'}}).then(loadAll).catch(x=>alert(x.message));return;}
   const approve=e.target.closest('[data-message-approve]');if(approve){api('adminReviewTickerMessage',{row:Number(approve.dataset.messageApprove),decision:'approve'}).then(loadAll).catch(x=>alert(x.message));return;}
   const reject=e.target.closest('[data-message-reject]');if(reject){api('adminReviewTickerMessage',{row:Number(reject.dataset.messageReject),decision:'reject'}).then(loadAll).catch(x=>alert(x.message));return;}
   const toggle=e.target.closest('[data-message-toggle]');if(toggle){api('adminToggleTickerMessage',{row:Number(toggle.dataset.messageToggle),active:toggle.dataset.active!=='yes'}).then(loadAll).catch(x=>alert(x.message));return;}
@@ -638,6 +731,13 @@ document.getElementById('tickerMasterToggle').addEventListener('click',async e=>
   try{await api('adminSetTickerBar',{enabled:!enabled});await loadAll();}
   catch(x){alert(x.message||'Could not change the message bar.')}
   finally{btn.disabled=false;}
+});
+document.getElementById('taskForm').addEventListener('submit',async e=>{
+  e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));const status=document.getElementById('taskStatus');status.textContent='';
+  const btn=e.submitter;btn.disabled=true;btn.textContent='Adding…';
+  try{await api('adminAddTask',{task:fd});e.target.reset();status.className='success';status.textContent='Task added.';await loadAll();}
+  catch(x){status.className='error';status.textContent=x.message||'Could not add task.'}
+  finally{btn.disabled=false;btn.textContent='Add task';}
 });
 document.getElementById('officialMessageForm').addEventListener('submit',async e=>{
   e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));const status=document.getElementById('officialMessageStatus');status.textContent='';
