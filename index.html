@@ -78,7 +78,7 @@
     .ticker-track{display:flex;width:max-content;animation:tickerScroll 28s linear infinite;white-space:nowrap;padding:9px 0}
     .ticker:hover .ticker-track{animation-play-state:paused}
     .ticker-item{display:inline-block;padding:0 38px;font-size:.78rem;letter-spacing:.05em}
-    .ticker-item.guest-message{font-style:italic}
+    .ticker-item.guest-message{font-style:italic;font-family:Georgia,"Times New Roman",serif;opacity:.96}
     .ticker-item.official-update{font-style:normal;font-weight:500}
     @keyframes tickerScroll{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
     .camera-cta{max-width:760px;margin:28px auto 0;background:rgba(247,245,239,.82);border:1px solid rgba(90,94,75,.16);padding:30px;text-align:center}
@@ -510,7 +510,13 @@
     const tickerTrack = document.getElementById('tickerTrack');
     const cameraButton = document.getElementById('cameraButton');
     const cameraStatus = document.getElementById('cameraStatus');
-    const tickerTestMode = new URLSearchParams(location.search).get('tickerTest') === '1';
+    const tickerParams = new URLSearchParams(location.search);
+    const tickerQueryTest = tickerParams.get('tickerTest') === '1' || tickerParams.get('tickertest') === '1';
+    if (tickerQueryTest) {
+      try { sessionStorage.setItem('lc_ticker_test', '1'); } catch (e) {}
+    }
+    let tickerTestMode = tickerQueryTest;
+    try { tickerTestMode = tickerTestMode || sessionStorage.getItem('lc_ticker_test') === '1'; } catch (e) {}
 
     let activeInvite = null;
 
@@ -746,10 +752,10 @@
       renderTicker(invite.messages || invite.approvedMessages || []);
       if (tickerTestMode) {
         renderTicker([
-          {type:'official', text:'Please remember to RSVP by January 2027'},
-          {type:'guest', text:'Wishing you both the happiest day — Sarah & Tom'},
-          {type:'official', text:'Taxi home? Pre-book it — future you will be grateful'},
-          {type:'guest', text:'Cannot wait to celebrate with you both! — Jenny'}
+          {type:'official', text:'IMPORTANT UPDATE · Please remember to RSVP by January 2027'},
+          {type:'guest', text:'“Wishing you both the happiest day ❤️” — Sarah & Tom'},
+          {type:'official', text:'IMPORTANT UPDATE · Taxi home? Pre-book it — future you will be grateful'},
+          {type:'guest', text:'“Cannot wait to celebrate with you both!” — Jenny'}
         ]);
       }
 
