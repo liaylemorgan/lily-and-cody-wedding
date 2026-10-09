@@ -73,6 +73,16 @@
     .countdown-number{display:block;font-size:1.65rem;line-height:1;color:var(--olive-dark);font-weight:400}
     .countdown-label{display:block;margin-top:7px;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:#5f6257}
     .phase-banner{max-width:720px;margin:20px auto 0;text-align:center;font-style:italic;color:var(--olive-dark)}
+    .phase-focus{max-width:620px;margin:18px auto 0;padding:16px 18px;border:1px solid rgba(90,94,75,.18);background:rgba(247,245,239,.66);text-align:center}
+    .phase-focus strong{display:block;font-weight:400;letter-spacing:.12em;text-transform:uppercase;font-size:.72rem;color:var(--olive-dark);margin-bottom:5px}
+    .phase-focus p{font-size:.9rem;color:#4f5349}
+    .phase-priority{box-shadow:inset 0 0 0 2px rgba(90,94,75,.18)}
+    body[data-wedding-phase="rsvp"] #rsvp .rsvp-shell{box-shadow:0 20px 55px rgba(90,94,75,.16);border-color:var(--olive)}
+    body[data-wedding-phase="planning"] #information .info-grid{outline:1px solid rgba(90,94,75,.18);outline-offset:14px}
+    body[data-wedding-phase="final-countdown"] #information{background:linear-gradient(rgba(247,245,239,.9),rgba(247,245,239,.9)),url("assets/qr-card-template.png") center/cover}
+    body[data-wedding-phase="final-countdown"] #information .info-card{border-color:var(--olive-dark)}
+    body[data-wedding-phase="wedding-day"] #camera .camera-cta{border-color:var(--olive-dark);box-shadow:0 20px 55px rgba(90,94,75,.16);transform:scale(1.01)}
+    body[data-wedding-phase="after"] #camera .camera-cta{border-color:var(--olive);background:rgba(247,245,239,.94)}
     .ticker{position:fixed;left:0;right:0;top:62px;z-index:19;background:rgba(90,94,75,.95);color:#fff;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.15)}
     .ticker.hidden{display:none!important}
     .ticker-track{display:flex;width:max-content;animation:tickerScroll 28s linear infinite;white-space:nowrap;padding:9px 0}
@@ -250,9 +260,13 @@
         <div class="countdown-item"><span class="countdown-number" id="countSeconds">—</span><span class="countdown-label">Seconds</span></div>
       </div>
       <div class="phase-banner" id="phaseBanner"></div>
-      <div class="hero-actions">
-        <a class="btn" href="#invitation">Your Invitation</a>
-        <a class="btn secondary" href="#information">Wedding Information</a>
+      <div class="phase-focus" id="phaseFocus">
+        <strong id="phaseFocusTitle">Right now</strong>
+        <p id="phaseFocusText">Please check your invitation details and RSVP.</p>
+      </div>
+      <div class="hero-actions" id="heroActions">
+        <a class="btn" id="heroPrimary" href="#invitation">Your Invitation</a>
+        <a class="btn secondary" id="heroSecondary" href="#information">Wedding Information</a>
       </div>
     </div>
   </header>
@@ -410,7 +424,7 @@
       </div>
     </section>
 
-    <section class="section alt" id="camera">
+    <section class="section alt hidden" id="camera">
       <div class="wrap">
         <h2 class="section-title">Guest Camera</h2>
         <div class="script">Share a moment from the day</div>
@@ -577,10 +591,39 @@
         'wedding-day':'Today is the day! The guest camera is ready for your photos.',
         'after':'Thank you for celebrating with Lily & Cody. Keep an eye out for approved photos and memories from the day.'
       };
+      const focus = {
+        'rsvp':{title:'Your next step',body:'Please check every named guest on your invitation and send your RSVP.',primary:['RSVP','#rsvp'],secondary:['Wedding Information','#information']},
+        'planning':{title:'Plan your day',body:'Travel, accommodation, dress code and other practical details are now the priority.',primary:['Wedding Information','#information'],secondary:['Review RSVP','#rsvp']},
+        'final-countdown':{title:'Final checks',body:'Confirm your arrival time, route, parking and taxi home before the big day.',primary:['Travel & details','#information'],secondary:['Your Invitation','#invitation']},
+        'wedding-day':{title:'Today is the day',body:'Enjoy the celebration — and add your favourite moments to the Guest Camera.',primary:['Open Guest Camera','#camera'],secondary:['Wedding Information','#information']},
+        'after':{title:'Thank you',body:'Keep sharing your favourite moments while Lily & Cody review photos for the gallery.',primary:['Add your photos','#camera'],secondary:['Wedding Information','#information']}
+      };
+      const f = focus[phase] || focus.rsvp;
       phaseBanner.textContent = text[phase] || '';
       document.body.dataset.weddingPhase = phase;
-      if (phase === 'wedding-day' || phase === 'after') {
-        document.getElementById('camera')?.classList.remove('hidden');
+      document.getElementById('phaseFocusTitle').textContent=f.title;
+      document.getElementById('phaseFocusText').textContent=f.body;
+      const primary=document.getElementById('heroPrimary'),secondary=document.getElementById('heroSecondary');
+      primary.textContent=f.primary[0];primary.href=f.primary[1];
+      secondary.textContent=f.secondary[0];secondary.href=f.secondary[1];
+
+      const camera=document.getElementById('camera');
+      camera?.classList.toggle('hidden', !(phase === 'wedding-day' || phase === 'after'));
+
+      document.querySelectorAll('.phase-priority').forEach(el=>el.classList.remove('phase-priority'));
+      const priorityId = phase === 'rsvp' ? 'rsvp' : (phase === 'wedding-day' || phase === 'after' ? 'camera' : 'information');
+      document.getElementById(priorityId)?.classList.add('phase-priority');
+
+      const main=document.querySelector('main');
+      const invitation=document.getElementById('invitation');
+      const information=document.getElementById('information');
+      const rsvp=document.getElementById('rsvp');
+      if(main && invitation && information && rsvp && camera){
+        if(phase==='wedding-day' || phase==='after'){
+          main.insertBefore(camera, invitation);
+        } else if(camera.nextElementSibling?.id !== 'faq'){
+          main.insertBefore(camera, document.getElementById('faq'));
+        }
       }
     }
 
