@@ -50,12 +50,13 @@ const weddingDayEnd=new Date('2027-08-22T23:59:59+01:00');
 const btn=document.getElementById('uploadButton');
 const msg=document.getElementById('cameraMessage');
 const now=new Date();
-if(now>=weddingDayStart&&now<=weddingDayEnd){
-  msg.textContent='The guest camera is ready — tap below to upload your photos.';
+const cameraTestMode=new URLSearchParams(location.search).get('test')==='1';
+if((now>=weddingDayStart&&now<=weddingDayEnd)||cameraTestMode){
+  msg.textContent=cameraTestMode?'Guest camera test mode is active. Photos will upload to the private wedding folder.':'The guest camera is ready — tap below to upload your photos.';
   btn.textContent='Upload photos';
   btn.classList.remove('disabled');
   btn.setAttribute('aria-disabled','false');
-  btn.href='#upload';
+  btn.href='https://script.google.com/macros/s/AKfycbzcxOveQr3fLbr4pB8tKGg5M-PqjvW8IY-1Z7HT6O1P8AWNKzblxvb-QVXN0-YMkLGu/exec';
 }
 </script>
 </body>
