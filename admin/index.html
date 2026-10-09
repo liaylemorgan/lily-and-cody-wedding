@@ -141,7 +141,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
       <section class="panel" id="seating"><h2>Seating Planner</h2><div class="card"><p class="muted">The seating planner is ready for confirmed guests. Table editing will populate here from the database.</p><div id="seatContent"></div></div></section>
       <section class="panel" id="photos">
         <h2>Photo Review</h2>
-        <div class="notice">Guest Camera uploads stay private until reviewed. Approving a photo keeps it for the future gallery; rejecting it moves the file out of Wedding Pictures into a private Rejected Photos folder.</div>
+        <div class="notice">Guest Camera uploads stay private until reviewed. Approving a photo marks it for the future gallery; rejecting it excludes it from the gallery. Rejected originals remain private in Wedding Pictures.</div>
         <div class="card">
           <div class="toprow"><div><h3 style="margin-bottom:4px">Pending uploads</h3><p class="muted" style="margin:0">Use Preview before approving or rejecting.</p></div><button class="btn secondary" type="button" id="refreshPhotos">Refresh photos</button></div>
           <div class="table-wrap" style="margin-top:14px"><table><thead><tr><th>Uploaded</th><th>Guest</th><th>File</th><th>Status</th><th>Actions</th></tr></thead><tbody id="photoRows"></tbody></table></div>
