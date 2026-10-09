@@ -30,7 +30,7 @@
     .eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:.72rem}
     .section{padding:82px 0}
     .section.alt{background:#fff}
-    .section.sage{background:var(--sage-light)}
+    .section.sage{background:linear-gradient(rgba(247,245,239,.88),rgba(247,245,239,.88)),url("assets/qr-card-template.png") center/cover fixed}
     .section-title{text-align:center;font-weight:400;font-size:clamp(2rem,7vw,3.2rem);letter-spacing:.08em}
     .script{font-family:"Brush Script MT","Segoe Script",cursive;font-size:2rem;color:var(--olive-dark);text-align:center;margin-top:5px}
     .intro{max-width:660px;margin:20px auto 0;text-align:center}
@@ -38,28 +38,28 @@
     .btn:hover{background:transparent;color:var(--olive-dark)}
     .btn.secondary{background:transparent;color:var(--olive-dark)}
     .btn.secondary:hover{background:var(--olive-dark);color:#fff}
-    .hero{min-height:100svh;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;padding:78px 20px;background:radial-gradient(circle at 50% 12%,rgba(255,255,255,.72),transparent 43%),linear-gradient(180deg,#d7d8ca 0%,var(--sage-light) 100%)}
-    .hero-inner{position:relative;z-index:2;width:min(100%,700px)}
+    .hero{min-height:100svh;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;padding:78px 20px;background:linear-gradient(rgba(247,245,239,.64),rgba(247,245,239,.74)),url("assets/qr-card-template.png") center/cover no-repeat}
+    .hero-inner{position:relative;z-index:2;width:min(100%,720px);padding:52px 34px;background:rgba(247,245,239,.74);border:1px solid rgba(90,94,75,.18);box-shadow:0 22px 70px rgba(47,50,40,.09);backdrop-filter:blur(2px)}
     .hero .eyebrow{margin-bottom:24px}
     .names{line-height:.9}
-    .name{display:block;font-weight:400;font-size:clamp(3.8rem,15vw,7.5rem);letter-spacing:.18em;padding-left:.18em}
+    .name{display:block;font-weight:400;font-size:clamp(3.8rem,15vw,7.2rem);letter-spacing:.14em;padding-left:.14em}
     .and{display:block;font-family:"Brush Script MT","Segoe Script",cursive;font-weight:400;font-size:clamp(2rem,8vw,4rem);margin:18px 0;transform:rotate(-5deg)}
     .date{margin-top:32px;text-transform:uppercase;letter-spacing:.16em;font-size:.9rem}
     .venue{margin:18px auto 34px;text-transform:uppercase;letter-spacing:.13em;font-size:.78rem;line-height:1.9}
     .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
-    .branch{position:absolute;width:min(58vw,440px);opacity:.7;pointer-events:none}
+    .branch{display:none}
     .branch.top{top:-40px;left:-55px;transform:rotate(-10deg)}
     .branch.bottom{right:-60px;bottom:-50px;transform:rotate(172deg)}
     .nav{position:sticky;top:0;z-index:20;background:rgba(247,245,239,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
     .nav-inner{width:min(100% - 28px,980px);margin:auto;display:flex;justify-content:space-between;align-items:center;min-height:62px;gap:16px}
     .brand{letter-spacing:.16em;font-size:.86rem}
     .nav-links{display:flex;gap:20px;font-size:.72rem;letter-spacing:.09em;text-transform:uppercase}
-    .invite-card{max-width:690px;margin:0 auto;background:rgba(255,255,255,.52);border:1px solid var(--line);box-shadow:var(--shadow);padding:42px 30px;text-align:center}
+    .invite-card{max-width:690px;margin:0 auto;background:rgba(255,255,255,.86);border:1px solid rgba(90,94,75,.18);box-shadow:0 18px 50px rgba(47,50,40,.08);padding:48px 34px;text-align:center;backdrop-filter:blur(2px)}
     .invite-badge{display:inline-block;border:1px solid var(--olive-dark);padding:7px 13px;margin-bottom:20px;text-transform:uppercase;letter-spacing:.14em;font-size:.68rem;color:var(--olive-dark)}
-    .invite-card h3{font-size:1.8rem;font-weight:400;letter-spacing:.06em}
+    .invite-card h3{font-size:2rem;font-weight:400;letter-spacing:.08em}
     .invite-card .type{font-family:"Brush Script MT","Segoe Script",cursive;color:var(--olive-dark);font-size:2.1rem;margin:6px 0 22px}
     .key-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
-    .key-card{background:var(--paper);border:1px solid var(--line);padding:28px 20px;text-align:center}
+    .key-card{background:rgba(247,245,239,.92);border:1px solid rgba(90,94,75,.16);padding:26px 20px;text-align:center}
     .key-card h4{font-weight:400;text-transform:uppercase;letter-spacing:.11em;font-size:.8rem;margin-bottom:10px}
     .key-card strong{display:block;font-size:1.15rem;font-weight:400}
     .timeline{max-width:670px;margin:42px auto 0}
@@ -71,10 +71,10 @@
     .event-title{font-weight:400;font-size:1.05rem}
     .event-note{font-size:.88rem;color:#5f6257;margin-top:2px}
     .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:38px}
-    .info-card{background:#fff;border:1px solid var(--line);padding:30px;text-align:left}
+    .info-card{background:#fff;border:1px solid rgba(90,94,75,.16);padding:30px;text-align:left;box-shadow:0 8px 24px rgba(47,50,40,.04)}
     .info-card h3{font-weight:400;letter-spacing:.08em;text-transform:uppercase;font-size:.9rem;margin-bottom:12px}
     .info-card p{font-size:.94rem}
-    .rsvp-shell{max-width:760px;margin:30px auto 0;background:rgba(255,255,255,.55);border:1px solid var(--line);padding:34px;box-shadow:var(--shadow)}
+    .rsvp-shell{max-width:760px;margin:30px auto 0;background:rgba(255,255,255,.9);border:1px solid rgba(90,94,75,.18);padding:34px;box-shadow:0 18px 50px rgba(47,50,40,.08);backdrop-filter:blur(2px)}
     .guest-rsvp-list{display:grid;gap:16px;margin-bottom:24px}.guest-rsvp-card{background:#fff;border:1px solid var(--line);padding:22px;text-align:left}.guest-rsvp-head{display:flex;justify-content:space-between;gap:14px;align-items:start;margin-bottom:15px}.guest-rsvp-name{font-size:1.25rem;font-weight:400}.guest-rsvp-type{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--olive-dark);border:1px solid var(--line);padding:4px 8px}.guest-answer{display:flex;gap:18px;flex-wrap:wrap}.guest-answer label{display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:.95rem;margin:0}.guest-details{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}.guest-details.hidden{display:none!important}.guest-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.guest-detail-grid .form-row{margin-bottom:0}.rsvp-summary{background:var(--paper);border:1px solid var(--line);padding:18px;margin:20px 0;text-align:left}.rsvp-summary strong{font-weight:400}.form-row{margin-bottom:20px;text-align:left}
     label,legend{display:block;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
     input[type="text"],textarea{width:100%;padding:13px 14px;border:1px solid #b9bca9;background:rgba(255,255,255,.78);color:var(--ink);border-radius:0}
@@ -99,10 +99,10 @@
     body.locked{overflow:hidden}
     .site-shell{display:none}
     body.unlocked .site-shell{display:block}
-    .gate{min-height:100svh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:28px;background:radial-gradient(circle at 50% 12%,rgba(255,255,255,.76),transparent 43%),linear-gradient(180deg,#d7d8ca 0%,var(--sage-light) 100%)}
+    .gate{min-height:100svh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:28px;background:linear-gradient(rgba(247,245,239,.62),rgba(247,245,239,.72)),url("assets/qr-card-template.png") center/cover no-repeat}
     body.unlocked .gate{display:none}
-    .gate-card{position:relative;z-index:2;width:min(100%,500px);background:rgba(247,245,239,.92);border:1px solid var(--line);box-shadow:var(--shadow);padding:46px 32px;text-align:center}
-    .gate-card h1{font-weight:400;font-size:clamp(2.5rem,10vw,4.4rem);letter-spacing:.13em;padding-left:.13em;line-height:1}
+    .gate-card{position:relative;z-index:2;width:min(100%,500px);background:rgba(247,245,239,.84);border:1px solid rgba(90,94,75,.18);box-shadow:0 22px 70px rgba(47,50,40,.12);padding:50px 34px;text-align:center;backdrop-filter:blur(3px)}
+    .gate-card h1{font-weight:400;font-size:clamp(2.5rem,10vw,4.2rem);letter-spacing:.11em;padding-left:.11em;line-height:1}
     .gate-card .gate-and{font-family:"Brush Script MT","Segoe Script",cursive;font-size:2rem;color:var(--olive-dark);margin:14px 0}
     .gate-copy{margin:24px auto 26px;max-width:360px;font-size:.95rem}
     .code-input{width:100%;padding:15px 16px;border:1px solid #aeb19d;background:#fff;text-align:center;text-transform:uppercase;letter-spacing:.18em;font-size:1.05rem;margin-bottom:12px}
@@ -121,6 +121,7 @@
       .section{padding:64px 0}
       .key-grid,.info-grid{grid-template-columns:1fr}
       .time-row{grid-template-columns:78px 18px 1fr;gap:10px}
+      .hero-inner{padding:40px 22px}
       .rsvp-shell{padding:26px 20px}
       .preview-switch{left:10px;right:10px;text-align:center}
     }
