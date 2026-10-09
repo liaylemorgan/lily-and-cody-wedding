@@ -418,7 +418,8 @@
     const rsvpResponsePrompt = document.getElementById('rsvpResponsePrompt');
     const faqQuestion = document.getElementById('faqQuestion');
     const faqAskButton = document.getElementById('faqAskButton');
-    const faqAnswer = document.getElementById('faqAnswer');\n    const dynamicFaqs = document.getElementById('dynamicFaqs');
+    const faqAnswer = document.getElementById('faqAnswer');
+    const dynamicFaqs = document.getElementById('dynamicFaqs');
 
     let activeInvite = null;
 
@@ -574,7 +575,8 @@
         ? 'Your personalised invitation says 12:30 PM. Please do not arrive before 12:00 PM—this wedding does not operate an “arrive early for a free upgrade” policy.'
         : 'Your personalised invitation says 7:00 PM. Please do not arrive before 6:30 PM—this wedding does not operate an “arrive early for a free upgrade” policy.';
 
-      renderGuestRsvp(invite);\n      renderDynamicFaqs(invite);
+      renderGuestRsvp(invite);
+      renderDynamicFaqs(invite);
 
       document.body.classList.remove('locked');
       document.body.classList.add('unlocked');
