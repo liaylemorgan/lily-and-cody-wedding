@@ -134,6 +134,9 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
         <h2>Messages</h2>
         <div class="notice">Use this area for both important wedding updates and guest messages. Official updates appear upright with ✦. Approved guest messages appear in italics with ♡.</div>
         <div class="card">
+          <div class="toprow"><div><h3 style="margin-bottom:4px">Rolling message bar</h3><p class="muted" style="margin:0">Master switch for the guest website ticker.</p></div><button class="btn secondary" type="button" id="tickerMasterToggle">Loading…</button></div>
+        </div>
+        <div class="card">
           <h3>Add important wedding update</h3>
           <form id="officialMessageForm">
             <div class="field"><label>Update</label><textarea name="message" maxlength="240" required placeholder="e.g. Please remember to pre-book your taxi home"></textarea></div>
@@ -238,7 +241,7 @@ async function loadAll(){
   const s=r.stats||{}; ['Households','Day','Evening','Guests','Adults','Children','Rsvp','Awaiting','Faq'].forEach(k=>document.getElementById('s'+k).textContent=s[k.toLowerCase()]??0);
   renderHouseholds(r.households||[]);renderGuests(r.guests||[]);
   const sync=document.getElementById('lastSynced');if(sync)sync.textContent='Last refreshed: '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  renderSimple('seatContent',r.seating||[]);renderSimple('photoContent',r.photos||[]);renderMessages(r.messages||[]);renderFaqs(r.faqQuestions||[],r.faqLibrary||[]);renderSimple('taskContent',r.tasks||[]);
+  renderSimple('seatContent',r.seating||[]);renderSimple('photoContent',r.photos||[]);renderMessages(r.messages||[]);renderTickerMaster(r.tickerEnabled!==false);renderFaqs(r.faqQuestions||[],r.faqLibrary||[]);renderSimple('taskContent',r.tasks||[]);
 }
 function renderHouseholds(rows){
   const body=document.getElementById('householdRows');body.innerHTML='';
@@ -249,6 +252,11 @@ function renderHouseholds(rows){
   });
 }
 function renderGuests(rows){document.getElementById('guestRows').innerHTML=rows.map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.household)}</td><td>${esc(g.type)}</td><td>${esc(g.invitedTo)}</td><td>${esc(g.response||'No response')}</td><td><button class="inline-btn" type="button" data-edit-guest="${g.row}">Edit</button></td></tr>`).join('')}
+function renderTickerMaster(enabled){
+  const btn=document.getElementById('tickerMasterToggle');if(!btn)return;
+  btn.dataset.enabled=enabled?'yes':'no';
+  btn.textContent=enabled?'ON · Click to hide':'OFF · Click to show';
+}
 function renderMessages(rows){
   const guestRows=document.getElementById('guestMessageRows');
   const liveRows=document.getElementById('liveMessageRows');
@@ -625,6 +633,12 @@ document.getElementById('logout').onclick=()=>{sessionStorage.removeItem(TOKEN_K
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>openPanel(b.dataset.panel));
 document.getElementById('householdForm').addEventListener('submit',async e=>{e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));fd.household=smartNameCase(fd.household);fd.contactName=smartNameCase(fd.contactName);await api('adminAddHousehold',{household:fd});e.target.reset();await loadAll()});
 document.getElementById('guestForm').addEventListener('submit',async e=>{e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));fd.guestName=smartNameCase(fd.guestName);await api('adminAddGuest',{guest:fd});e.target.reset();await loadAll()});
+document.getElementById('tickerMasterToggle').addEventListener('click',async e=>{
+  const btn=e.currentTarget,enabled=btn.dataset.enabled==='yes';btn.disabled=true;
+  try{await api('adminSetTickerBar',{enabled:!enabled});await loadAll();}
+  catch(x){alert(x.message||'Could not change the message bar.')}
+  finally{btn.disabled=false;}
+});
 document.getElementById('officialMessageForm').addEventListener('submit',async e=>{
   e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));const status=document.getElementById('officialMessageStatus');status.textContent='';
   const btn=e.submitter;btn.disabled=true;btn.textContent='Publishing…';
