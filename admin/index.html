@@ -130,7 +130,30 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
 
       <section class="panel" id="seating"><h2>Seating Planner</h2><div class="card"><p class="muted">The seating planner is ready for confirmed guests. Table editing will populate here from the database.</p><div id="seatContent"></div></div></section>
       <section class="panel" id="photos"><h2>Photo Review</h2><div class="card"><p class="muted">Guest-camera uploads will appear here for approval before they are shown publicly.</p><div id="photoContent"></div></div></section>
-      <section class="panel" id="messages"><h2>Messages</h2><div class="card"><p class="muted">RSVP messages will appear here. Approved messages can later feed the website ticker.</p><div id="messageContent"></div></div></section>
+      <section class="panel" id="messages">
+        <h2>Messages</h2>
+        <div class="notice">Use this area for both important wedding updates and guest messages. Official updates appear upright with ✦. Approved guest messages appear in italics with ♡.</div>
+        <div class="card">
+          <h3>Add important wedding update</h3>
+          <form id="officialMessageForm">
+            <div class="field"><label>Update</label><textarea name="message" maxlength="240" required placeholder="e.g. Please remember to pre-book your taxi home"></textarea></div>
+            <div class="grid2">
+              <div class="field"><label>Show from <span class="muted">(optional)</span></label><input type="datetime-local" name="start"></div>
+              <div class="field"><label>Show until <span class="muted">(optional)</span></label><input type="datetime-local" name="end"></div>
+            </div>
+            <button class="btn" type="submit">Publish update</button>
+            <div id="officialMessageStatus"></div>
+          </form>
+        </div>
+        <div class="card">
+          <h3>Guest messages waiting for review</h3>
+          <div class="table-wrap"><table><thead><tr><th>Guest / household</th><th>Message</th><th>Status</th><th>Action</th></tr></thead><tbody id="guestMessageRows"></tbody></table></div>
+        </div>
+        <div class="card">
+          <h3>Live rolling bar</h3>
+          <div class="table-wrap"><table><thead><tr><th>Type</th><th>Message</th><th>Active</th><th>Timing</th><th>Action</th></tr></thead><tbody id="liveMessageRows"></tbody></table></div>
+        </div>
+      </section>
       <section class="panel" id="faqs">
         <h2>FAQ Questions</h2>
         <div class="notice">Questions the guest FAQ assistant could not answer appear here. Repeated wording is grouped so you can spot common questions and promote them to the live FAQ.</div>
@@ -215,7 +238,7 @@ async function loadAll(){
   const s=r.stats||{}; ['Households','Day','Evening','Guests','Adults','Children','Rsvp','Awaiting','Faq'].forEach(k=>document.getElementById('s'+k).textContent=s[k.toLowerCase()]??0);
   renderHouseholds(r.households||[]);renderGuests(r.guests||[]);
   const sync=document.getElementById('lastSynced');if(sync)sync.textContent='Last refreshed: '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-  renderSimple('seatContent',r.seating||[]);renderSimple('photoContent',r.photos||[]);renderSimple('messageContent',r.messages||[]);renderFaqs(r.faqQuestions||[],r.faqLibrary||[]);renderSimple('taskContent',r.tasks||[]);
+  renderSimple('seatContent',r.seating||[]);renderSimple('photoContent',r.photos||[]);renderMessages(r.messages||[]);renderFaqs(r.faqQuestions||[],r.faqLibrary||[]);renderSimple('taskContent',r.tasks||[]);
 }
 function renderHouseholds(rows){
   const body=document.getElementById('householdRows');body.innerHTML='';
@@ -226,6 +249,26 @@ function renderHouseholds(rows){
   });
 }
 function renderGuests(rows){document.getElementById('guestRows').innerHTML=rows.map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.household)}</td><td>${esc(g.type)}</td><td>${esc(g.invitedTo)}</td><td>${esc(g.response||'No response')}</td><td><button class="inline-btn" type="button" data-edit-guest="${g.row}">Edit</button></td></tr>`).join('')}
+function renderMessages(rows){
+  const guestRows=document.getElementById('guestMessageRows');
+  const liveRows=document.getElementById('liveMessageRows');
+  if(!guestRows||!liveRows)return;
+  const guest=rows.filter(m=>String(m.type||'Guest').toLowerCase()==='guest' && String(m.status||'').toLowerCase()!=='rejected' && String(m.approvedForTicker||'').toLowerCase()!=='yes');
+  const live=rows.filter(m=>String(m.approvedForTicker||'').toLowerCase()==='yes');
+  guestRows.innerHTML=guest.length?guest.map(m=>`<tr>
+    <td>${esc(m.householdGuest||'Guest')}</td>
+    <td><em>${esc(m.message||'')}</em></td>
+    <td>${esc(m.status||'Pending')}</td>
+    <td><div class="row-actions"><button class="inline-btn" type="button" data-message-approve="${m.row}">Approve</button><button class="inline-btn" type="button" data-message-reject="${m.row}">Decline</button></div></td>
+  </tr>`).join(''):'<tr><td colspan="4" class="muted">No guest messages waiting for review.</td></tr>';
+  liveRows.innerHTML=live.length?live.map(m=>`<tr>
+    <td>${String(m.type||'Guest').toLowerCase()==='guest'?'♡ Guest':'✦ Official'}</td>
+    <td>${String(m.type||'').toLowerCase()==='guest'?'<em>'+esc(m.message||'')+'</em>':esc(m.message||'')}</td>
+    <td>${esc(m.active||'No')}</td>
+    <td>${esc([m.start,m.end].filter(Boolean).join(' → ')||'Always')}</td>
+    <td><button class="inline-btn" type="button" data-message-toggle="${m.row}" data-active="${String(m.active||'No').toLowerCase()==='yes'?'yes':'no'}">${String(m.active||'No').toLowerCase()==='yes'?'Pause':'Activate'}</button></td>
+  </tr>`).join(''):'<tr><td colspan="5" class="muted">Nothing is currently approved for the rolling bar.</td></tr>';
+}
 function renderFaqs(questions,library){
   const qBody=document.getElementById('faqQuestionRows');
   if(!questions.length){
@@ -542,6 +585,9 @@ document.addEventListener('click',e=>{
   const qr=e.target.closest('[data-qr-household-row]');if(qr){downloadSingleQrCard(qr.dataset.qrHouseholdRow);return;}
   const eh=e.target.closest('[data-edit-household]');if(eh){populateEditHousehold(eh.dataset.editHousehold);return;}
   const eg=e.target.closest('[data-edit-guest]');if(eg){populateEditGuest(eg.dataset.editGuest);return;}
+  const approve=e.target.closest('[data-message-approve]');if(approve){api('adminReviewTickerMessage',{row:Number(approve.dataset.messageApprove),decision:'approve'}).then(loadAll).catch(x=>alert(x.message));return;}
+  const reject=e.target.closest('[data-message-reject]');if(reject){api('adminReviewTickerMessage',{row:Number(reject.dataset.messageReject),decision:'reject'}).then(loadAll).catch(x=>alert(x.message));return;}
+  const toggle=e.target.closest('[data-message-toggle]');if(toggle){api('adminToggleTickerMessage',{row:Number(toggle.dataset.messageToggle),active:toggle.dataset.active!=='yes'}).then(loadAll).catch(x=>alert(x.message));return;}
   const b=e.target.closest('[data-add-guest]');if(!b)return;
   openPanel('guests');
   document.getElementById('guestHousehold').value=b.dataset.addGuest;
@@ -579,6 +625,13 @@ document.getElementById('logout').onclick=()=>{sessionStorage.removeItem(TOKEN_K
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>openPanel(b.dataset.panel));
 document.getElementById('householdForm').addEventListener('submit',async e=>{e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));fd.household=smartNameCase(fd.household);fd.contactName=smartNameCase(fd.contactName);await api('adminAddHousehold',{household:fd});e.target.reset();await loadAll()});
 document.getElementById('guestForm').addEventListener('submit',async e=>{e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));fd.guestName=smartNameCase(fd.guestName);await api('adminAddGuest',{guest:fd});e.target.reset();await loadAll()});
+document.getElementById('officialMessageForm').addEventListener('submit',async e=>{
+  e.preventDefault();const fd=Object.fromEntries(new FormData(e.target));const status=document.getElementById('officialMessageStatus');status.textContent='';
+  const btn=e.submitter;btn.disabled=true;btn.textContent='Publishing…';
+  try{await api('adminAddTickerMessage',{message:fd.message.trim(),start:fd.start||'',end:fd.end||''});e.target.reset();status.className='success';status.textContent='Update published.';await loadAll();}
+  catch(x){status.className='error';status.textContent=x.message||'Could not publish update.'}
+  finally{btn.disabled=false;btn.textContent='Publish update';}
+});
 
 applyNameCase(document);
 
