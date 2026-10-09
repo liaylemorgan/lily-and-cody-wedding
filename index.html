@@ -68,6 +68,20 @@
     .date{margin-top:34px;text-transform:uppercase;letter-spacing:.18em;font-size:.86rem}
     .venue{margin:18px auto 32px;text-transform:uppercase;letter-spacing:.14em;font-size:.76rem;line-height:1.95}
     .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:4px}
+    .countdown{display:grid;grid-template-columns:repeat(4,minmax(70px,1fr));gap:10px;max-width:520px;margin:30px auto 0}
+    .countdown-item{background:rgba(247,245,239,.68);border:1px solid rgba(90,94,75,.16);padding:14px 10px}
+    .countdown-number{display:block;font-size:1.65rem;line-height:1;color:var(--olive-dark);font-weight:400}
+    .countdown-label{display:block;margin-top:7px;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:#5f6257}
+    .phase-banner{max-width:720px;margin:20px auto 0;text-align:center;font-style:italic;color:var(--olive-dark)}
+    .ticker{position:fixed;left:0;right:0;top:62px;z-index:19;background:rgba(90,94,75,.95);color:#fff;overflow:hidden;border-bottom:1px solid rgba(255,255,255,.15)}
+    .ticker.hidden{display:none!important}
+    .ticker-track{display:flex;width:max-content;animation:tickerScroll 28s linear infinite;white-space:nowrap;padding:9px 0}
+    .ticker:hover .ticker-track{animation-play-state:paused}
+    .ticker-item{display:inline-block;padding:0 38px;font-size:.78rem;letter-spacing:.05em}
+    @keyframes tickerScroll{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
+    .camera-cta{max-width:760px;margin:28px auto 0;background:rgba(247,245,239,.82);border:1px solid rgba(90,94,75,.16);padding:30px;text-align:center}
+    .camera-cta h3{font-weight:400;font-size:1.5rem;margin-bottom:8px}
+    .camera-cta p{max-width:560px;margin:0 auto 18px;color:#5f6257}
     .branch{display:none}
     .branch.top{top:-40px;left:-55px;transform:rotate(-10deg)}
     .branch.bottom{right:-60px;bottom:-50px;transform:rotate(172deg)}
@@ -167,6 +181,8 @@
       .timeline-shell{padding:24px 18px}
       .time-row{grid-template-columns:78px 18px 1fr;gap:10px}
       .hero-inner{padding:40px 22px}
+      .countdown{grid-template-columns:repeat(2,1fr);max-width:320px}
+      .ticker{top:58px}
       .rsvp-shell{padding:26px 20px}
       .faq-assistant{padding:24px 20px}
       .faq-assistant-top{display:block}.faq-assistant-badge{display:inline-block;margin-top:10px}
@@ -225,6 +241,13 @@
       <h1 class="names"><span class="name">LILY</span><span class="and">and</span><span class="name">CODY</span></h1>
       <div class="date">Saturday · 14 August 2027</div>
       <div class="venue">Dunedin Country House<br>Patrington · East Yorkshire</div>
+      <div class="countdown" id="weddingCountdown" aria-label="Countdown to the wedding">
+        <div class="countdown-item"><span class="countdown-number" id="countDays">—</span><span class="countdown-label">Days</span></div>
+        <div class="countdown-item"><span class="countdown-number" id="countHours">—</span><span class="countdown-label">Hours</span></div>
+        <div class="countdown-item"><span class="countdown-number" id="countMinutes">—</span><span class="countdown-label">Minutes</span></div>
+        <div class="countdown-item"><span class="countdown-number" id="countSeconds">—</span><span class="countdown-label">Seconds</span></div>
+      </div>
+      <div class="phase-banner" id="phaseBanner"></div>
       <div class="hero-actions">
         <a class="btn" href="#invitation">Your Invitation</a>
         <a class="btn secondary" href="#information">Wedding Information</a>
@@ -243,6 +266,9 @@
       </div>
     </div>
   </nav>
+  <div class="ticker hidden" id="messageTicker" aria-label="Wedding updates">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
 
   <main>
     <section class="section sage" id="invitation">
@@ -381,6 +407,19 @@
       </div>
     </section>
 
+    <section class="section alt" id="camera">
+      <div class="wrap">
+        <h2 class="section-title">Guest Camera</h2>
+        <div class="script">Share a moment from the day</div>
+        <div class="camera-cta">
+          <h3>Help us capture the bits we might miss</h3>
+          <p>Guest photo uploads will go privately to Lily & Cody for review before anything appears in the gallery. Please keep wedding photos private until Lily & Cody have shared theirs.</p>
+          <button class="btn" type="button" id="cameraButton">Open guest camera</button>
+          <div class="status hidden" id="cameraStatus"></div>
+        </div>
+      </div>
+    </section>
+
     <section class="section alt" id="faq">
       <div class="wrap">
         <h2 class="section-title">Frequently Asked Questions</h2>
@@ -463,8 +502,83 @@
     const faqAskButton = document.getElementById('faqAskButton');
     const faqAnswer = document.getElementById('faqAnswer');
     const dynamicFaqs = document.getElementById('dynamicFaqs');
+    const phaseBanner = document.getElementById('phaseBanner');
+    const messageTicker = document.getElementById('messageTicker');
+    const tickerTrack = document.getElementById('tickerTrack');
+    const cameraButton = document.getElementById('cameraButton');
+    const cameraStatus = document.getElementById('cameraStatus');
 
     let activeInvite = null;
+
+    const WEDDING_CEREMONY = new Date('2027-08-14T13:30:00+01:00');
+    const WEDDING_DAY_START = new Date('2027-08-14T00:00:00+01:00');
+    const WEDDING_DAY_END = new Date('2027-08-15T00:00:00+01:00');
+
+    function weddingPhase(now = new Date()) {
+      if (now < new Date('2027-02-01T00:00:00+00:00')) return 'rsvp';
+      if (now < new Date('2027-08-01T00:00:00+01:00')) return 'planning';
+      if (now < WEDDING_DAY_START) return 'final-countdown';
+      if (now < WEDDING_DAY_END) return 'wedding-day';
+      return 'after';
+    }
+
+    function updateWeddingCountdown() {
+      const now = new Date();
+      const diff = WEDDING_CEREMONY - now;
+      const box = document.getElementById('weddingCountdown');
+      if (diff <= 0) {
+        if (weddingPhase(now) === 'wedding-day') {
+          box.innerHTML = '<div class="countdown-item" style="grid-column:1/-1"><span class="countdown-number">TODAY</span><span class="countdown-label">Lily & Cody are getting married</span></div>';
+        } else {
+          box.innerHTML = '<div class="countdown-item" style="grid-column:1/-1"><span class="countdown-number">♥</span><span class="countdown-label">Just married</span></div>';
+        }
+        return;
+      }
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+      document.getElementById('countDays').textContent = days;
+      document.getElementById('countHours').textContent = String(hours).padStart(2,'0');
+      document.getElementById('countMinutes').textContent = String(mins).padStart(2,'0');
+      document.getElementById('countSeconds').textContent = String(secs).padStart(2,'0');
+    }
+
+    function applyWeddingPhase() {
+      const phase = weddingPhase();
+      const text = {
+        'rsvp':'We cannot wait to celebrate with you — please remember to RSVP by January 2027.',
+        'planning':'The countdown is on. Check back here for the latest travel, accommodation and wedding-day details.',
+        'final-countdown':'Not long now — please double-check your travel plans, taxi booking and arrival time.',
+        'wedding-day':'Today is the day! The guest camera is ready for your photos.',
+        'after':'Thank you for celebrating with Lily & Cody. Keep an eye out for approved photos and memories from the day.'
+      };
+      phaseBanner.textContent = text[phase] || '';
+      document.body.dataset.weddingPhase = phase;
+      if (phase === 'wedding-day' || phase === 'after') {
+        document.getElementById('camera')?.classList.remove('hidden');
+      }
+    }
+
+    function renderTicker(messages) {
+      const approved = Array.isArray(messages) ? messages.filter(Boolean) : [];
+      if (!approved.length) {
+        messageTicker.classList.add('hidden');
+        tickerTrack.innerHTML = '';
+        return;
+      }
+      tickerTrack.innerHTML = approved.map(m => '<span class="ticker-item">✦ ' + escHtml(m) + '</span>').join('');
+      messageTicker.classList.remove('hidden');
+    }
+
+    cameraButton.addEventListener('click', function() {
+      cameraStatus.classList.remove('hidden');
+      cameraStatus.textContent = 'The guest camera upload link will be connected here once the upload backend is switched back on.';
+    });
+
+    updateWeddingCountdown();
+    applyWeddingPhase();
+    setInterval(updateWeddingCountdown, 1000);
 
     function normaliseCode(value) {
       return String(value || '').trim().toUpperCase().replace(/\s+/g, '');
@@ -620,6 +734,7 @@
 
       renderGuestRsvp(invite);
       renderDynamicFaqs(invite);
+      renderTicker(invite.messages || invite.approvedMessages || []);
 
       document.body.classList.remove('locked');
       document.body.classList.add('unlocked');
