@@ -414,7 +414,7 @@
         <div class="camera-cta">
           <h3>Help us capture the bits we might miss</h3>
           <p>Guest photo uploads will go privately to Lily & Cody for review before anything appears in the gallery. Please keep wedding photos private until Lily & Cody have shared theirs.</p>
-          <button class="btn" type="button" id="cameraButton">Open guest camera</button>
+          <a class="btn" id="cameraButton" href="/camera/">Open guest camera</a>
           <div class="status hidden" id="cameraStatus"></div>
         </div>
       </div>
@@ -570,11 +570,6 @@
       tickerTrack.innerHTML = approved.map(m => '<span class="ticker-item">✦ ' + escHtml(m) + '</span>').join('');
       messageTicker.classList.remove('hidden');
     }
-
-    cameraButton.addEventListener('click', function() {
-      cameraStatus.classList.remove('hidden');
-      cameraStatus.textContent = 'The guest camera upload link will be connected here once the upload backend is switched back on.';
-    });
 
     updateWeddingCountdown();
     applyWeddingPhase();
