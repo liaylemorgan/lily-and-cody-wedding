@@ -38,8 +38,51 @@
     .btn:hover{background:transparent;color:var(--olive-dark)}
     .btn.secondary{background:transparent;color:var(--olive-dark)}
     .btn.secondary:hover{background:var(--olive-dark);color:#fff}
-    .hero{min-height:100svh;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;padding:78px 20px;background:linear-gradient(rgba(247,245,239,.38),rgba(247,245,239,.48)),url("assets/qr-card-template.png") center/cover no-repeat}
-    .hero-inner{position:relative;z-index:2;width:min(100%,680px);padding:54px 34px;background:rgba(247,245,239,.52);border:0;box-shadow:0 18px 55px rgba(47,50,40,.07);backdrop-filter:blur(1px)}
+    .hero{
+      min-height:100svh;
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:78px 20px;
+      background:
+        linear-gradient(rgba(247,245,239,.22),rgba(247,245,239,.32)),
+        linear-gradient(180deg,#ecece4 0%,#f6f5ef 100%);
+    }
+    .hero::before,
+    .hero::after{
+      content:"";
+      position:absolute;
+      width:min(34vw,360px);
+      height:min(42vw,430px);
+      background-image:url("assets/qr-card-template.png");
+      background-repeat:no-repeat;
+      background-size:220% auto;
+      opacity:.52;
+      pointer-events:none;
+    }
+    .hero::before{
+      top:0;
+      left:0;
+      background-position:left top;
+    }
+    .hero::after{
+      right:0;
+      bottom:0;
+      background-position:right bottom;
+    }
+    .hero-inner{
+      position:relative;
+      z-index:2;
+      width:min(100%,680px);
+      padding:54px 34px;
+      background:rgba(247,245,239,.46);
+      border:0;
+      box-shadow:0 18px 55px rgba(47,50,40,.07);
+      backdrop-filter:blur(1px);
+    }
     .hero .eyebrow{margin-bottom:26px;color:#4f5346}
     .names{line-height:.9}
     .name{display:block;font-weight:400;font-size:clamp(3.8rem,15vw,7.2rem);letter-spacing:.14em;padding-left:.14em}
