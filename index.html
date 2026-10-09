@@ -74,8 +74,8 @@
     .info-card{background:#fff;border:1px solid var(--line);padding:30px;text-align:left}
     .info-card h3{font-weight:400;letter-spacing:.08em;text-transform:uppercase;font-size:.9rem;margin-bottom:12px}
     .info-card p{font-size:.94rem}
-    .rsvp-shell{max-width:700px;margin:30px auto 0;background:rgba(255,255,255,.55);border:1px solid var(--line);padding:34px;box-shadow:var(--shadow)}
-    .form-row{margin-bottom:20px;text-align:left}
+    .rsvp-shell{max-width:760px;margin:30px auto 0;background:rgba(255,255,255,.55);border:1px solid var(--line);padding:34px;box-shadow:var(--shadow)}
+    .guest-rsvp-list{display:grid;gap:16px;margin-bottom:24px}.guest-rsvp-card{background:#fff;border:1px solid var(--line);padding:22px;text-align:left}.guest-rsvp-head{display:flex;justify-content:space-between;gap:14px;align-items:start;margin-bottom:15px}.guest-rsvp-name{font-size:1.25rem;font-weight:400}.guest-rsvp-type{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--olive-dark);border:1px solid var(--line);padding:4px 8px}.guest-answer{display:flex;gap:18px;flex-wrap:wrap}.guest-answer label{display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:.95rem;margin:0}.guest-details{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}.guest-details.hidden{display:none!important}.guest-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.guest-detail-grid .form-row{margin-bottom:0}.rsvp-summary{background:var(--paper);border:1px solid var(--line);padding:18px;margin:20px 0;text-align:left}.rsvp-summary strong{font-weight:400}.form-row{margin-bottom:20px;text-align:left}
     label,legend{display:block;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
     input[type="text"],textarea{width:100%;padding:13px 14px;border:1px solid #b9bca9;background:rgba(255,255,255,.78);color:var(--ink);border-radius:0}
     textarea{min-height:100px;resize:vertical}
@@ -113,6 +113,7 @@
     @keyframes pulse{to{opacity:.25}}
 
     @media(max-width:720px){
+      .guest-detail-grid{grid-template-columns:1fr}
       .nav-links{display:none}
       .branch{width:75vw}
       .branch.top{top:-15px;left:-80px}
@@ -247,29 +248,24 @@
       <div class="wrap">
         <h2 class="section-title">RSVP</h2>
         <div class="script">Please reply by January 2027</div>
-        <p class="intro">This is the guest-facing form layout. We will connect it to the wedding guest list and Google Sheet next so responses are actually saved.</p>
+        <p class="intro">Please respond for each person named on your invitation. This lets Lily & Cody know exactly who is attending and any individual dietary or accessibility requirements.</p>
+
         <form class="rsvp-shell" id="rsvpForm">
-          <div class="form-row">
-            <label for="rsvpName">Name / household</label>
-            <input id="rsvpName" name="name" type="text" autocomplete="name" placeholder="Your name" required>
+          <div id="rsvpGuestList" class="guest-rsvp-list"></div>
+
+          <div class="rsvp-summary" id="rsvpSummary">
+            <strong>Your invitation:</strong> <span id="rsvpHouseholdLabel">—</span><br>
+            <span id="rsvpResponsePrompt">Please answer for every named guest.</span>
           </div>
-          <fieldset>
-            <legend>Will you be attending?</legend>
-            <div class="radio-line">
-              <label><input type="radio" name="attendance" value="yes" required> Yes, I'll be there</label>
-              <label><input type="radio" name="attendance" value="no" required> Sorry, I can't attend</label>
-            </div>
-          </fieldset>
-          <div class="form-row">
-            <label for="dietary">Dietary requirements</label>
-            <textarea id="dietary" name="dietary" placeholder="Allergies, intolerances or vegetarian requirements"></textarea>
-          </div>
-          <p class="form-note">There are no meal selections to make. Vegetarian options will be available; please tell Lily & Cody about any dietary requirements.</p>
+
           <div class="form-row">
             <label for="message">Message for Lily & Cody <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
             <textarea id="message" name="message" placeholder="Leave a message for the couple"></textarea>
           </div>
-          <button class="btn" type="submit">Submit RSVP</button>
+
+          <p class="form-note">There are no meal selections to make. Vegetarian options will be available. Please add dietary requirements, allergies or accessibility needs beside the relevant guest.</p>
+
+          <button class="btn" type="submit" id="rsvpSubmitButton">Submit RSVP</button>
           <div class="status hidden" id="formStatus" role="status"></div>
         </form>
       </div>
@@ -326,7 +322,9 @@
     const infoScript = document.getElementById('infoScript');
     const infoIntro = document.getElementById('infoIntro');
     const arrivalFaq = document.getElementById('arrivalFaq');
-    const rsvpName = document.getElementById('rsvpName');
+    const rsvpGuestList = document.getElementById('rsvpGuestList');
+    const rsvpHouseholdLabel = document.getElementById('rsvpHouseholdLabel');
+    const rsvpResponsePrompt = document.getElementById('rsvpResponsePrompt');
 
     let activeInvite = null;
 
@@ -347,6 +345,112 @@
       const response = await fetch(url, { method: 'GET', cache: 'no-store' });
       if (!response.ok) throw new Error('Unable to check invitation code.');
       return response.json();
+    }
+
+    function escHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, ch => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+      }[ch]));
+    }
+
+    function normaliseGuestResponse(value) {
+      const v = String(value || '').toLowerCase();
+      if (v === 'attending' || v === 'yes') return 'yes';
+      if (v === 'declined' || v === 'no') return 'no';
+      return '';
+    }
+
+    function renderGuestRsvp(invite) {
+      const guests = Array.isArray(invite.guests) ? invite.guests : [];
+      rsvpGuestList.innerHTML = '';
+      rsvpHouseholdLabel.textContent = invite.household || invite.contactName || 'Your household';
+
+      if (!guests.length) {
+        rsvpGuestList.innerHTML = '<div class="status">No named guests were found for this invitation. Please contact Lily & Cody before submitting an RSVP.</div>';
+        return;
+      }
+
+      guests.forEach((guest, index) => {
+        const response = normaliseGuestResponse(guest.response);
+        const yesChecked = response === 'yes' ? 'checked' : '';
+        const noChecked = response === 'no' ? 'checked' : '';
+        const showDetails = response === 'yes';
+
+        const card = document.createElement('div');
+        card.className = 'guest-rsvp-card';
+        card.dataset.guestIndex = String(index);
+        card.dataset.guestName = guest.name || '';
+        card.dataset.guestType = guest.type || 'Adult';
+
+        card.innerHTML = `
+          <div class="guest-rsvp-head">
+            <div>
+              <div class="guest-rsvp-name">${escHtml(guest.name || 'Guest')}</div>
+              <div class="muted">${escHtml(invite.invitationType || '')}</div>
+            </div>
+            <span class="guest-rsvp-type">${escHtml(guest.type || 'Guest')}</span>
+          </div>
+
+          <fieldset>
+            <legend>Will ${escHtml(guest.name || 'this guest')} be attending?</legend>
+            <div class="guest-answer">
+              <label><input type="radio" name="guest_${index}_attendance" value="yes" ${yesChecked} required> Yes, attending</label>
+              <label><input type="radio" name="guest_${index}_attendance" value="no" ${noChecked} required> No, unable to attend</label>
+            </div>
+          </fieldset>
+
+          <div class="guest-details ${showDetails ? '' : 'hidden'}">
+            <div class="guest-detail-grid">
+              <div class="form-row">
+                <label for="guest_${index}_dietary">Dietary requirements</label>
+                <textarea id="guest_${index}_dietary" data-field="dietary" placeholder="Allergies, intolerances or vegetarian requirements">${escHtml(guest.dietary || '')}</textarea>
+              </div>
+              <div class="form-row">
+                <label for="guest_${index}_accessibility">Accessibility needs</label>
+                <textarea id="guest_${index}_accessibility" data-field="accessibility" placeholder="Anything Lily & Cody should know">${escHtml(guest.accessibility || '')}</textarea>
+              </div>
+            </div>
+          </div>
+        `;
+
+        card.querySelectorAll('input[type="radio"]').forEach(radio => {
+          radio.addEventListener('change', () => {
+            card.querySelector('.guest-details').classList.toggle('hidden', radio.value !== 'yes' || !radio.checked);
+            updateRsvpPrompt();
+          });
+        });
+
+        rsvpGuestList.appendChild(card);
+      });
+
+      updateRsvpPrompt();
+    }
+
+    function collectGuestDetails() {
+      return [...document.querySelectorAll('.guest-rsvp-card')].map(card => {
+        const selected = card.querySelector('input[type="radio"]:checked');
+        const attending = selected ? selected.value === 'yes' : null;
+        return {
+          name: card.dataset.guestName || '',
+          type: card.dataset.guestType || 'Adult',
+          attending: attending,
+          dietary: attending ? (card.querySelector('[data-field="dietary"]')?.value.trim() || '') : '',
+          accessibility: attending ? (card.querySelector('[data-field="accessibility"]')?.value.trim() || '') : ''
+        };
+      });
+    }
+
+    function updateRsvpPrompt() {
+      const details = collectGuestDetails();
+      const answered = details.filter(g => g.attending !== null).length;
+      const attending = details.filter(g => g.attending === true).length;
+      if (!details.length) {
+        rsvpResponsePrompt.textContent = 'No named guests are linked to this invitation.';
+      } else if (answered < details.length) {
+        rsvpResponsePrompt.textContent = answered + ' of ' + details.length + ' responses completed.';
+      } else {
+        rsvpResponsePrompt.textContent = attending + ' attending · ' + (details.length - attending) + ' unable to attend.';
+      }
     }
 
     function applyInvite(invite) {
@@ -374,7 +478,7 @@
         ? 'Full Day guests are invited to arrive from 12:30 PM. Please do not arrive before 12:00 PM.'
         : 'Evening guests are invited to arrive from 7:00 PM. Please do not arrive before 6:30 PM.';
 
-      if (rsvpName) rsvpName.value = invite.household || invite.contactName || '';
+      renderGuestRsvp(invite);
 
       document.body.classList.remove('locked');
       document.body.classList.add('unlocked');
@@ -423,6 +527,7 @@
     document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const status = document.getElementById('formStatus');
+      const submitButton = document.getElementById('rsvpSubmitButton');
 
       if (!activeInvite) {
         status.classList.remove('hidden');
@@ -430,26 +535,34 @@
         return;
       }
 
-      if (!isApiConfigured()) {
+      const guestDetails = collectGuestDetails();
+      const unanswered = guestDetails.filter(g => g.attending === null);
+      if (!guestDetails.length) {
         status.classList.remove('hidden');
-        status.innerHTML = '<strong>RSVP connection pending.</strong> The secure backend still needs its deployment URL added.';
+        status.textContent = 'No named guests were found on this invitation. Please contact Lily & Cody.';
+        return;
+      }
+      if (unanswered.length) {
+        status.classList.remove('hidden');
+        status.textContent = 'Please answer for every named guest before submitting your RSVP.';
+        unanswered[0] && document.querySelector('.guest-rsvp-card input[type="radio"]:not(:checked)')?.focus();
         return;
       }
 
-      const attendance = this.querySelector('input[name="attendance"]:checked');
+      const attendingGuests = guestDetails.filter(g => g.attending).map(g => g.name);
       const data = {
         action: 'rsvp',
         code: normaliseCode(localStorage.getItem(STORAGE_KEY)),
-        attendance: attendance ? attendance.value : '',
-        attendingGuests: [],
-        dietary: document.getElementById('dietary').value.trim(),
-        accessibility: '',
+        guestDetails: guestDetails,
+        attendingGuests: attendingGuests,
         message: document.getElementById('message').value.trim(),
         amended: Boolean(activeInvite.rsvpStatus && activeInvite.rsvpStatus !== 'Not sent')
       };
 
       status.classList.remove('hidden');
       status.textContent = 'Saving your RSVP…';
+      submitButton.disabled = true;
+      submitButton.textContent = 'Saving…';
 
       try {
         const response = await fetch(API_URL, {
@@ -459,9 +572,27 @@
         });
         const result = await response.json();
         if (!result.ok) throw new Error(result.error || 'Unable to save RSVP.');
-        status.innerHTML = '<strong>Thank you.</strong> Your RSVP has been saved for Lily & Cody.';
+
+        activeInvite.rsvpStatus = result.status || activeInvite.rsvpStatus;
+        guestDetails.forEach(g => {
+          const existing = activeInvite.guests.find(x => x.name === g.name);
+          if (existing) {
+            existing.response = g.attending ? 'Attending' : 'Declined';
+            existing.dietary = g.dietary || '';
+            existing.accessibility = g.accessibility || '';
+          }
+        });
+
+        const attendingCount = guestDetails.filter(g => g.attending).length;
+        const declinedCount = guestDetails.length - attendingCount;
+        status.innerHTML = '<strong>Thank you.</strong> Your RSVP has been saved for Lily & Cody.<br>' +
+          attendingCount + ' attending · ' + declinedCount + ' unable to attend.';
+        submitButton.textContent = 'Update RSVP';
       } catch (err) {
         status.textContent = err.message || 'We could not save your RSVP. Please try again.';
+        submitButton.textContent = 'Submit RSVP';
+      } finally {
+        submitButton.disabled = false;
       }
     });
 
