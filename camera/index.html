@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="theme-color" content="#5A5E4B">
+<title>Guest Camera | Lily & Cody</title>
+<style>
+:root{--sage:#AFB39D;--light:#CBCCBB;--olive:#8F927B;--dark:#5A5E4B;--cream:#F7F5EF;--paper:#F1EFE6;--ink:#282A24;--line:rgba(90,94,75,.22)}
+*{box-sizing:border-box}body{margin:0;font-family:Georgia,"Times New Roman",serif;background:var(--cream);color:var(--ink);line-height:1.65}
+a{color:inherit}.top{background:rgba(247,245,239,.96);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.topin{width:min(100% - 32px,920px);margin:auto;min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{letter-spacing:.16em;text-decoration:none}.back{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dark)}
+.hero{min-height:58svh;display:flex;align-items:center;justify-content:center;text-align:center;padding:72px 20px;background:linear-gradient(rgba(247,245,239,.34),rgba(247,245,239,.54)),url("../assets/qr-card-template.png") center/cover no-repeat}
+.hero-inner{width:min(100%,680px);background:rgba(247,245,239,.62);padding:46px 30px;backdrop-filter:blur(1px)}
+.eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:.72rem;color:var(--dark)}
+.hero h1{font-size:clamp(2.8rem,11vw,5rem);font-weight:400;letter-spacing:.1em;margin:16px 0 0}
+.script{font-family:"Brush Script MT","Segoe Script",cursive;color:var(--dark);font-size:2.1rem;margin-top:6px}
+.wrap{width:min(100% - 36px,760px);margin:auto;padding:50px 0 70px}.card{background:#fafaf6;border:1px solid #afb39d;padding:30px;text-align:center}
+.card h2{font-weight:400;font-size:1.7rem;margin:0 0 12px}.card p{margin:8px auto;max-width:590px}.note{margin-top:22px;background:var(--paper);border-left:3px solid var(--olive);padding:18px;text-align:left}
+.btn{display:inline-block;margin-top:24px;border:1px solid var(--dark);background:var(--dark);color:#fff;padding:13px 20px;text-decoration:none;text-transform:uppercase;letter-spacing:.1em;font-size:.72rem}
+.btn.disabled{opacity:.55;cursor:not-allowed}.small{font-size:.8rem;color:#66695d;margin-top:14px!important}.footer{background:var(--dark);color:#fff;text-align:center;padding:34px 20px;letter-spacing:.12em}
+@media(max-width:700px){.hero{min-height:50svh}.hero-inner{padding:36px 22px}.topin{min-height:58px}.brand{font-size:.82rem}}
+</style>
+</head>
+<body>
+<header class="top"><div class="topin"><a class="brand" href="/">LILY & CODY</a><a class="back" href="/" onclick="if(history.length>1){event.preventDefault();history.back();}">← Back to invitation</a></div></header>
+<section class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">14 August 2027</div>
+    <h1>GUEST CAMERA</h1>
+    <div class="script">Share a moment from the day</div>
+  </div>
+</section>
+<main class="wrap">
+  <div class="card">
+    <h2>Help us capture the bits we might miss</h2>
+    <p>Use the guest camera to send your photos privately to Lily & Cody. They will be reviewed before anything appears in the wedding gallery.</p>
+    <p><strong>Please keep wedding photos private until Lily & Cody have shared theirs.</strong></p>
+    <a class="btn disabled" id="uploadButton" href="#" aria-disabled="true">Photo upload opens on the wedding day</a>
+    <p class="small" id="cameraMessage">You can keep this page bookmarked — this address will not change.</p>
+    <div class="note">This QR code and page are permanent. If the upload system changes behind the scenes, the printed code will still bring guests here.</div>
+  </div>
+</main>
+<footer class="footer">LILY & CODY · GUEST CAMERA</footer>
+<script>
+const weddingDayStart=new Date('2027-08-14T00:00:00+01:00');
+const weddingDayEnd=new Date('2027-08-22T23:59:59+01:00');
+const btn=document.getElementById('uploadButton');
+const msg=document.getElementById('cameraMessage');
+const now=new Date();
+if(now>=weddingDayStart&&now<=weddingDayEnd){
+  msg.textContent='The guest camera is ready — tap below to upload your photos.';
+  btn.textContent='Upload photos';
+  btn.classList.remove('disabled');
+  btn.setAttribute('aria-disabled','false');
+  btn.href='#upload';
+}
+</script>
+</body>
+</html>
