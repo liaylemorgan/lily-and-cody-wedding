@@ -103,6 +103,12 @@
     .memory-thumb{aspect-ratio:1/1;border:1px solid var(--line);background:var(--paper);overflow:hidden;cursor:pointer;padding:0}
     .memory-thumb img{width:100%;height:100%;object-fit:cover;display:block}
     .memory-meta{text-align:center;margin-top:14px;font-size:.82rem;color:#5f6257}
+    .message-board{max-width:860px;margin:34px auto 0}
+    .message-board-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:24px}
+    .message-note{background:rgba(255,255,255,.76);border:1px solid rgba(90,94,75,.16);padding:22px;font-style:italic;line-height:1.7}
+    .message-note strong{display:block;margin-top:10px;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;font-style:normal;color:var(--olive-dark);font-weight:400}
+    .message-board-form{background:rgba(247,245,239,.88);border:1px solid rgba(90,94,75,.16);padding:28px}
+    .message-board-form .grid2{display:grid;grid-template-columns:1fr 2fr;gap:14px}
     body[data-wedding-phase="wedding-day"] #memories,
     body[data-wedding-phase="after"] #memories{display:block!important}
     body[data-wedding-phase="wedding-day"] #memories .section-title,
@@ -215,6 +221,7 @@
       .preview-switch{left:10px;right:10px;text-align:center}
       .featured-memory{min-height:300px}
       .memory-strip{grid-template-columns:repeat(2,1fr)}
+      .message-board-grid,.message-board-form .grid2{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -467,6 +474,25 @@
       </div>
     </section>
 
+    <section class="section alt hidden" id="weddingMessages">
+      <div class="wrap">
+        <h2 class="section-title">Messages for Lily & Cody</h2>
+        <div class="script">Leave them something lovely</div>
+        <p class="intro">Share a message, a memory, a bit of advice or something that will make them smile. Messages are reviewed before appearing publicly.</p>
+        <div class="message-board">
+          <div class="message-board-grid" id="messageBoardGrid"></div>
+          <form class="message-board-form" id="weddingMessageForm">
+            <div class="grid2">
+              <div class="form-row"><label for="weddingMessageName">Your name</label><input id="weddingMessageName" type="text" maxlength="80" required placeholder="Your name"></div>
+              <div class="form-row"><label for="weddingMessageText">Your message</label><textarea id="weddingMessageText" maxlength="300" required placeholder="A message for Lily & Cody"></textarea></div>
+            </div>
+            <button class="btn" type="submit">Send message</button>
+            <div class="status hidden" id="weddingMessageStatus" role="status"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+
     <section class="section alt" id="faq">
       <div class="wrap">
         <h2 class="section-title">Frequently Asked Questions</h2>
@@ -567,6 +593,7 @@
     let galleryTimer = null;
     let galleryPollTimer = null;
     let galleryIndex = 0;
+    let boardItems = [];
     let phaseConfig = {
       mode:'Automatic',
       manualPhase:'rsvp',
@@ -643,9 +670,13 @@
 
       const camera=document.getElementById('camera');
       const memories=document.getElementById('memories');
+      const weddingMessages=document.getElementById('weddingMessages');
+      const rsvpSection=document.getElementById('rsvp');
       const photoPhase=phase === 'wedding-day' || phase === 'after';
       camera?.classList.toggle('hidden', !photoPhase);
       memories?.classList.toggle('hidden', !photoPhase);
+      weddingMessages?.classList.toggle('hidden', !photoPhase);
+      rsvpSection?.classList.toggle('hidden', photoPhase);
       if(memories){
         document.getElementById('memoriesScript').textContent=phase==='wedding-day'?'Live from Lily & Cody’s wedding':'A growing collection from the day';
         document.getElementById('memoriesIntro').textContent=phase==='wedding-day'
@@ -661,13 +692,15 @@
       const invitation=document.getElementById('invitation');
       const information=document.getElementById('information');
       const rsvp=document.getElementById('rsvp');
-      if(main && invitation && information && rsvp && camera && memories){
+      if(main && invitation && information && rsvp && camera && memories && weddingMessages){
         if(phase==='wedding-day' || phase==='after'){
           main.insertBefore(memories, invitation);
           main.insertBefore(camera, memories.nextSibling);
+          main.insertBefore(weddingMessages, camera.nextSibling);
         } else {
           if(camera.nextElementSibling?.id !== 'memories') main.insertBefore(camera, memories);
-          if(memories.nextElementSibling?.id !== 'faq') main.insertBefore(memories, document.getElementById('faq'));
+          if(memories.nextElementSibling?.id !== 'weddingMessages') main.insertBefore(memories, weddingMessages);
+          if(weddingMessages.nextElementSibling?.id !== 'faq') main.insertBefore(weddingMessages, document.getElementById('faq'));
         }
       }
     }
@@ -744,6 +777,10 @@
           const currentIds=galleryItems.map(x=>x.id).join('|');
           const incomingIds=incoming.map(x=>x.id).join('|');
           if(currentIds!==incomingIds)await renderGallery(incoming);
+          const incomingBoard=fresh?.invite?.messageBoard||[];
+          const currentBoard=boardItems.map(x=>(x.message||'')+'|'+(x.by||'')).join('||');
+          const nextBoard=incomingBoard.map(x=>(x.message||'')+'|'+(x.by||'')).join('||');
+          if(currentBoard!==nextBoard)renderMessageBoard(incomingBoard);
         }catch(e){}
       },60000);
     }
@@ -785,6 +822,17 @@
       }
       await showGalleryPhoto(0);
       if(galleryItems.length>1) galleryTimer=setInterval(()=>showGalleryPhoto(galleryIndex+1),7000);
+    }
+
+    function renderMessageBoard(items){
+      boardItems=Array.isArray(items)?items:[];
+      const grid=document.getElementById('messageBoardGrid');
+      if(!grid)return;
+      if(!boardItems.length){
+        grid.innerHTML='<div class="message-note" style="grid-column:1/-1;text-align:center;font-style:normal">Approved messages will appear here throughout the celebration.</div>';
+        return;
+      }
+      grid.innerHTML=boardItems.slice(0,12).map(m=>'<div class="message-note">“'+escHtml(m.message||'')+'”<strong>— '+escHtml(m.by||'Guest')+'</strong></div>').join('');
     }
 
     function escHtml(value) {
@@ -928,6 +976,7 @@
       renderDynamicFaqs(invite);
       renderTicker(invite.messages || invite.approvedMessages || []);
       renderGallery(invite.gallery || []);
+      renderMessageBoard(invite.messageBoard || []);
       startGalleryPolling();
       if (tickerTestMode) {
         renderTicker([
@@ -1126,6 +1175,24 @@
       gateInput.value = '';
       gateError.textContent = '';
       gateInput.focus();
+    });
+
+    document.getElementById('weddingMessageForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const status=document.getElementById('weddingMessageStatus');
+      const name=document.getElementById('weddingMessageName').value.trim();
+      const message=document.getElementById('weddingMessageText').value.trim();
+      status.classList.remove('hidden');
+      if(!activeInvite?.code){status.textContent='Please sign in with your invitation code again.';return;}
+      if(!name||!message){status.textContent='Please add your name and a message.';return;}
+      status.textContent='Sending…';
+      try{
+        const response=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'guestMessage',code:activeInvite.code,name,message})});
+        const json=await response.json();
+        if(!json.ok)throw new Error(json.error||'Could not send message.');
+        document.getElementById('weddingMessageText').value='';
+        status.textContent='Message sent for review — thank you ♡';
+      }catch(err){status.textContent=err.message||'Could not send message.';}
     });
 
     document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
