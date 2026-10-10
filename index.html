@@ -297,10 +297,12 @@
     <div class="nav-inner">
       <a class="brand" href="#">LILY & CODY</a>
       <div class="nav-links">
-        <a href="#invitation">Invitation</a>
-        <a href="#information">Information</a>
-        <a href="#rsvp">RSVP</a>
-        <a href="#faq">FAQs</a>
+        <a id="navInvitation" href="#invitation">Invitation</a>
+        <a id="navInformation" href="#information">Information</a>
+        <a id="navRsvp" href="#rsvp">RSVP</a>
+        <a id="navFaq" href="#faq">FAQs</a>
+        <a id="navMemories" class="hidden" href="#memories">Memories</a>
+        <a id="navMessages" class="hidden" href="#weddingMessages">Messages</a>
       </div>
     </div>
   </nav>
@@ -657,7 +659,7 @@
         'planning':{title:'Plan your day',body:'Travel, accommodation, dress code and other practical details are now the priority.',primary:['Wedding Information','#information'],secondary:['Review RSVP','#rsvp']},
         'final-countdown':{title:'Final checks',body:'Confirm your arrival time, route, parking and taxi home before the big day.',primary:['Travel & details','#information'],secondary:['Your Invitation','#invitation']},
         'wedding-day':{title:'Today is the day',body:'See the celebration unfold live — and add your own favourite moments too.',primary:['Wedding Memories','#memories'],secondary:['Open Guest Camera','#camera']},
-        'after':{title:'Relive the day',body:'The approved gallery keeps growing as more memories are reviewed and shared.',primary:['Wedding Memories','#memories'],secondary:['Add your photos','#camera']}
+        'after':{title:'Relive the day',body:'The wedding site is now all about the memories — photos and messages from the people who shared the day.',primary:['Wedding Memories','#memories'],secondary:['Messages for Lily & Cody','#weddingMessages']}
       };
       const f = focus[phase] || focus.rsvp;
       phaseBanner.textContent = text[phase] || '';
@@ -672,16 +674,35 @@
       const memories=document.getElementById('memories');
       const weddingMessages=document.getElementById('weddingMessages');
       const rsvpSection=document.getElementById('rsvp');
-      const photoPhase=phase === 'wedding-day' || phase === 'after';
-      camera?.classList.toggle('hidden', !photoPhase);
+      const invitationSection=document.getElementById('invitation');
+      const informationSection=document.getElementById('information');
+      const faqSection=document.getElementById('faq');
+      const weddingDay=phase === 'wedding-day';
+      const afterWedding=phase === 'after';
+      const photoPhase=weddingDay || afterWedding;
+
       memories?.classList.toggle('hidden', !photoPhase);
       weddingMessages?.classList.toggle('hidden', !photoPhase);
       rsvpSection?.classList.toggle('hidden', photoPhase);
+
+      // Wedding day keeps useful practical sections and the Guest Camera.
+      camera?.classList.toggle('hidden', !weddingDay);
+      invitationSection?.classList.toggle('hidden', afterWedding);
+      informationSection?.classList.toggle('hidden', afterWedding);
+      faqSection?.classList.toggle('hidden', afterWedding);
+
+      // After the wedding, the site becomes a clean memories + messages experience.
+      document.getElementById('navInvitation')?.classList.toggle('hidden', afterWedding);
+      document.getElementById('navInformation')?.classList.toggle('hidden', afterWedding);
+      document.getElementById('navRsvp')?.classList.toggle('hidden', photoPhase);
+      document.getElementById('navFaq')?.classList.toggle('hidden', afterWedding);
+      document.getElementById('navMemories')?.classList.toggle('hidden', !photoPhase);
+      document.getElementById('navMessages')?.classList.toggle('hidden', !photoPhase);
       if(memories){
         document.getElementById('memoriesScript').textContent=phase==='wedding-day'?'Live from Lily & Cody’s wedding':'A growing collection from the day';
         document.getElementById('memoriesIntro').textContent=phase==='wedding-day'
           ? 'Approved photos appear here throughout the day, so the gallery will keep changing as new moments are shared.'
-          : 'The memories continue after the last dance — approved photos will keep appearing here as they are reviewed.';
+          : 'A growing collection of approved photos from Lily & Cody’s wedding day.';
       }
 
       document.querySelectorAll('.phase-priority').forEach(el=>el.classList.remove('phase-priority'));
@@ -693,10 +714,13 @@
       const information=document.getElementById('information');
       const rsvp=document.getElementById('rsvp');
       if(main && invitation && information && rsvp && camera && memories && weddingMessages){
-        if(phase==='wedding-day' || phase==='after'){
+        if(phase==='wedding-day'){
           main.insertBefore(memories, invitation);
           main.insertBefore(camera, memories.nextSibling);
           main.insertBefore(weddingMessages, camera.nextSibling);
+        } else if(phase==='after'){
+          main.insertBefore(memories, main.firstElementChild);
+          main.insertBefore(weddingMessages, memories.nextSibling);
         } else {
           if(camera.nextElementSibling?.id !== 'memories') main.insertBefore(camera, memories);
           if(memories.nextElementSibling?.id !== 'weddingMessages') main.insertBefore(memories, weddingMessages);
