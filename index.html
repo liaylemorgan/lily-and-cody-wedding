@@ -94,6 +94,19 @@
     .camera-cta{max-width:760px;margin:28px auto 0;background:rgba(247,245,239,.82);border:1px solid rgba(90,94,75,.16);padding:30px;text-align:center}
     .camera-cta h3{font-weight:400;font-size:1.5rem;margin-bottom:8px}
     .camera-cta p{max-width:560px;margin:0 auto 18px;color:#5f6257}
+    .memories-shell{max-width:900px;margin:34px auto 0}
+    .featured-memory{position:relative;min-height:440px;background:var(--paper);border:1px solid rgba(90,94,75,.16);overflow:hidden;display:grid;place-items:center}
+    .featured-memory img{width:100%;height:100%;max-height:620px;object-fit:contain;background:#111}
+    .featured-memory-copy{padding:34px;text-align:center;color:#5f6257}
+    .memory-caption{position:absolute;left:0;right:0;bottom:0;padding:14px 18px;background:linear-gradient(transparent,rgba(0,0,0,.68));color:#fff;font-size:.82rem;letter-spacing:.03em}
+    .memory-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+    .memory-thumb{aspect-ratio:1/1;border:1px solid var(--line);background:var(--paper);overflow:hidden;cursor:pointer;padding:0}
+    .memory-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .memory-meta{text-align:center;margin-top:14px;font-size:.82rem;color:#5f6257}
+    body[data-wedding-phase="wedding-day"] #memories,
+    body[data-wedding-phase="after"] #memories{display:block!important}
+    body[data-wedding-phase="wedding-day"] #memories .section-title,
+    body[data-wedding-phase="after"] #memories .section-title{font-size:clamp(2.5rem,8vw,4.1rem)}
     .branch{display:none}
     .branch.top{top:-40px;left:-55px;transform:rotate(-10deg)}
     .branch.bottom{right:-60px;bottom:-50px;transform:rotate(172deg)}
@@ -200,6 +213,8 @@
       .faq-assistant-top{display:block}.faq-assistant-badge{display:inline-block;margin-top:10px}
       .faq-ask{grid-template-columns:1fr}.faq-ask .btn{width:100%}
       .preview-switch{left:10px;right:10px;text-align:center}
+      .featured-memory{min-height:300px}
+      .memory-strip{grid-template-columns:repeat(2,1fr)}
     }
   </style>
 </head>
@@ -437,6 +452,21 @@
       </div>
     </section>
 
+    <section class="section sage hidden" id="memories">
+      <div class="wrap">
+        <h2 class="section-title">Wedding Memories</h2>
+        <div class="script" id="memoriesScript">Captured by the people we love</div>
+        <p class="intro" id="memoriesIntro">Approved Guest Camera photos will appear here throughout the celebration.</p>
+        <div class="memories-shell">
+          <div class="featured-memory" id="featuredMemory">
+            <div class="featured-memory-copy">The gallery is waiting for its first approved photo.</div>
+          </div>
+          <div class="memory-strip" id="memoryStrip"></div>
+          <div class="memory-meta" id="memoryMeta"></div>
+        </div>
+      </div>
+    </section>
+
     <section class="section alt" id="faq">
       <div class="wrap">
         <h2 class="section-title">Frequently Asked Questions</h2>
@@ -533,6 +563,9 @@
     try { tickerTestMode = tickerTestMode || sessionStorage.getItem('lc_ticker_test') === '1'; } catch (e) {}
 
     let activeInvite = null;
+    let galleryItems = [];
+    let galleryTimer = null;
+    let galleryIndex = 0;
     let phaseConfig = {
       mode:'Automatic',
       manualPhase:'rsvp',
@@ -595,8 +628,8 @@
         'rsvp':{title:'Your next step',body:'Please check every named guest on your invitation and send your RSVP.',primary:['RSVP','#rsvp'],secondary:['Wedding Information','#information']},
         'planning':{title:'Plan your day',body:'Travel, accommodation, dress code and other practical details are now the priority.',primary:['Wedding Information','#information'],secondary:['Review RSVP','#rsvp']},
         'final-countdown':{title:'Final checks',body:'Confirm your arrival time, route, parking and taxi home before the big day.',primary:['Travel & details','#information'],secondary:['Your Invitation','#invitation']},
-        'wedding-day':{title:'Today is the day',body:'Enjoy the celebration — and add your favourite moments to the Guest Camera.',primary:['Open Guest Camera','#camera'],secondary:['Wedding Information','#information']},
-        'after':{title:'Thank you',body:'Keep sharing your favourite moments while Lily & Cody review photos for the gallery.',primary:['Add your photos','#camera'],secondary:['Wedding Information','#information']}
+        'wedding-day':{title:'Today is the day',body:'See the celebration unfold live — and add your own favourite moments too.',primary:['Wedding Memories','#memories'],secondary:['Open Guest Camera','#camera']},
+        'after':{title:'Relive the day',body:'The approved gallery keeps growing as more memories are reviewed and shared.',primary:['Wedding Memories','#memories'],secondary:['Add your photos','#camera']}
       };
       const f = focus[phase] || focus.rsvp;
       phaseBanner.textContent = text[phase] || '';
@@ -608,7 +641,16 @@
       secondary.textContent=f.secondary[0];secondary.href=f.secondary[1];
 
       const camera=document.getElementById('camera');
-      camera?.classList.toggle('hidden', !(phase === 'wedding-day' || phase === 'after'));
+      const memories=document.getElementById('memories');
+      const photoPhase=phase === 'wedding-day' || phase === 'after';
+      camera?.classList.toggle('hidden', !photoPhase);
+      memories?.classList.toggle('hidden', !photoPhase);
+      if(memories){
+        document.getElementById('memoriesScript').textContent=phase==='wedding-day'?'Live from Lily & Cody’s wedding':'A growing collection from the day';
+        document.getElementById('memoriesIntro').textContent=phase==='wedding-day'
+          ? 'Approved photos appear here throughout the day, so the gallery will keep changing as new moments are shared.'
+          : 'The memories continue after the last dance — approved photos will keep appearing here as they are reviewed.';
+      }
 
       document.querySelectorAll('.phase-priority').forEach(el=>el.classList.remove('phase-priority'));
       const priorityId = phase === 'rsvp' ? 'rsvp' : (phase === 'wedding-day' || phase === 'after' ? 'camera' : 'information');
@@ -618,11 +660,13 @@
       const invitation=document.getElementById('invitation');
       const information=document.getElementById('information');
       const rsvp=document.getElementById('rsvp');
-      if(main && invitation && information && rsvp && camera){
+      if(main && invitation && information && rsvp && camera && memories){
         if(phase==='wedding-day' || phase==='after'){
-          main.insertBefore(camera, invitation);
-        } else if(camera.nextElementSibling?.id !== 'faq'){
-          main.insertBefore(camera, document.getElementById('faq'));
+          main.insertBefore(memories, invitation);
+          main.insertBefore(camera, memories.nextSibling);
+        } else {
+          if(camera.nextElementSibling?.id !== 'memories') main.insertBefore(camera, memories);
+          if(memories.nextElementSibling?.id !== 'faq') main.insertBefore(memories, document.getElementById('faq'));
         }
       }
     }
@@ -669,6 +713,63 @@
       const response = await fetch(url, { method: 'GET', cache: 'no-store' });
       if (!response.ok) throw new Error('Unable to check invitation code.');
       return response.json();
+    }
+
+    async function galleryImage(fileId) {
+      const code = activeInvite?.code || '';
+      if (!code || !fileId) throw new Error('Photo unavailable');
+      const response = await fetch(API_URL, {
+        method:'POST',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify({action:'galleryImage',code,fileId})
+      });
+      if(!response.ok) throw new Error('Photo unavailable');
+      const json=await response.json();
+      if(!json.ok) throw new Error(json.error||'Photo unavailable');
+      return 'data:'+json.mimeType+';base64,'+json.base64;
+    }
+
+    function stopGalleryRotation(){
+      if(galleryTimer){clearInterval(galleryTimer);galleryTimer=null;}
+    }
+
+    async function showGalleryPhoto(index){
+      if(!galleryItems.length)return;
+      galleryIndex=((index%galleryItems.length)+galleryItems.length)%galleryItems.length;
+      const item=galleryItems[galleryIndex], featured=document.getElementById('featuredMemory');
+      featured.innerHTML='<div class="featured-memory-copy">Loading photo…</div>';
+      try{
+        if(!item.src)item.src=await galleryImage(item.id);
+        featured.innerHTML='<img alt="Wedding memory shared by '+escHtml(item.guest||'a guest')+'" src="'+item.src+'"><div class="memory-caption">♡ Shared by '+escHtml(item.guest||'a guest')+'</div>';
+        document.querySelectorAll('.memory-thumb').forEach((b,i)=>b.setAttribute('aria-current',i===galleryIndex?'true':'false'));
+      }catch(e){
+        featured.innerHTML='<div class="featured-memory-copy">This photo could not be loaded right now.</div>';
+      }
+    }
+
+    async function renderGallery(items){
+      stopGalleryRotation();
+      galleryItems=(Array.isArray(items)?items:[]).filter(x=>x&&x.id).slice(0,24);
+      const strip=document.getElementById('memoryStrip'),meta=document.getElementById('memoryMeta'),featured=document.getElementById('featuredMemory');
+      strip.innerHTML='';
+      if(!galleryItems.length){
+        featured.innerHTML='<div class="featured-memory-copy">Approved Guest Camera photos will appear here as Lily & Cody’s wedding team reviews them.</div>';
+        meta.textContent='No approved photos yet — check back during the celebration.';
+        return;
+      }
+      meta.textContent=galleryItems.length+' approved photo'+(galleryItems.length===1?'':'s')+' currently in the live gallery';
+      for(let i=0;i<galleryItems.length;i++){
+        const item=galleryItems[i],btn=document.createElement('button');
+        btn.className='memory-thumb';btn.type='button';btn.setAttribute('aria-label','Show photo '+(i+1));
+        btn.innerHTML='<div class="featured-memory-copy" style="padding:8px;font-size:.72rem">Loading…</div>';
+        btn.onclick=()=>showGalleryPhoto(i);strip.appendChild(btn);
+        try{
+          if(!item.src)item.src=await galleryImage(item.id);
+          btn.innerHTML='<img alt="" src="'+item.src+'">';
+        }catch(e){btn.innerHTML='<div class="featured-memory-copy" style="padding:8px;font-size:.72rem">Unavailable</div>';}
+      }
+      await showGalleryPhoto(0);
+      if(galleryItems.length>1) galleryTimer=setInterval(()=>showGalleryPhoto(galleryIndex+1),7000);
     }
 
     function escHtml(value) {
@@ -811,6 +912,7 @@
       renderGuestRsvp(invite);
       renderDynamicFaqs(invite);
       renderTicker(invite.messages || invite.approvedMessages || []);
+      renderGallery(invite.gallery || []);
       if (tickerTestMode) {
         renderTicker([
           {type:'official', text:'IMPORTANT UPDATE · Please remember to RSVP by January 2027'},
