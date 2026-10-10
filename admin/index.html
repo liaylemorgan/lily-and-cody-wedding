@@ -467,7 +467,7 @@ function renderMessages(rows){
   const guestRows=document.getElementById('guestMessageRows');
   const liveRows=document.getElementById('liveMessageRows');
   if(!guestRows||!liveRows)return;
-  const guest=rows.filter(m=>String(m.type||'Guest').toLowerCase()==='guest' && String(m.status||'').toLowerCase()!=='rejected' && String(m.approvedForTicker||'').toLowerCase()!=='yes');
+  const guest=rows.filter(m=>String(m.type||'Guest').toLowerCase()==='guest' && !['hidden','rejected'].includes(String(m.status||'').toLowerCase()) && String(m.approvedForTicker||'').toLowerCase()!=='yes');
   const live=rows.filter(m=>String(m.approvedForTicker||'').toLowerCase()==='yes');
   guestRows.innerHTML=guest.length?guest.map(m=>`<tr>
     <td>${esc(m.householdGuest||'Guest')}</td>
@@ -512,7 +512,7 @@ function parseTaskDate(v){
   const d=new Date(v);return isNaN(d.getTime())?null:d;
 }
 function renderActionCentre(r){
-  const messages=(r.messages||[]).filter(m=>String(m.type||'Guest').toLowerCase()==='guest' && String(m.approvedForTicker||'').toLowerCase()!=='yes' && String(m.status||'').toLowerCase()!=='rejected').length;
+  const messages=(r.messages||[]).filter(m=>String(m.type||'Guest').toLowerCase()==='guest' && String(m.approvedForTicker||'').toLowerCase()!=='yes' && !['hidden','rejected'].includes(String(m.status||'').toLowerCase())).length;
   const photos=(r.photos||[]).filter(p=>!p.status || ['pending','waiting','to review'].includes(String(p.status).toLowerCase())).length;
   const tasks=r.tasks||[],now=new Date();now.setHours(0,0,0,0);
   const open=tasks.filter(t=>String(t.status||'').toLowerCase()!=='complete');
