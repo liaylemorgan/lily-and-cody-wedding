@@ -565,6 +565,7 @@
     let activeInvite = null;
     let galleryItems = [];
     let galleryTimer = null;
+    let galleryPollTimer = null;
     let galleryIndex = 0;
     let phaseConfig = {
       mode:'Automatic',
@@ -731,6 +732,20 @@
 
     function stopGalleryRotation(){
       if(galleryTimer){clearInterval(galleryTimer);galleryTimer=null;}
+    }
+    function startGalleryPolling(){
+      if(galleryPollTimer)clearInterval(galleryPollTimer);
+      galleryPollTimer=setInterval(async()=>{
+        const phase=weddingPhase();
+        if(!activeInvite?.code || (phase!=='wedding-day' && phase!=='after'))return;
+        try{
+          const fresh=await lookupInvite(activeInvite.code);
+          const incoming=fresh?.invite?.gallery||[];
+          const currentIds=galleryItems.map(x=>x.id).join('|');
+          const incomingIds=incoming.map(x=>x.id).join('|');
+          if(currentIds!==incomingIds)await renderGallery(incoming);
+        }catch(e){}
+      },60000);
     }
 
     async function showGalleryPhoto(index){
@@ -913,6 +928,7 @@
       renderDynamicFaqs(invite);
       renderTicker(invite.messages || invite.approvedMessages || []);
       renderGallery(invite.gallery || []);
+      startGalleryPolling();
       if (tickerTestMode) {
         renderTicker([
           {type:'official', text:'IMPORTANT UPDATE · Please remember to RSVP by January 2027'},
