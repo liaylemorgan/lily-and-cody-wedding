@@ -398,8 +398,8 @@
           </a>
           <a class="info-card info-card-link" href="info/dress-code.html">
             <h3><span class="info-icon">✦</span>Dress Code</h3>
-            <p>A quick guide to the colours Lily & Cody would like guests to avoid.</p>
-            <span class="card-more">What to wear</span>
+            <p>White, cream, sage green and silver are reserved territory. Please choose another colour and save everyone the drama.</p>
+            <span class="card-more">Read the dress-code warning</span>
           </a>
           <a class="info-card info-card-link" href="info/children.html">
             <h3><span class="info-icon">♡</span>Children & Additional Guests</h3>
@@ -503,7 +503,7 @@
         <div class="faq">
           <details><summary>What time should I arrive?</summary><p id="arrivalFaq">Your personalised invitation has your arrival time. Please follow that one—this wedding does not operate an “arrive early for a free upgrade” policy.</p></details>
           <details><summary>Can I bring children or an extra guest?</summary><p>Only the people specifically named on your invitation are invited. If their name is not there, there is no allocated place, no meal and no mysterious spare chair waiting in the wings. Please leave surprise children, partners, friends and plus-ones at home unless Lily & Cody have specifically invited them.</p></details>
-          <details><summary>Can I wear patterned white?</summary><p>Please avoid white, cream and sage green. If you’re preparing a courtroom defence for your outfit, perhaps choose another one.</p></details>
+          <details><summary>Can I wear patterned white?</summary><p>Please avoid white, cream, sage green and silver. If you’re preparing a courtroom defence for why it is “technically not white”, choose another outfit. White has a suspiciously short life expectancy at this wedding — and the person wearing it may find their evening cut equally short.</p></details>
           <details><summary>What if my dietary requirements change?</summary><p>Please update your RSVP if something changes. Allergies and dietary needs matter; discovering you dislike potatoes during the wedding breakfast is slightly less helpful.</p></details>
           <details><summary>Do I have to dance?</summary><p>Bring your enthusiasm. Coordination is optional, and we make no promises about anyone’s uncle.</p></details>
           <details><summary>Can I request a song?</summary><p>You may suggest one. A suggestion is not a legally binding contract, especially if it lasts nine minutes.</p></details>
@@ -1089,8 +1089,8 @@
         return { answer: 'The invitation is for the people specifically named on it. If someone is not named, there is no allocated place, no meal and no secret reserve seat. Please ask Lily & Cody rather than bringing an unexpected plus-one.', matched: true };
       }
 
-      if (/\b(white|cream|sage|dress|wear|outfit)\b/.test(q)) {
-        return { answer: 'Please avoid white, cream and sage green. If you’re preparing a courtroom defence for your outfit, perhaps choose another one.', matched: true };
+      if (/\b(white|cream|sage|silver|dress|wear|outfit)\b/.test(q)) {
+        return { answer: 'Please avoid white, cream, sage green and silver. If your outfit needs a legal defence explaining why it is “not really white”, it is already the wrong outfit. White may also have a remarkably short life expectancy at this wedding — and wearing it is not the best way to secure a long evening.', matched: true };
       }
 
       if (/diet|allerg|vegetarian|intoleran|food requirement/.test(q)) {
