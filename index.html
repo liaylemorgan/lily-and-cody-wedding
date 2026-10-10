@@ -152,7 +152,7 @@
     .mini-list{margin-top:10px;padding-left:18px;font-size:.9rem}
     .mini-list li{margin:4px 0}
     .rsvp-shell{max-width:760px;margin:30px auto 0;background:rgba(255,255,255,.9);border:1px solid rgba(90,94,75,.18);padding:34px;box-shadow:0 18px 50px rgba(47,50,40,.08);backdrop-filter:blur(2px)}
-    .guest-rsvp-list{display:grid;gap:16px;margin-bottom:24px}.guest-rsvp-card{background:rgba(255,255,255,.78);border:1px solid rgba(90,94,75,.14);padding:24px;text-align:left}.guest-rsvp-head{display:flex;justify-content:space-between;gap:14px;align-items:start;margin-bottom:15px}.guest-rsvp-name{font-size:1.32rem;font-weight:400;letter-spacing:.02em}.guest-rsvp-type{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--olive-dark);border:1px solid var(--line);padding:4px 8px}.guest-answer{display:flex;gap:18px;flex-wrap:wrap}.guest-answer label{display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:.95rem;margin:0}.guest-details{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}.guest-details.hidden{display:none!important}.guest-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.guest-detail-grid .form-row{margin-bottom:0}.rsvp-summary{background:rgba(241,239,230,.75);border:1px solid rgba(90,94,75,.14);padding:18px;margin:20px 0;text-align:left}.rsvp-summary strong{font-weight:400}.form-row{margin-bottom:20px;text-align:left}
+    .guest-rsvp-list{display:grid;gap:16px;margin-bottom:24px}.guest-rsvp-card{background:rgba(255,255,255,.78);border:1px solid rgba(90,94,75,.14);padding:24px;text-align:left}.guest-rsvp-head{display:flex;justify-content:space-between;gap:14px;align-items:start;margin-bottom:15px}.guest-rsvp-name{font-size:1.32rem;font-weight:400;letter-spacing:.02em}.guest-rsvp-type{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--olive-dark);border:1px solid var(--line);padding:4px 8px}.guest-answer{display:flex;gap:18px;flex-wrap:wrap}.guest-answer label{display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:.95rem;margin:0}.guest-details{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}.guest-details.hidden{display:none!important}.guest-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.guest-detail-grid .form-row{margin-bottom:0}.rsvp-summary{background:rgba(241,239,230,.75);border:1px solid rgba(90,94,75,.14);padding:18px;margin:20px 0;text-align:left}.rsvp-summary strong{font-weight:400}.calendar-card{margin-top:22px;padding:22px;background:rgba(247,245,239,.9);border:1px solid rgba(90,94,75,.18);text-align:center}.calendar-card h3{font-weight:400;font-size:1.25rem;margin:0 0 6px}.calendar-card p{margin:0 auto 16px;max-width:590px;color:#5f6257}.calendar-detail{font-size:.82rem;letter-spacing:.03em;margin-bottom:14px;color:var(--olive-dark)}.form-row{margin-bottom:20px;text-align:left}
     label,legend{display:block;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px}
     input[type="text"],textarea{width:100%;padding:13px 14px;border:1px solid #b9bca9;background:rgba(255,255,255,.78);color:var(--ink);border-radius:0}
     textarea{min-height:100px;resize:vertical}
@@ -444,6 +444,13 @@
 
           <button class="btn" type="submit" id="rsvpSubmitButton">Submit RSVP</button>
           <div class="status hidden" id="formStatus" role="status"></div>
+
+          <div class="calendar-card hidden" id="calendarCard">
+            <h3>Save the date</h3>
+            <p id="calendarCopy">Add Lily & Cody's wedding to your calendar with the details for your invitation.</p>
+            <div class="calendar-detail" id="calendarDetail"></div>
+            <button class="btn secondary" type="button" id="addCalendarButton">Add to Calendar</button>
+          </div>
         </form>
       </div>
     </section>
@@ -581,6 +588,10 @@
     const messageTicker = document.getElementById('messageTicker');
     const tickerTrack = document.getElementById('tickerTrack');
     const cameraButton = document.getElementById('cameraButton');
+    const calendarCard = document.getElementById('calendarCard');
+    const calendarCopy = document.getElementById('calendarCopy');
+    const calendarDetail = document.getElementById('calendarDetail');
+    const addCalendarButton = document.getElementById('addCalendarButton');
     const cameraStatus = document.getElementById('cameraStatus');
     const tickerParams = new URLSearchParams(location.search);
     const tickerQueryTest = tickerParams.get('tickerTest') === '1' || tickerParams.get('tickertest') === '1';
@@ -965,6 +976,81 @@
       }
     }
 
+    function inviteHasAttendee(invite) {
+      const guests = Array.isArray(invite?.guests) ? invite.guests : [];
+      return guests.some(g => normaliseGuestResponse(g.response) === 'attending');
+    }
+
+    function updateCalendarCard(invite) {
+      if (!calendarCard || !invite) return;
+      const show = inviteHasAttendee(invite);
+      calendarCard.classList.toggle('hidden', !show);
+      if (!show) return;
+
+      const isDay = String(invite.invitationType || '').toLowerCase().includes('full');
+      calendarCopy.textContent = isDay
+        ? 'Your Full Day invitation will be saved with your 12:30 PM arrival time and 1:30 PM ceremony details.'
+        : 'Your Evening invitation will be saved with your 7:00 PM arrival time.';
+      calendarDetail.textContent = isDay
+        ? 'Saturday 14 August 2027 · Arrival 12:30 PM · Dunedin Country House'
+        : 'Saturday 14 August 2027 · Arrival 7:00 PM · Dunedin Country House';
+    }
+
+    function escapeIcs(value) {
+      return String(value || '')
+        .replace(/\\/g,'\\\\')
+        .replace(/\n/g,'\\n')
+        .replace(/,/g,'\\,')
+        .replace(/;/g,'\\;');
+    }
+
+    function downloadWeddingCalendar() {
+      if (!activeInvite || !inviteHasAttendee(activeInvite)) return;
+
+      const isDay = String(activeInvite.invitationType || '').toLowerCase().includes('full');
+      const title = isDay
+        ? "Lily & Cody's Wedding — Full Day"
+        : "Lily & Cody's Wedding — Evening Celebration";
+
+      const description = isDay
+        ? "You are invited to Lily & Cody's full wedding day. Guest arrival: 12:30 PM. Ceremony: 1:30 PM. Please do not arrive before 12:00 PM. The bar is cashless (card only). Wedding information: https://lilyandcody.co.uk"
+        : "You are invited to Lily & Cody's evening celebration. Guest arrival: 7:00 PM. Please do not arrive before 6:30 PM. The bar is cashless (card only). Wedding information: https://lilyandcody.co.uk";
+
+      // 14 August is British Summer Time. UTC values make the saved local arrival
+      // time display correctly while still travelling cleanly between calendar apps.
+      const startUtc = isDay ? '20270814T113000Z' : '20270814T180000Z';
+      const uid = 'lily-cody-20270814-' + (isDay ? 'full-day' : 'evening') + '@lilyandcody.co.uk';
+      const dtstamp = new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
+
+      const ics = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Lily and Cody Wedding//EN',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH',
+        'BEGIN:VEVENT',
+        'UID:' + uid,
+        'DTSTAMP:' + dtstamp,
+        'DTSTART:' + startUtc,
+        'SUMMARY:' + escapeIcs(title),
+        'LOCATION:' + escapeIcs('Dunedin Country House, 40 Westgate, Patrington, Hull, HU12 0NB'),
+        'DESCRIPTION:' + escapeIcs(description),
+        'URL:https://lilyandcody.co.uk',
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].join('\r\n');
+
+      const blob = new Blob([ics], {type:'text/calendar;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = isDay ? 'Lily-and-Cody-Wedding-Full-Day.ics' : 'Lily-and-Cody-Wedding-Evening.ics';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }
+
     function applyInvite(invite) {
       activeInvite = invite;
       if (invite.sitePhase) {
@@ -997,6 +1083,7 @@
         : 'Your personalised invitation says 7:00 PM. Please do not arrive before 6:30 PM—this wedding does not operate an “arrive early for a free upgrade” policy.';
 
       renderGuestRsvp(invite);
+      updateCalendarCard(invite);
       renderDynamicFaqs(invite);
       renderTicker(invite.messages || invite.approvedMessages || []);
       renderGallery(invite.gallery || []);
@@ -1219,6 +1306,8 @@
       }catch(err){status.textContent=err.message||'Could not send message.';}
     });
 
+    addCalendarButton?.addEventListener('click', downloadWeddingCalendar);
+
     document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const status = document.getElementById('formStatus');
@@ -1282,6 +1371,7 @@
         const declinedCount = guestDetails.length - attendingCount;
         status.innerHTML = '<strong>Thank you.</strong> Your RSVP has been saved for Lily & Cody.<br>' +
           attendingCount + ' attending · ' + declinedCount + ' unable to attend.';
+        updateCalendarCard(activeInvite);
         submitButton.textContent = 'Update RSVP';
       } catch (err) {
         status.textContent = err.message || 'We could not save your RSVP. Please try again.';
