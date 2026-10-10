@@ -480,7 +480,7 @@ function renderMessages(rows){
     <td>${String(m.type||'').toLowerCase()==='guest'?'<em>'+esc(m.message||'')+'</em>':esc(m.message||'')}</td>
     <td>${esc(m.active||'No')}</td>
     <td>${esc([m.start,m.end].filter(Boolean).join(' → ')||'Always')}</td>
-    <td><button class="inline-btn" type="button" data-message-toggle="${m.row}" data-active="${String(m.active||'No').toLowerCase()==='yes'?'yes':'no'}">${String(m.active||'No').toLowerCase()==='yes'?'Pause':'Activate'}</button></td>
+    <td><div class="row-actions"><button class="inline-btn" type="button" data-message-toggle="${m.row}" data-active="${String(m.active||'No').toLowerCase()==='yes'?'yes':'no'}">${String(m.active||'No').toLowerCase()==='yes'?'Pause':'Activate'}</button><button class="inline-btn" type="button" data-message-unapprove="${m.row}">Reject</button></div></td>
   </tr>`).join(''):'<tr><td colspan="5" class="muted">Nothing is currently approved for the rolling bar.</td></tr>';
 }
 function renderFaqs(questions,library){
@@ -903,6 +903,7 @@ document.addEventListener('click',e=>{
   const approve=e.target.closest('[data-message-approve]');if(approve){api('adminReviewTickerMessage',{row:Number(approve.dataset.messageApprove),decision:'approve'}).then(loadAll).catch(x=>alert(x.message));return;}
   const reject=e.target.closest('[data-message-reject]');if(reject){api('adminReviewTickerMessage',{row:Number(reject.dataset.messageReject),decision:'reject'}).then(loadAll).catch(x=>alert(x.message));return;}
   const toggle=e.target.closest('[data-message-toggle]');if(toggle){api('adminToggleTickerMessage',{row:Number(toggle.dataset.messageToggle),active:toggle.dataset.active!=='yes'}).then(loadAll).catch(x=>alert(x.message));return;}
+  const unapprove=e.target.closest('[data-message-unapprove]');if(unapprove){if(confirm('Reject this approved message and remove it from the live ticker?'))api('adminReviewTickerMessage',{row:Number(unapprove.dataset.messageUnapprove),decision:'reject'}).then(loadAll).catch(x=>alert(x.message));return;}
   const b=e.target.closest('[data-add-guest]');if(!b)return;
   openPanel('guests');
   document.getElementById('guestHousehold').value=b.dataset.addGuest;
