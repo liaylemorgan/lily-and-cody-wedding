@@ -814,18 +814,26 @@
     function startGalleryPolling(){
       if(galleryPollTimer)clearInterval(galleryPollTimer);
       galleryPollTimer=setInterval(async()=>{
-        const phase=weddingPhase();
-        if(!activeInvite?.code || (phase!=='wedding-day' && phase!=='after'))return;
+        if(!activeInvite?.code)return;
         try{
           const fresh=await lookupInvite(activeInvite.code);
-          const incoming=fresh?.invite?.gallery||[];
-          const currentIds=galleryItems.map(x=>x.id).join('|');
-          const incomingIds=incoming.map(x=>x.id).join('|');
-          if(currentIds!==incomingIds)await renderGallery(incoming);
-          const incomingBoard=fresh?.invite?.messageBoard||[];
-          const currentBoard=boardItems.map(x=>(x.message||'')+'|'+(x.by||'')).join('||');
-          const nextBoard=incomingBoard.map(x=>(x.message||'')+'|'+(x.by||'')).join('||');
-          if(currentBoard!==nextBoard)renderMessageBoard(incomingBoard);
+          const freshInvite=fresh?.invite||{};
+
+          // Keep the rolling ticker genuinely live in every site phase.
+          renderTicker(freshInvite.messages || freshInvite.approvedMessages || []);
+
+          const phase=weddingPhase();
+          if(phase==='wedding-day' || phase==='after'){
+            const incoming=freshInvite.gallery||[];
+            const currentIds=galleryItems.map(x=>x.id).join('|');
+            const incomingIds=incoming.map(x=>x.id).join('|');
+            if(currentIds!==incomingIds)await renderGallery(incoming);
+
+            const incomingBoard=freshInvite.messageBoard||[];
+            const currentBoard=boardItems.map(x=>(x.message||'')+'|'+(x.by||'')).join('||');
+            const nextBoard=incomingBoard.map(x=>(x.message||'')+'|'+(x.by||'')).join('||');
+            if(currentBoard!==nextBoard)renderMessageBoard(incomingBoard);
+          }
         }catch(e){}
       },60000);
     }
