@@ -376,7 +376,7 @@ function renderHouseholds(rows){
     const o=document.createElement('option');o.value=h.household;o.textContent=h.household;select.appendChild(o);
   });
 }
-function renderGuests(rows){document.getElementById('guestRows').innerHTML=rows.map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.household)}</td><td>${esc(g.type)}</td><td>${esc(g.invitedTo)}</td><td>${esc(g.response||'No response')}</td><td><button class="inline-btn" type="button" data-edit-guest="${g.row}">Edit</button></td></tr>`).join('')}
+function renderGuests(rows){document.getElementById('guestRows').innerHTML=rows.map(g=>`<tr><td>${esc(g.name)}</td><td>${esc(g.household)}</td><td>${esc(g.type)}</td><td>${esc(g.invitedTo)}</td><td>${esc(g.response||'No response')}</td><td><div class="row-actions"><button class="inline-btn" type="button" data-edit-guest="${g.row}">Edit</button><button class="inline-btn" type="button" data-delete-guest="${g.row}" data-delete-guest-name="${encodeURIComponent(g.name||'Guest')}">Delete</button></div></td></tr>`).join('')}
 function renderTickerMaster(enabled){
   const btn=document.getElementById('tickerMasterToggle');if(!btn)return;
   btn.dataset.enabled=enabled?'yes':'no';
@@ -889,6 +889,7 @@ document.addEventListener('click',e=>{
   const qr=e.target.closest('[data-qr-household-row]');if(qr){downloadSingleQrCard(qr.dataset.qrHouseholdRow);return;}
   const eh=e.target.closest('[data-edit-household]');if(eh){populateEditHousehold(eh.dataset.editHousehold);return;}
   const eg=e.target.closest('[data-edit-guest]');if(eg){populateEditGuest(eg.dataset.editGuest);return;}
+  const dg=e.target.closest('[data-delete-guest]');if(dg){const name=decodeURIComponent(dg.dataset.deleteGuestName||'this guest');if(confirm('Delete '+name+' from the invitation? This removes them from the guest list and seating plan. Historical RSVP submissions are kept for audit.'))api('adminDeleteGuest',{row:Number(dg.dataset.deleteGuest)}).then(loadAll).catch(x=>alert(x.message||'Could not delete guest.'));return;}
   const te=e.target.closest('[data-task-edit]');if(te){populateEditTask(te.dataset.taskEdit);return;}
   const tc=e.target.closest('[data-task-complete]');if(tc){api('adminUpdateTask',{task:{row:Number(tc.dataset.taskComplete),status:'Complete'}}).then(loadAll).catch(x=>alert(x.message));return;}
   const pv=e.target.closest('[data-phase-preview]');if(pv){window.open('/?phasePreview='+encodeURIComponent(pv.dataset.phasePreview),'_blank');return;}
