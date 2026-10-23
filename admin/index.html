@@ -56,11 +56,12 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
       <button data-panel="messages">Messages</button>
       <button data-panel="faqs">FAQ questions</button>
       <button data-panel="tasks">Wedding tasks</button>
+      <button data-panel="coachHire">Coach hire</button>
     </nav>
     <main>
       <section class="panel active" id="dashboard">
         <h2>Wedding Dashboard</h2>
-        <div class="notice"><strong>Google Sheet is the source of truth.</strong> The admin dashboard displays the live wedding database exactly as stored there; it does not rename, merge or “correct” existing households or guests.</div><div class="quick-actions"><button class="btn secondary" type="button" id="refreshDashboard">Refresh from spreadsheet</button><span class="muted" id="lastSynced"></span></div>
+        <div class="notice"><strong>Google Sheet is the source of truth.</strong> The admin dashboard displays the live wedding database exactly as stored there; it does not rename, merge or “correct” existing households or guests.</div><div class="quick-actions"><a class="btn secondary" href="https://docs.google.com/spreadsheets/d/1lhoiyRq_ZadNmZ04GuU-IOJIk6zNBqM8XHCAAkwDILE/edit" target="_blank" rel="noopener noreferrer">Coach hire quotes ↗</a></div><div class="quick-actions"><button class="btn secondary" type="button" id="refreshDashboard">Refresh from spreadsheet</button><span class="muted" id="lastSynced"></span></div>
         <div class="quick-actions"><button class="btn" type="button" id="openInviteBuilder">+ Add invitation</button><button class="btn secondary" type="button" id="openExistingGuest">+ Add guest to existing household</button><button class="btn secondary" type="button" id="downloadAllQrCards">Download all QR cards (PDF)</button></div>
         <div class="stats">
           <div class="stat"><small>Households</small><strong id="sHouseholds">0</strong></div>
@@ -229,6 +230,16 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #b8baa9;backgroun
         <div class="card">
           <h3>Live FAQ library</h3>
           <div class="table-wrap"><table><thead><tr><th>Question</th><th>Answer</th><th>Times asked</th><th>Status</th></tr></thead><tbody id="faqLibraryRows"></tbody></table></div>
+        </div>
+      </section>
+      <section class="panel" id="coachHire">
+        <h2>Coach Hire &amp; Return Transport</h2>
+        <div class="notice">Wedding transport from Dunedin Country House on 14 August 2027. Planning for up to 80 guests. The quote tracker is maintained in Google Sheets so everyone works from one set of figures.</div>
+        <div class="card">
+          <h3>Coach hire quote comparison</h3>
+          <p>Seven operators are listed. Enquiries have been sent to five; Enterprise Coaches and Bus King are still to contact.</p>
+          <div class="actions"><a class="btn" href="https://docs.google.com/spreadsheets/d/1lhoiyRq_ZadNmZ04GuU-IOJIk6zNBqM8XHCAAkwDILE/edit" target="_blank" rel="noopener noreferrer">Open live quote tracker ↗</a></div>
+          <p class="muted tiny">You must have access to the Google Sheet to view or edit it. Quotes and enquiry status are updated in the Sheet, not separately on this dashboard.</p>
         </div>
       </section>
       <section class="panel" id="tasks">
